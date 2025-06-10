@@ -1,0 +1,7 @@
+.hero-section {
+    background-color: var(--color--primary-1);
+    margin-top: -98px;
+    padding-top: 150px;
+    position: relative;
+    overflow: hidden;
+}

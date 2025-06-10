@@ -1,36 +1,12 @@
 ---
 import ProductSlider from '../components/ProductSlider.astro';
 import { products } from '../data/products.js';
+import Hero from '../components/Homepage/Hero.astro';
 ---
 
 <main>
     <article>
-      <section class="hero" id="home">
-        <div class="container">
-          <div class="hero-content">
-            <p class="hero-subtitle">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur</p>
-
-            <h2 class="h2 hero-title">Lorem Ipsum is simply dummy text</h2>
-
-            <p class="hero-text">
-              Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-            </p>
-
-            <button class="btn">Learn More</button>
-          </div>
-
-          <figure class="hero-banner">
-            <img
-              src="https://cdn3d.iconscout.com/3d/premium/thumb/chemistry-3d-icon-download-in-png-blend-fbx-gltf-file-formats--chemical-experiment-science-laboratory-pack-technology-icons-8998307.png"
-              width="694"
-              height="529"
-              loading="lazy"
-              alt="hero-banner"
-              class="w-100 banner-animation"
-            />
-          </figure>
-        </div>
-      </section>
+      <Hero />
 
       <!-- 
         - #ABOUT
