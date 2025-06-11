@@ -1,16 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Animated Timeline</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chemical Product Cards with Images</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Our Chemical Products</h1>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      
-    </style>
-  </head>
-  <body>
-    
-  </body>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Card with Image -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
+        <img src="https://via.placeholder.com/600x300?text=Acetone" alt="Acetone Image" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800">Acetone</h2>
+          <p class="text-sm text-gray-600">C<sub>3</sub>H<sub>6</sub>O · CAS: 67-64-1</p>
+          <p class="text-sm mt-2 text-gray-700">
+            High-purity solvent for industrial and lab use.
+          </p>
+          <div class="flex space-x-2 mt-3 text-red-600 text-xl">
+            <i class="fas fa-fire"></i>
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="mt-4 flex justify-between text-sm">
+            <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">View SDS</a>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Request Quote</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card with Chemical Structure -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
+        <img src="https://via.placeholder.com/600x300?text=Ethanol+Structure" alt="Ethanol Structure" class="w-full h-48 object-contain bg-white">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800">Ethanol</h2>
+          <p class="text-sm text-gray-600">C<sub>2</sub>H<sub>5</sub>OH · CAS: 64-17-5</p>
+          <p class="text-sm mt-2 text-gray-700">
+            Used in pharmaceuticals, disinfection, and fuel additives.
+          </p>
+          <div class="flex space-x-2 mt-3 text-red-600 text-xl">
+            <i class="fas fa-fire"></i>
+          </div>
+          <div class="mt-4 flex justify-between text-sm">
+            <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">SDS</a>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add to Inquiry</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image + Safety-Focused -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
+        <img src="https://via.placeholder.com/600x300?text=Nitric+Acid" alt="Nitric Acid" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800">Nitric Acid</h2>
+          <p class="text-sm text-gray-600">HNO<sub>3</sub> · CAS: 7697-37-2</p>
+          <p class="text-sm mt-2 text-gray-700">
+            Strong oxidizing agent. Corrosive. Handle with care.
+          </p>
+          <div class="flex space-x-2 mt-3 text-red-600 text-xl">
+            <i class="fas fa-biohazard"></i>
+            <i class="fas fa-skull-crossbones"></i>
+          </div>
+          <div class="mt-4 flex justify-between text-sm">
+            <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">SDS</a>
+            <a href="#" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">Download COA</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
 </html>
