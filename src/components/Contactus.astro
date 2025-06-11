@@ -1,0 +1,158 @@
+---
+import "../styles/global.css";
+---
+   <section class="py-8 bg-cover bg-center bg-no-repeat" style="background-image: url('https://www.antstack.com/assets/talk_to_us/talk_to_us_bg.svg');">
+  <div class="flex justify-center items-center py-8">
+    <a href="/">
+      <img src="https://www.antstack.com/assets/logo/primaryNew.svg" alt="AntStack Logo" class="w-52 h-auto">
+    </a>
+  </div>
+
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-5 grid-cols-1 gap-6">
+      <!-- Cột trái - Thông tin liên hệ -->
+      <div class="lg:col-span-2 flex flex-col space-y-6">
+        <h1 class="font-manrope text-white text-4xl lg:text-6xl font-bold leading-10">
+          Liên hệ
+        </h1>
+
+        <div class="text-white mt-4 mb-4 space-y-4 text-xl">
+          <div class="flex items-center space-x-2">
+            <img src="https://www.tmasolutions.vn//images/icons/LienHe/phong-kinh-doanh.webp" class="h-10 w-10" />
+            <span>+84 123 456 789</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <img src="https://www.tmasolutions.vn//images/icons/LienHe/yeu-cau-chung.webp" class="h-10 w-10" />
+            <span>contact@company.com</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <img src="https://www.tmasolutions.vn//images/icons/LienHe/toa-nha-tma.webp" class="h-10 w-10" />
+            <span>123 Đường ABC, Quận 1, TP.HCM</span>
+          </div>
+
+          <!-- Google Map -->
+          <div class="w-full rounded-xl overflow-hidden shadow-lg">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.432716186844!2d106.70042427582522!3d10.774019959326205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3eebf67925%3A0x24c07dfe968790d3!2zMTIzIMSQLiBBQkMgQ8aw4budbmcgMSwgUFAuIEjhu5MgQ2jDrSBNaW5oLCBWaWV0bmFt!5e0!3m2!1svi!2s!4v1718000000000!5m2!1svi!2s"
+              width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cột phải - Form -->
+      <div class="lg:col-span-3 bg-gray-50 p-6 rounded-2xl">
+        <div class="max-w-md mx-auto">
+          <h2 class="text-indigo-600 font-manrope text-3xl font-semibold leading-10 mb-11">
+            Gửi tin nhắn cho chúng tôi
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Name -->
+            <div class="relative">
+              <input type="text" id="name" placeholder=" "
+                oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
+                class="peer w-full h-12 text-gray-600 placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
+              <label for="name"
+                class="absolute left-4 top-2 text-gray-400 text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                Họ và Tên
+              </label>
+            </div>
+
+            <!-- Email -->
+            <div class="relative">
+              <input type="text" id="Email" placeholder=" "
+                oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
+                class="peer w-full h-12 text-gray-600 placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
+              <label for="Email"
+                class="absolute left-4 top-2 text-gray-400 text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                Email
+              </label>
+            </div>
+
+            <!-- Phone -->
+            <div class="relative">
+              <input type="tel" id="phone" placeholder=" "
+                oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
+                class="peer w-full h-12 text-gray-600 placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
+              <label for="phone"
+                class="absolute left-4 top-2 text-gray-400 text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                Số điện thoại
+              </label>
+            </div>
+
+            <!-- Bạn là -->
+            <div class="relative">
+              <select id="businessType" onchange="this.setAttribute('data-has-content', this.value ? 'true' : '')"
+                class="peer w-full h-12 text-gray-600 bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2 appearance-none shadow-sm">
+                <option value="" hidden></option>
+                <option value="retail">Cá nhân</option>
+                <option value="service">Doanh nghiệp</option>
+                <option value="other">Khác</option>
+              </select>
+              <label for="businessType"
+                class="absolute left-4 top-2 text-gray-400 text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                Bạn là
+              </label>
+            </div>
+
+            <!-- Loại hình kinh doanh -->
+            <div class="relative">
+              <select id="businessCategory"
+                onchange="this.setAttribute('data-has-content', this.value ? 'true' : '')"
+                class="peer w-full h-12 text-gray-600 bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2 appearance-none shadow-sm">
+                <option value="" hidden></option>
+                <option value="retail">Bán lẻ</option>
+                <option value="service">Dịch vụ</option>
+                <option value="manufacturing">Sản xuất</option>
+                <option value="other">Khác</option>
+              </select>
+              <label for="businessCategory"
+                class="absolute left-4 top-2 text-gray-400 text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                Loại hình kinh doanh
+              </label>
+            </div>
+          </div>
+
+          <!-- Message -->
+          <div class="relative my-6">
+            <textarea id="message" placeholder=" " rows="4"
+              oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
+              class="peer w-full text-gray-600 placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-2xl border border-gray-200 focus:outline-none p-4 resize-none"></textarea>
+            <label for="message"
+              class="absolute left-4 top-4 text-gray-400 text-base transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-lg peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600">
+              Message
+            </label>
+          </div>
+
+          <!-- Button -->
+          <button
+            class="w-full h-10 text-white text-base font-semibold leading-6 rounded-full transition-all duration-700 hover:bg-indigo-800 bg-indigo-600 shadow-sm">
+            Gửi
+          </button>
+
+          <!-- Custom Input Styling -->
+          <style>
+            input[data-has-content="true"]+label,
+            textarea[data-has-content="true"]+label,
+            select[data-has-content="true"]+label {
+              top: 0 !important;
+              font-size: 0.875rem;
+              color: #4f46e5;
+            }
+          </style>
+
+          <!-- Input số -->
+          <script>
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('input', function () {
+              this.value = this.value.replace(/[^0-9]/g, '');
+              this.setAttribute('data-has-content', this.value ? 'true' : '');
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
