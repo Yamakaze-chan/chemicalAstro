@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Custom animations */
+@layer utilities {
+  /* Slide Down */
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slideDown {
+    animation: slideDown 1s ease-out forwards;
+  }
+
+  /* Slide In Left */
+  @keyframes slideInLeft {
+    0% {
+      transform: translateX(-1000px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  .animate-slideInLeft {
+    animation: slideInLeft 1s ease-out forwards;
+  }
+
+  /* Fade In + Pop */
+  @keyframes fadeIn {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  .animation-delay-500  { animation-delay: 0.5s; }
+  .animation-delay-1500 { animation-delay: 1.5s; }
+  .animation-delay-2500 { animation-delay: 2.5s; }
+  .animation-delay-2700 { animation-delay: 2.7s; }
+  .animation-delay-2900 { animation-delay: 2.9s; }
+  .animation-delay-\[4000ms\] { animation-delay: 4s; }
+  .animation-delay-\[5000ms\] { animation-delay: 5s; }
+  .animation-delay-\[6000ms\] { animation-delay: 6s; }
+  .animation-delay-\[6200ms\] { animation-delay: 6.2s; }
+  .animation-delay-\[6400ms\] { animation-delay: 6.4s; }
+  .animation-delay-\[6600ms\] { animation-delay: 6.6s; }
+  .animation-delay-\[6800ms\] { animation-delay: 6.8s; }
+  .animation-delay-\[7000ms\] { animation-delay: 7s; }
+}
