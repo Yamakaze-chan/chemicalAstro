@@ -1,33 +1,41 @@
 ---
-
+import "../../styles/global.css";
 ---
-<section class="hero-section">
-    <div class="w-full">
-        <div class="grid grid-flow-col grid-rows-4 gap-4">
-        <div data-w-id="75cc54a2-184f-aac3-b01c-46336253572f" style="
-            opacity: 1;
-            transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1)
-                rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
-            transform-style: preserve-3d;
-            " class="hero-title-wrap">
-            <h1 class="hero-title">
-            Empowering <span class="hero-text">industry</span> with
-            precision engineering
-            </h1>
-            <a href="/services" class="button-white w-button">Discover our solutions</a>
-        </div>
-        <div>
-            <p data-w-id="ec41c649-9964-886f-e8b8-060864a2d0ce" style="
-                opacity: 1;
-                transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1)
-                rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
-                transform-style: preserve-3d;
-            " class="hero-description">
-            Explore cutting-edge solutions tailored for excellence in
-            manufacturing. At your company, we fuse innovative technology
-            with industry expertise.
-            </p>
-        </div>
-        </div>
+<section id="homepage-hero" class="relative w-full h-screen flex justify-center m-0">
+    <div class="w-full h-full absolute">
+        <img src="/assets/grid.svg" class="absolute -z-11 w-full h-full hidden md:block object-cover"/>
+        <img src="/assets/HeroSectionArrow.svg" class="absolute -z-10 max-w-none translate-y-[100px] -translate-x-[70px] w-[80%]"/>
+    </div>
+    <div class=" w-[85%] h-full flex flex-col justify-center items-center gap-8">
+        <h1 class="text-[48px] md:text-[96px] font-bold text-center">
+            Leading 
+            <br>
+            <span>The Serverless</span> 
+            <br>
+            Revolution.
+        </h1> 
+        <p class="text-[20px] md:text-[24px] text-center">
+            We are partnering with the business to build modern applications,
+                modernize existing applications, and reduce the time to market by 50%.
+            </p> 
+        <button
+        class="overflow-hidden relative w-32 p-2 h-12 bg-black text-white border-none rounded-md text-xl font-bold cursor-pointer relative z-1 group"
+        >
+        Hover me!
+        <span
+            class="absolute w-36 h-32 -top-8 -left-2 bg-white rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-left"
+        ></span>
+        <span
+            class="absolute w-36 h-32 -top-8 -left-2 bg-purple-400 rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-left"
+        ></span>
+        <span
+            class="absolute w-36 h-32 -top-8 -left-2 bg-purple-600 rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-1000 duration-500 origin-left"
+        ></span>
+        <span
+            class="group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-2.5 left-6 z-10"
+            >Explore!</span
+        >
+        </button>
+
     </div>
 </section>
