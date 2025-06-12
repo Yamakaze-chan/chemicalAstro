@@ -2,6 +2,8 @@
 
 /* Custom animations */
 @layer utilities {
+  .font-playfair { font-family: 'Playfair Display', serif; }
+  .font-roboto { font-family: 'Roboto', sans-serif; }
   /* Slide Down */
   @keyframes slideDown {
     0% {
