@@ -1,7 +1,8 @@
 ---
 import "../styles/global.css";
 ---
-   <section class="bg-gradient-to-b from-[var(--color-4)] to-[var(--color-3)] py-8 bg-cover bg-center bg-no-repeat">
+<!-- bg-gradient-to-b from-[var(--color-4)] to-[var(--color-3)] -->
+   <section class="bg-[linear-gradient(to_bottom,_var(--color-4)_0%,_var(--color-1)_40%,_var(--color-1)_60%,_var(--color-4)_100%)] py-8 bg-cover bg-center bg-no-repeat">
   <div class="flex justify-center items-center py-8">
     
   </div>
@@ -54,7 +55,7 @@ import "../styles/global.css";
                 oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
                 class="peer w-full h-12 text-[var(--color-3)] placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
               <label for="name"
-                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-[var(--color-3)]">
                 Họ và Tên
               </label>
             </div>
@@ -65,7 +66,7 @@ import "../styles/global.css";
                 oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
                 class="peer w-full h-12 text-[var(--color-3)] placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
               <label for="Email"
-                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-[var(--color-3)]">
                 Email
               </label>
             </div>
@@ -76,7 +77,7 @@ import "../styles/global.css";
                 oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
                 class="peer w-full h-12 text-[var(--color-3)] placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
               <label for="phone"
-                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-[var(--color-3)]">
                 Số điện thoại
               </label>
             </div>
@@ -91,7 +92,7 @@ import "../styles/global.css";
                 <option value="other">Khác</option>
               </select>
               <label for="businessType"
-                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-[var(--color-3)]">
                 Bạn là <svg fill="currentColor" viewBox="0 0 20 20" :class="{'rotate-180': open, 'rotate-0': !open}" class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1 rotate-0"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
               </label>
               
@@ -109,7 +110,7 @@ import "../styles/global.css";
                 <option value="other">Khác</option>
               </select>
               <label for="businessCategory"
-                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-indigo-600">
+                class="absolute left-4 top-2 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-sm peer-focus:text-[var(--color-3)]">
                 Loại hình kinh doanh <svg fill="currentColor" viewBox="0 0 20 20" :class="{'rotate-180': open, 'rotate-0': !open}" class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1 rotate-0"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
               </label>
             </div>
@@ -121,14 +122,14 @@ import "../styles/global.css";
               oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
               class="peer w-full text-[var(--color-3)] placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-2xl border border-gray-200 focus:outline-none p-4 resize-none"></textarea>
             <label for="message"
-              class="absolute left-4 top-4 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-lg peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600">
+              class="absolute left-4 top-4 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-lg peer-focus:top-2 peer-focus:text-sm peer-focus:text-[var(--color-3)]">
               Message
             </label>
           </div>
 
           <!-- Button -->
           <button
-            class="w-full h-10 text-[var(--color-2)] text-base font-semibold leading-6 rounded-full transition-all opacity-80 duration-300 bg-[var(--color-3)] hover:opacity-100 shadow-sm">
+            class="w-full h-10 text-[var(--color-2)] text-base font-semibold leading-6 rounded-full transition-all opacity-80 duration-300 bg-[var(--color-4)] hover:opacity-100 shadow-sm">
             Gửi
           </button>
 
@@ -139,7 +140,7 @@ import "../styles/global.css";
             select[data-has-content="true"]+label {
               top: 0 !important;
               font-size: 0.875rem;
-              color: #4f46e5;
+              color: #000;
             }
           </style>
 

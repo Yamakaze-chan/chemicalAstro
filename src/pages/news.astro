@@ -1,14 +1,14 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import About from '../components/About.astro';
+import News from '../components/News.astro';
 ---
 
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ted Martins - Home</title>
+    <title>Ted Martins - News</title>
 
     <!-- Ionicons support -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -16,11 +16,23 @@ import About from '../components/About.astro';
 
     <!-- Optional global CSS -->
     <link rel="stylesheet" href="/styles/global.css" />
+    <link rel = "stylesheet" href="/styles/homepage.css" />
+
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
   </head>
 
   <body>
-    <Header />
-    <About />
-    <Footer />
+  <Header />
+
+    
+    <News />
+
+	<Footer />
   </body>
 </html>
