@@ -1,13 +1,7 @@
 @import "tailwindcss";
 :root {
-	--color--gray-2: #f2f5fb;
-	--font-family--body: Poppins, sans-serif;
-	--color--body: var(--color--gray-1);
-	--font-family--heading: Chakrapetch, sans-serif;
-	--color--heading: var(--color--black);
-	--color--primary-1: #1d3960;
-	--color--white: white;
-	--color--gray-1: #566375;
-	--color--transparent: #0000;
-	--color--black: #1d2635;
+	--color-1: #024959;
+	--color-2: #F2E3D5;
+	--color-3: #012E40;
+	--color-4: #4D9AA6;
 }
