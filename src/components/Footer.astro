@@ -1,7 +1,7 @@
 ---
 // No props required for now
 ---
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <footer class="bg-[var(--color-3)] text-[var(--color-2)] text-sm">
   <div class="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
     
@@ -14,23 +14,21 @@
     <!-- Address Sections -->
     <div class="space-y-8">
       <div>
-        <h3 class="text-lg font-semibold mb-1">Headquarters</h3>
-        <p>AntStack Inc.</p>
-        <p>8 The Green STE D, Dover, Kent, 19901, USA.</p>
+        <h3 class="text-lg font-semibold mb-1">Công Ty</h3>
         <div class="flex items-center space-x-2 mt-2">
-          <img src="" alt="Call Icon" loading="lazy" class="w-4 h-4">
-          <span>+1 (650) 305-6238</span>
+        <i class="fa-solid fa-building"></i>
+        <p>Name Company</p>
+        </div>
+        <div class="flex items-center space-x-2 mt-2">
+        <i class="fa-solid fa-location-dot"></i>
+        <p>123 Đường ABC, Quận 1, TP.HCM</p>
+        </div>
+        <div class="flex items-center space-x-2 mt-2">
+           <i class="fa-solid fa-phone"></i>
+          <span>+84 000000000</span>
         </div>
       </div>
-      <div>
-        <h3 class="text-lg font-semibold mb-1">Delivery Centre</h3>
-        <p>AntStack Technologies Private Limited</p>
-        <p>#620, 3rd Floor, Dr Rajkumar Rd, 2nd Block, 1st Main, Rajajinagar, Bengaluru, Karnataka 560010</p>
-        <div class="flex items-center space-x-2 mt-2">
-          <img src="" alt="Call Icon" loading="lazy" class="w-4 h-4">
-          <span>080-41330449 / +91-9353139419</span>
-        </div>
-      </div>
+      
     </div>
 
     <!-- Socials and Newsletter -->
@@ -46,14 +44,47 @@
 
       <div class="space-y-2">
         <div class="flex items-center space-x-2">
-          <img src="" alt="Newsletter Icon" class="w-6 h-6">
+          <i class="fa-solid fa-envelope"></i>
           <p class="font-medium">Subscribe to our newsletter</p>
         </div>
         <p class="text-sm">Our bi-weekly newsletter delivers serverless, AI, tech trends, podcasts and blogs straight to your inbox.</p>
-        <form class="flex flex-col sm:flex-row gap-2 mt-2">
-          <input type="email" placeholder="Enter email address" required class="bg-white px-4 py-2 rounded focus:outline-none w-full sm:w-auto text-black">
-          <button type="submit" class="bg-[var(--color-4)] hover:bg-[var(--color-1)] px-4 py-2 rounded text-white">Subscribe</button>
-        </form>
+        <form id="subscribe-form" class="flex flex-col sm:flex-row gap-2 mt-2">
+  <input
+    type="email"
+    name="email"
+    placeholder="Enter email address"
+    required
+    class="bg-white px-4 py-2 rounded focus:outline-none w-full sm:w-auto text-black"
+  />
+  <button
+    type="submit"
+    class="bg-[var(--color-4)] hover:bg-[var(--color-1)] px-4 py-2 rounded text-white"
+  >
+    Subscribe
+  </button>
+</form>
+
+    <script>
+          const form = document.getElementById("subscribe-form");
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = form.email.value;
+
+            const res = await fetch("/api/subscribe", {
+              method: "POST",
+              body: JSON.stringify({ email }),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            const data = await res.json();
+            alert(data.message);
+            form.reset();
+          });
+        </script>
+
       </div>
     </div>
   </div>

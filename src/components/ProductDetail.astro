@@ -1,74 +1,32 @@
 <section class="bg-white text-[var(--color-3)] py-12">
-  <div class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-12 mt-[5%]">
+  <div id="product-detail" class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-12 mt-[5%]">
 
-    <!-- Ảnh sản phẩm -->
+  </div>
+</section>
+<script>
+import { products } from "../data/products";
+
+const productDetail = document.getElementById('product-detail')
+const urlParams = new URLSearchParams(window.location.search);
+const id = parseInt(urlParams.get("id"));
+
+const product = products.find(p => p.id === id);
+
+if (!product) {
+  productDetail.innerHTML = `<p class="text-red-500">Không tìm thấy sản phẩm.</p>`;
+} else {
+  productDetail.innerHTML = `
     <div class="lg:w-1/2">
-      <img src="https://sudospaces.com/vietchem/vietchem/2021/08/hexamin-medium.jpg" 
-           alt="Tên sản phẩm" 
-           class="w-full h-[500px] object-contain rounded-xl shadow" />
+      <img src="${product.image}" alt="${product.title}" class="w-full h-[500px] object-contain rounded-xl shadow" />
     </div>
-
-    <!-- Thông tin sản phẩm -->
     <div class="lg:w-1/2">
-      <h1 class="text-3xl font-bold text-[var(--color-1)] mb-4">Tên sản phẩm ABC</h1>
-      <p class="text-xl text-red-500 font-semibold mb-4">Giá: 450.000₫</p>
-
-      <p class="mb-6 text-gray-600">
-        Sản phẩm ABC là lựa chọn hoàn hảo cho người dùng cần sự an toàn, hiệu quả và thân thiện với môi trường. Được sản xuất theo tiêu chuẩn ISO mới nhất, sản phẩm đảm bảo chất lượng vượt trội.
-      </p>
-
-      <div class="flex items-center gap-4 mb-6">
-        <label for="quantity" class="font-medium">Số lượng:</label>
-        <input type="number" id="quantity" name="quantity" value="1" min="1" 
-               class="w-20 border border-gray-300 rounded px-2 py-1" />
-      </div>
-
+      <h1 class="text-3xl font-bold text-[var(--color-1)] mb-4">${product.title}</h1>
+      <p class="mb-6 text-gray-600">${product.description}</p>
       <button class="bg-[var(--color-3)] text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition">
-        Thêm vào giỏ hàng
+        Liên hệ với chúng tôi
       </button>
     </div>
-  </div>
-</section>
-<section class="bg-gray-50 py-12">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-2xl font-bold text-[var(--color-1)] mb-6">Chi tiết sản phẩm</h2>
-    <div class="prose max-w-none text-justify">
-      <p>
-        Sản phẩm ABC được nghiên cứu và phát triển nhằm tối ưu hóa hiệu suất sử dụng và thân thiện với môi trường. Phù hợp với nhiều lĩnh vực như công nghiệp, nông nghiệp và phòng thí nghiệm.
-      </p>
-      <ul>
-        <li>Trọng lượng: 500g</li>
-        <li>Thành phần: 99% chất tinh khiết</li>
-        <li>Xuất xứ: Nhật Bản</li>
-        <li>Bảo quản: nơi khô ráo, thoáng mát</li>
-      </ul>
-    </div>
-  </div>
-</section>
-<section class="bg-white py-12">
-  <div class="max-w-7xl mx-auto px-4">
-    <h2 class="text-2xl font-bold text-[var(--color-1)] mb-6">Sản phẩm liên quan</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Sản phẩm liên quan -->
-      <div class="border rounded-xl p-4 hover:shadow transition">
-        <img src="https://sudospaces.com/vietchem/vietchem/2021/08/hexamin-medium.jpg" alt="" class="w-full h-40 object-contain mb-3">
-        <h3 class="text-lg font-semibold mb-2">Sản phẩm XYZ</h3>
-        <p class="text-red-500 font-medium mb-2">350.000₫</p>
-        <a href="#" class="text-[var(--color-3)] hover:underline text-sm">Xem chi tiết</a>
-      </div>
-      <!-- Lặp sản phẩm khác -->
-       <div class="border rounded-xl p-4 hover:shadow transition">
-        <img src="https://sudospaces.com/vietchem/vietchem/2021/08/hexamin-medium.jpg" alt="" class="w-full h-40 object-contain mb-3">
-        <h3 class="text-lg font-semibold mb-2">Sản phẩm XYZ</h3>
-        <p class="text-red-500 font-medium mb-2">350.000₫</p>
-        <a href="#" class="text-[var(--color-3)] hover:underline text-sm">Xem chi tiết</a>
-      </div>
-      <div class="border rounded-xl p-4 hover:shadow transition">
-        <img src="https://sudospaces.com/vietchem/vietchem/2021/08/hexamin-medium.jpg" alt="" class="w-full h-40 object-contain mb-3">
-        <h3 class="text-lg font-semibold mb-2">Sản phẩm XYZ</h3>
-        <p class="text-red-500 font-medium mb-2">350.000₫</p>
-        <a href="#" class="text-[var(--color-3)] hover:underline text-sm">Xem chi tiết</a>
-      </div>
-    </div>
-  </div>
-</section>
+  `;
+}
+
+</script>
