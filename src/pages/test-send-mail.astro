@@ -1,0 +1,56 @@
+---
+import "../styles/global.css"; // nếu bạn có dùng style
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Test Send Mail</title>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-6 rounded shadow-md w-full max-w-md">
+      <h1 class="text-xl font-bold mb-4">Đăng ký nhận tin</h1>
+
+      <form id="subscribe-form" class="flex flex-col gap-4">
+        <input
+          type="email"
+          name="email"
+          placeholder="Nhập email của bạn"
+          required
+          class="border px-4 py-2 rounded"
+        />
+        <button
+          type="submit"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+          Subscribe
+        </button>
+      </form>
+
+      <p id="status" class="mt-4 text-sm text-gray-600"></p>
+    </div>
+
+    <script>
+      const form = document.getElementById("subscribe-form");
+      const status = document.getElementById("status");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = form.email.value;
+        console.log("Đang gửi email:", email);
+
+        const res = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await res.json();
+        status.textContent = data.message;
+        form.reset();
+      });
+    </script>
+  </body>
+</html>

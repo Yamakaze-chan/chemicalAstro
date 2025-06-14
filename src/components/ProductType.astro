@@ -1,0 +1,53 @@
+---
+---
+
+<section class="min-h-screen bg-white py-12 text-[var(--color-3)]">
+  <div class="max-w-7xl mx-auto px-4 shadow-2xl pb-12 rounded-xl">
+    <h1 id="product-heading" class="text-3xl mt-[5%] font-bold text-center mb-10">TẤT CẢ SẢN PHẨM THUỘC</h1>
+
+    
+
+  <div id="product-type" class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-12 mt-[5%] justify-center">
+  </div>
+
+  </div>
+</section>
+<script>
+import { products } from "../data/products";
+
+const productType = document.getElementById('product-type')
+const urlParams = new URLSearchParams(window.location.search);
+const tags = urlParams.get("type");
+
+const product = products.filter(p => p.tags.includes(tags));
+
+
+
+if (product.length === 0) {
+  productType.innerHTML = `<p class="text-red-500">Hiện chưa có sản phẩm!</p>`;
+} else {
+  productType.innerHTML = product.map(product =>`
+     <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition duration-300">
+        <a href="/productdetail?id=${product.id}">
+          <img src="${product.image}" alt="${product.title}"
+            class="w-full h-64 object-contain rounded-md mb-4 hover:scale-105 transition duration-300 bg-white" />
+        </a>
+        <h2 class="text-xl font-semibold mb-2">${product.title}</h2>
+        <a href="/productdetail?id=${product.id}" 
+          class="inline-block bg-[var(--color-3)] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition">
+          Xem chi tiết
+        </a>
+      </div>
+    `).join('');
+}
+
+const heading = document.getElementById("product-heading");
+const tagFromURL = urlParams.get("type");
+
+if (tagFromURL) {
+  heading.innerHTML = `TẤT CẢ SẢN PHẨM THUỘC <span class="text-[var(--color-1)]">${tagFromURL}</span>`;
+} else {
+  heading.innerHTML = `TẤT CẢ SẢN PHẨM`;
+}
+
+</script>
