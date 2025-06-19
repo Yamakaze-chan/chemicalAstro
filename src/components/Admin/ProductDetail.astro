@@ -1,0 +1,116 @@
+
+<section class="bg-white text-[var(--color-3)] py-12">
+  <div id="product-detail" class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-12 mt-[5%]">
+
+  </div>
+</section>
+
+<script>
+import products from "../../data/products.json";
+
+const productDetail = document.getElementById('product-detail')
+const urlParams = new URLSearchParams(window.location.search);
+const id = parseInt(urlParams.get("id"));
+
+const product = products.find(p => p.id === id);
+
+if (!product) {
+  productDetail.innerHTML = `<p class="text-red-500">Không tìm thấy sản phẩm.</p>`;
+} else {
+ productDetail.innerHTML = `
+  <div class="max-w-3xl w-full mx-auto px-4">
+  <div class="flex flex-col gap-12">
+    <!-- Ảnh sản phẩm -->
+    <div>
+      <img
+        src="${product.image || "/images/placeholder.png"}"
+        alt="${product.name}"
+        class="w-full max-h-[500px] object-contain rounded-xl border shadow-lg"
+      />
+    </div>
+
+    <!-- Thông tin sản phẩm -->
+    <div class="space-y-6">
+      <h1 class="text-3xl font-extrabold text-[var(--color-1)]">${product.name}</h1>
+
+      <div class="text-gray-700 space-y-2">
+        <div><strong>CTPT:</strong> ${product.formula}</div>
+        <div><strong>Khối lượng mol:</strong> ${product.molarMass}</div>
+        <div><strong>Mã CAS:</strong> ${product.cas}</div>
+        <div><strong>HS Code:</strong> ${product.hsCode}</div>
+        <div><strong>Tags:</strong> ${product.tags?.join(", ") || "Không có"}</div>
+        <div><strong>Hình Thức:</strong></div>
+        <p class="bg-gray-100 p-3 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
+          ${product.appearance}
+        </p>
+        <div><strong>Bảo quản:</strong></div>
+        <p class="bg-gray-100 p-3 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
+          ${product.storage}
+        </p>
+      </div>
+
+      <!-- Thông số kỹ thuật -->
+      <div>
+        <strong>Thông số kỹ thuật:</strong>
+        ${product.specifications && product.specifications.length > 0 ? `
+          <div class="overflow-x-auto mt-2">
+            <table class="min-w-full border border-gray-300 text-sm text-left">
+              <thead class="bg-gray-100 text-gray-700">
+                <tr>
+                  <th class="border px-4 py-2">Tên chỉ tiêu</th>
+                  <th class="border px-4 py-2">Thực phẩm</th>
+                  <th class="border px-4 py-2">Công nghiệp</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${product.specifications.map(spec => `
+                  <tr class="hover:bg-gray-50">
+                    <td class="border px-4 py-2">${spec.name}</td>
+                    <td class="border px-4 py-2">${spec.food}</td>
+                    <td class="border px-4 py-2">${spec.tech}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        ` : `<p class="text-gray-500 mt-1">Không có thông số kỹ thuật.</p>`}
+      </div>
+
+      <!-- Nút thao tác -->
+      <div class="flex flex-wrap gap-4 pt-6 border-t mt-6">
+        <a href="/admin/editproduct?id=${id}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition font-semibold">Sửa</a>
+        <button id="delete-btn" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition font-semibold">Xóa</button>
+        <a href="/admin/products" class="ml-auto bg-gray-700 text-white px-5 py-2 rounded-lg transition font-semibold">← Quay về danh sách</a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+document.getElementById("delete-btn")?.addEventListener("click", async () => {
+  if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
+
+  try {
+    const res = await fetch("/api/delete-product", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      alert("Lỗi server: " + text);
+      return;
+    }
+
+    const result = await res.json();
+    alert("Đã xóa sản phẩm.");
+    window.location.href = "/admin/products";
+  } catch (error) {
+    alert("Lỗi kết nối máy chủ.");
+    console.error(error);
+  }
+});
+}
+</script>
+
+

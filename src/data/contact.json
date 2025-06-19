@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1750305685284,
+    "nameCustomer": "aaa",
+    "email": "tv0374760869@gmail.com",
+    "phone": "0766849981",
+    "businessType": "other",
+    "businessCategory": "service",
+    "messageCustomer": "",
+    "createdAt": "2025-06-19T04:01:22.729Z",
+    "status": "read"
+  },
+  {
+    "id": 1750304290989,
+    "nameCustomer": "test",
+    "email": "anhdinhnhat2015@gmail.com",
+    "phone": "0397714626",
+    "businessType": "retail",
+    "businessCategory": "retail",
+    "messageCustomer": "",
+    "createdAt": "2025-06-19T03:38:03.394Z",
+    "status": "read"
+  },
+  {
+    "id": 1750241918998,
+    "nameCustomer": "test221",
+    "email": "anhdinhnhat2015@gmail.com",
+    "phone": "0397714626",
+    "businessType": "retail",
+    "businessCategory": "retail",
+    "messageCustomer": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\r\n\r\nWhy do we use it?\r\nIt is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).\r\n\r\n\r\nWhere does it come from?\r\nContrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.",
+    "createdAt": "2025-06-18T10:18:34.498Z",
+    "status": "read"
+  },
+  {
+    "id": 1750241847684,
+    "nameCustomer": "test22",
+    "email": "anhdinhnhat2015@gmail.com",
+    "phone": "0397714626",
+    "businessType": "retail",
+    "businessCategory": "retail",
+    "messageCustomer": "",
+    "createdAt": "2025-06-18T10:17:27.659Z",
+    "status": "read"
+  },
+  {
+    "id": 1750219350243,
+    "nameCustomer": "test22",
+    "email": "anhdinhnhat2015@gmail.com",
+    "phone": "0397714626",
+    "businessType": "other",
+    "businessCategory": "other",
+    "messageCustomer": "",
+    "createdAt": "2025-06-18T04:02:20.518Z",
+    "status": "read"
+  },
+  {
+    "id": 1750219191054,
+    "nameCustomer": "test",
+    "email": "anhdinhnhat2015@gmail.com",
+    "phone": "0397714626",
+    "businessType": "service",
+    "businessCategory": "retail",
+    "messageCustomer": "",
+    "createdAt": "2025-06-18T03:59:46.157Z",
+    "status": "read"
+  },
+  {
+    "id": 1750219095201,
+    "nameCustomer": "test",
+    "email": "anhdinhnhat2015@gmail.com",
+    "phone": "0397714626",
+    "businessType": "service",
+    "businessCategory": "manufacturing",
+    "messageCustomer": "",
+    "createdAt": "2025-06-18T03:58:07.967Z",
+    "status": "read"
+  },
+  {
+    "id": 1750217732527,
+    "nameCustomer": "test",
+    "email": "anhdinhnhat2015@gmail.com",
+    "phone": "0397714626",
+    "businessType": "retail",
+    "businessCategory": "retail",
+    "messageCustomer": "dd",
+    "createdAt": "2025-06-18T03:35:23.123Z",
+    "status": "read"
+  },
+  {
+    "id": 1750217640290,
+    "nameCustomer": "test",
+    "email": "anhdinhnhat2015@gmail.com",
+    "phone": "0397714626",
+    "businessType": "retail",
+    "businessCategory": "retail",
+    "messageCustomer": "dd",
+    "createdAt": "2025-06-18T03:33:52.519Z",
+    "status": "read"
+  }
+]

@@ -1,0 +1,334 @@
+[
+  {
+    "id": 1750228635980,
+    "name": "Natri Axit Pyrophosphat – SAPP",
+    "formula": "Na₂H₂P₂O₇",
+    "molarMass": "221,95",
+    "cas": "7758-16-9",
+    "einecs": "231-835-0",
+    "hsCode": "28353990",
+    "appearance": "Bột trắng hoặc hạt trắng. Tỷ trọng tương đối là 1,86. Tan trong nước, không tan trong ethanol. Dung dịch nước của nó khi đun nóng với axit vô cơ loãng sẽ bị thủy phân tạo thành axit phosphoric. Chất này có tính hút ẩm và khi hút ẩm sẽ tạo thành hợp chất tinh thể ngậm 6 phân tử nước. Khi được nung trên 220°C, nó phân hủy thành natri metaphosphat.",
+    "storage": "Đóng trong bao nhựa bên trong và bao dệt bên ngoài loại 25kg, 50kg hoặc 1000kg. Bảo quản nơi thông thoáng, khô ráo, sạch sẽ và tránh ẩm.",
+    "image": "data:image/jpeg;base64,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",
+    "tags": [
+      "Sodium Phosphate"
+    ],
+    "specifications": [
+      {
+        "name": "Hàm lượng (Na₂H₂P₂O₇) ≥",
+        "food": "94.0%",
+        "tech": "94.0%"
+      },
+      {
+        "name": "Hàm lượng P₂O₅ (Phosphorus pentoxide)",
+        "food": "63.0–64.0%",
+        "tech": "—"
+      },
+      {
+        "name": "Giá trị pH (1% dung dịch)",
+        "food": "3.5 – 4.5",
+        "tech": "3.5 – 4.5"
+      },
+      {
+        "name": "Không tan trong nước ≤",
+        "food": "0.6%",
+        "tech": "0.6%"
+      },
+      {
+        "name": "Florua (F) ≤",
+        "food": "0.005%",
+        "tech": "—"
+      },
+      {
+        "name": "Chì (Pb) ≤",
+        "food": "0.0002%",
+        "tech": "—"
+      },
+      {
+        "name": "Kim loại nặng (Pb) ≤",
+        "food": "0.001%",
+        "tech": "—"
+      },
+      {
+        "name": "Asen (As) ≤",
+        "food": "0.0003%",
+        "tech": "—"
+      },
+      {
+        "name": "Hao hụt khi nung ở 105°C ≤",
+        "food": "0.5%",
+        "tech": "—"
+      }
+    ]
+  },
+  {
+    "id": 1750233386338,
+    "name": "Tetrasodium Pyrophosphat – TSPP",
+    "formula": "Na₄P₂O₇",
+    "molarMass": "265,9",
+    "cas": "7722-88-5",
+    "einecs": "231-767-1",
+    "hsCode": "28353990",
+    "appearance": "Bột trắng. Dễ tan trong nước, không tan trong rượu. Tỷ trọng tương đối là 2,45. Nhiệt độ nóng chảy là 890°C. Dung dịch nước có tính kiềm yếu. Dễ hút ẩm trong không khí. Ở 70°C dung dịch nước tương đối ổn định, nhưng khi đun sôi sẽ bị phân hủy thành dinatri hydrogen phosphat.",
+    "application": "Được sử dụng trong thực phẩm đóng hộp, nước trái cây, sản phẩm từ sữa, các sản phẩm từ đậu nành và sữa đậu nành như một chất cải thiện chất lượng.",
+    "storage": "Đóng gói trong túi nhựa bên trong và bao dệt bên ngoài loại 25kg, 50kg hoặc 1000kg. Bảo quản nơi thông thoáng, khô ráo, sạch sẽ và tránh ẩm.",
+    "image": "data:image/jpeg;base64,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",
+    "tags": [
+      "Sodium Phosphate"
+    ],
+    "specifications": [
+      {
+        "name": "Hàm lượng (Na₄P₂O₇) ≥",
+        "food": "96.5%",
+        "tech": "96.5%"
+      },
+      {
+        "name": "Hàm lượng P₂O₅ (Phosphorus pentoxide) ≥",
+        "food": "51.5%",
+        "tech": "51.5%"
+      },
+      {
+        "name": "Giá trị pH (1% dung dịch nước)",
+        "food": "9.9 – 10.7",
+        "tech": "9.9 – 10.7"
+      },
+      {
+        "name": "Không tan trong nước ≤",
+        "food": "0.2%",
+        "tech": "0.2%"
+      },
+      {
+        "name": "Độ mịn (qua rây 60 mesh)",
+        "food": "90%",
+        "tech": "90%"
+      },
+      {
+        "name": "Florua (F) ≤",
+        "food": "0.005%",
+        "tech": "—"
+      },
+      {
+        "name": "Kim loại nặng (Pb) ≤",
+        "food": "0.001%",
+        "tech": "—"
+      },
+      {
+        "name": "Asen (As) ≤",
+        "food": "0.0003%",
+        "tech": "—"
+      },
+      {
+        "name": "Hao hụt khi nung ≤",
+        "food": "0.5%",
+        "tech": "0.5%"
+      }
+    ]
+  },
+  {
+    "id": 1750235263517,
+    "name": "Monocalcium Phosphate – MCP",
+    "formula": "Ca(H₂PO₄)₂",
+    "molarMass": "252,07",
+    "cas": "7758-23-8",
+    "einecs": "",
+    "hsCode": "28352600",
+    "appearance": "Dạng bột trắng, tỷ trọng riêng 2.220. Tan trong axit clohydric và axit nitric, hơi tan trong nước (1,8% ở 30°C). Có chứa axit photphoric tự do và có tính hút ẩm. Dung dịch nước có tính axit.",
+    "application": "Trong ngành thực phẩm, MCP được sử dụng như:\r\n●\tChất tạo men nở\r\n\r\n●\tChất điều hòa bột\r\n\r\n●\tChất đệm pH\r\n\r\n●\tChất cải thiện kết cấu\r\n\r\n●\tChất ướp\r\n\r\n●\tChất tăng cường dinh dưỡng\r\n\r\n●\tChất tạo phức (chelating agent)\r\n●\tDùng làm bột nở trong bánh ngọt và bánh kem\r\n\r\n●\tDùng làm chất đệm lên men và phụ gia trong bánh mì và bánh quy\r\n\r\n●\tLà chất làm đông pectin, dùng trong thực phẩm có men và sản phẩm thịt\r\n\r\n●\tTăng cường khả năng lên men trong thực phẩm có chứa men (yeast-based)\r\n",
+    "storage": " Đóng gói trong bao dệt có lớp lót nhựa bên trong, loại 25kg, 50kg hoặc 1000kg.\r\n Bảo quản nơi mát mẻ, thông thoáng, khô ráo và sạch sẽ. Chống ẩm.\r\n",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5OqnFS2D2Yz3jhvy_jLRPbo_mJTZy6xG4Fw&s",
+    "tags": [
+      "Kali Phốt Phát (Potassium Phosphate)"
+    ],
+    "specifications": [
+      {
+        "name": "Hàm lượng canxi (tính theo Ca) ≥",
+        "food": "15.9–17.7%",
+        "tech": "14.2%"
+      },
+      {
+        "name": "Tổng hàm lượng photpho (tính theo P) ≥",
+        "food": "—",
+        "tech": "22.0%"
+      },
+      {
+        "name": "Tổn thất nung (Loss on ignition) ≤",
+        "food": "14.0–15.5%",
+        "tech": "—"
+      },
+      {
+        "name": "Asen (As) ≤",
+        "food": "0.0003%",
+        "tech": "0.002%"
+      },
+      {
+        "name": "Chì (Pb) ≤",
+        "food": "0.0002%",
+        "tech": "0.003%"
+      },
+      {
+        "name": "Florua (F) ≤",
+        "food": "0.0025%",
+        "tech": "0.18%"
+      },
+      {
+        "name": "Giá trị pH (PH)",
+        "food": "—",
+        "tech": "3 – 4"
+      },
+      {
+        "name": "Độ hòa tan trong nước ≥",
+        "food": "—",
+        "tech": "20%"
+      }
+    ]
+  },
+  {
+    "id": 1750235518790,
+    "name": "Kali Tripolyphosphat – KTPP",
+    "formula": "K₅P₃O₁₀",
+    "molarMass": "448,35",
+    "cas": "13845-36-8",
+    "einecs": "237-574-9",
+    "hsCode": "28353990",
+    "appearance": "Dạng bột trắng, có tính hút ẩm.\r\n Nhiệt độ nóng chảy: 620–640°C\r\n Tỷ trọng khối: 1,07 g/cm³\r\n Dễ tan trong nước (140g/100ml)\r\n",
+    "application": " Được sử dụng trong ngành thực phẩm như:\r\n●\tChất cải thiện kết cấu\r\n\r\n●\tChất tạo phức (chelating agent)\r\n\r\n●\tChất giữ ẩm\r\n\r\nỨng dụng phổ biến trong:\r\n●\tSúp thịt\r\n\r\n●\tTôm và cá đông lạnh\r\n\r\n●\tSữa bột, bột kem, phô mai, sữa đặc\r\n\r\n●\tBơ, thịt ướp, thịt hộp…\r\n KTPP có khả năng hòa tan rất tốt trong dung dịch.\r\n",
+    "storage": " Đóng gói trong bao dệt có lớp lót nhựa bên trong loại 25kg, 50kg hoặc 1000kg.\r\n Bảo quản nơi sạch sẽ, khô ráo, thoáng khí. Tránh ẩm.\r\n",
+    "image": "data:image/jpeg;base64,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",
+    "tags": [
+      "Kali Phốt Phát (Potassium Phosphate)"
+    ],
+    "specifications": [
+      {
+        "name": "Hàm lượng chính (tính theo K₅P₃O₁₀) ≥",
+        "food": "95.0%",
+        "tech": "95.0%"
+      },
+      {
+        "name": "Hàm lượng P₂O₅ (Phosphorus pentoxide) ≥",
+        "food": "46.0%",
+        "tech": "46.0%"
+      },
+      {
+        "name": "Hàm lượng K₂O (Oxide kali) ≥",
+        "food": "51.5%",
+        "tech": "51.5%"
+      },
+      {
+        "name": "Giá trị pH",
+        "food": "9.2 – 10.1",
+        "tech": "9.2 – 10.1"
+      },
+      {
+        "name": "Kim loại nặng (Pb) ≤",
+        "food": "0.001%",
+        "tech": "—"
+      },
+      {
+        "name": "Asen (As) ≤",
+        "food": "0.0003%",
+        "tech": "—"
+      },
+      {
+        "name": "Florua (F) ≤",
+        "food": "0.001%",
+        "tech": "—"
+      },
+      {
+        "name": "Không tan trong nước ≤",
+        "food": "0.1%",
+        "tech": "0.1%"
+      },
+      {
+        "name": "Chì (Pb) ≤",
+        "food": "0.0002%",
+        "tech": "—"
+      }
+    ]
+  },
+  {
+    "id": 1750297575349,
+    "name": "Natri Tripolyphosphat – STPP",
+    "formula": "Na₅P₃O₁₀",
+    "molarMass": "367,86",
+    "cas": "7758-29-4",
+    "einecs": "231-838-7",
+    "hsCode": "28353110",
+    "appearance": "Dạng bột trắng; nhiệt độ nóng chảy là 622°C. Dễ tan trong nước, có khả năng tạo phức mạnh với các ion kim loại như canxi và magiê. STPP có thể làm mềm nước cứng và chuyển hỗn dịch thành dung dịch. Nó có tính kiềm nhẹ, không ăn mòn và là chất hoạt động bề mặt vô cơ với hiệu quả nhũ hóa mạnh đối với dầu mỡ bôi trơn.\r\nKhối lượng riêng theo thể tích được chia làm 3 loại:\r\n●\tMật độ thấp: 0.35–0.5 g/cm³\r\n\r\n●\tMật độ trung bình: 0.51–0.65 g/cm³\r\n\r\n●\tMật độ cao: 0.66–0.9 g/cm³\r\n\r\nNatri tripolyphosphat tồn tại ở hai dạng tinh thể:\r\n●\tLoại I (dạng nhiệt độ cao)\r\n\r\n●\tLoại II (dạng nhiệt độ thấp)\r\n\r\nHai dạng này có cùng tính chất hóa học, nhưng khác nhau về độ ổn định nhiệt và khả năng hút ẩm — dạng I vượt trội hơn ở cả hai phương diện. Chúng cũng khác nhau về độ hòa tan và tỏa nhiệt khi hòa tan trong nước.\r\nTrong nước, STPP dần thủy phân thành orthophosphat và có khả năng tạo phức tuyệt vời với các ion kim loại như canxi, magiê, sắt. Nó cũng thể hiện một số đặc tính của chất hoạt động bề mặt hữu cơ.\r\n",
+    "application": "Trong công nghiệp thực phẩm, STPP được sử dụng làm chất cải thiện chất lượng cho thực phẩm đóng hộp, nước trái cây, sản phẩm từ sữa, sữa đậu nành, v.v. Chủ yếu dùng để làm mềm thịt nguội trong thực phẩm đóng hộp và làm mềm vỏ hạt đậu tằm trong đồ hộp. Ngoài ra, còn có thể dùng làm chất làm mềm và chất làm đặc.",
+    "storage": "Đóng gói trong bao nhựa bên trong và bao dệt bên ngoài loại 25kg, 50kg hoặc 1000kg. Bảo quản nơi thông thoáng và tránh ẩm.",
+    "image": "",
+    "tags": [
+      "Sodium Phosphate"
+    ],
+    "specifications": [
+      {
+        "name": "Hàm lượng (Na₅P₃O₁₀) ≥",
+        "food": "85.0%",
+        "tech": "85.0%"
+      },
+      {
+        "name": "Hàm lượng P₂O₅ (Phosphorus pentoxide) ≥",
+        "food": "56.0%",
+        "tech": "56.0%"
+      },
+      {
+        "name": "Không tan trong nước ≤",
+        "food": "0.1%",
+        "tech": "0.1%"
+      },
+      {
+        "name": "Hàm lượng sắt (Fe) ≤",
+        "food": "0.01%",
+        "tech": "—"
+      },
+      {
+        "name": "Giá trị pH (1% dung dịch nước)",
+        "food": "9.1 – 10.1",
+        "tech": "9.1 – 10.1"
+      },
+      {
+        "name": "Kim loại nặng (Pb) ≤",
+        "food": "0.001%",
+        "tech": "—"
+      },
+      {
+        "name": "Asen (As) ≤",
+        "food": "0.0003%",
+        "tech": "—"
+      },
+      {
+        "name": "Florua (F) ≤",
+        "food": "0.002%",
+        "tech": "—"
+      },
+      {
+        "name": "Độ trắng ≥",
+        "food": "90.0%",
+        "tech": "—"
+      }
+    ]
+  },
+  {
+    "id": 1750315941008,
+    "name": "Laptop",
+    "formula": "Laptop",
+    "molarMass": "Laptop",
+    "cas": "Laptop",
+    "einecs": "Laptop",
+    "hsCode": "Laptop",
+    "appearance": "",
+    "application": "",
+    "storage": "",
+    "image": "",
+    "tags": [
+      "Laptop"
+    ],
+    "specifications": [
+      {
+        "name": "Laptop",
+        "food": "Laptop",
+        "tech": "Laptop"
+      }
+    ]
+  }
+]
