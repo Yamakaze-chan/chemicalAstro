@@ -1,0 +1,70 @@
+<section class="bg-white text-[var(--color-3)] py-12">
+  <div id="new-detail" class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-12 mt-[5%]">
+
+  </div>
+</section>
+<script>
+import news from "../../data/news.json";
+
+  const newDetail = document.getElementById('new-detail');
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = parseInt(urlParams.get("id"));
+  const newItem = news.find(p => p.id === id);
+
+  if (!newItem) {
+    newDetail.innerHTML = `<p class="text-red-500 text-xl font-semibold">Không tìm thấy tin tức.</p>`;
+  } else {
+  newDetail.innerHTML = `
+  <div class="w-full space-y-8">
+    <!-- Tiêu đề -->
+    <h1 class="text-4xl font-extrabold text-center text-[var(--color-1)]">
+      ${newItem.title}
+    </h1>
+
+    <!-- Mô tả -->
+      <div class="p-6 rounded-lg text-gray-700 leading-relaxed text-center">
+        <div class="text-lg inline-block text-left max-w-3xl w-full">
+          ${newItem.content}
+        </div>
+      </div>
+
+    <!-- Hành động -->
+    <div class="flex flex-wrap justify-end gap-4 pt-8 border-t mt-12">
+      <a href="/admin/editnew?id=${newItem.id}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold shadow transition">
+        ✏️ Sửa
+      </a>
+      <button id="delete-btn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold shadow transition">
+        🗑️ Xóa
+      </button>
+      <a href="/admin/news" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-2 rounded-lg font-semibold shadow transition">
+        ← Quay về danh sách
+      </a>
+    </div>
+  </div>
+`;
+  document.getElementById("delete-btn")?.addEventListener("click", async () => {
+  if (!confirm("Bạn có chắc chắn muốn xóa tin tức này?")) return;
+
+  try {
+    const res = await fetch("/api/delete-news", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      alert("Lỗi server: " + text);
+      return;
+    }
+
+    const result = await res.json();
+    alert("Đã xóa tin tức.");
+    window.location.href = "/admin/news";
+  } catch (error) {
+    alert("Lỗi kết nối máy chủ.");
+    console.error(error);
+  }
+});
+}
+</script>

@@ -42,6 +42,7 @@ import "../styles/global.css";
       </div>
 
       <!-- Cột phải - Form -->
+       <form id="contact-form"> 
       <div class="lg:col-span-3 bg-gray-50 pt-5 pb-5 pl-15 pr-15 rounded-2xl">
          <div class="max-w-2xl mx-auto w-full">
 
@@ -52,7 +53,7 @@ import "../styles/global.css";
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Name -->
             <div class="relative">
-              <input type="text" id="name" placeholder=" "
+              <input type="text" id="name" name="nameCustomer" placeholder=" "
                 oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
                 class="peer w-full h-12 text-[var(--color-3)] placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
               <label for="name"
@@ -63,7 +64,7 @@ import "../styles/global.css";
 
             <!-- Email -->
             <div class="relative">
-              <input type="text" id="Email" placeholder=" "
+              <input type="text" id="email" name="email" placeholder=" "
                 oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
                 class="peer w-full h-12 text-[var(--color-3)] placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
               <label for="Email"
@@ -74,7 +75,7 @@ import "../styles/global.css";
 
             <!-- Phone -->
             <div class="relative">
-              <input type="tel" id="phone" placeholder=" "
+              <input type="tel" id="phone" name="phone" placeholder=" "
                 oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
                 class="peer w-full h-12 text-[var(--color-3)] placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2" />
               <label for="phone"
@@ -85,7 +86,7 @@ import "../styles/global.css";
 
             <!-- Bạn là -->
             <div class="relative">
-              <select id="businessType" onchange="this.setAttribute('data-has-content', this.value ? 'true' : '')"
+              <select id="businessType" name="businessType" onchange="this.setAttribute('data-has-content', this.value ? 'true' : '')"
                 class="peer w-full h-12 text-[var(--color-3)] bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2 appearance-none shadow-sm">
                 <option value="" hidden></option>
                 <option value="retail">Cá nhân</option>
@@ -101,7 +102,7 @@ import "../styles/global.css";
 
             <!-- Loại hình kinh doanh -->
             <div class="relative">
-              <select id="businessCategory"
+              <select id="businessCategory" name="businessCategory"
                 onchange="this.setAttribute('data-has-content', this.value ? 'true' : '')"
                 class="peer w-full h-12 text-[var(--color-3)] bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 pt-2 appearance-none shadow-sm">
                 <option value="" hidden></option>
@@ -119,20 +120,21 @@ import "../styles/global.css";
 
           <!-- Message -->
           <div class="relative my-6">
-            <textarea id="message" placeholder=" " rows="4"
+            <textarea id="message" name="messageCustomer" placeholder=" " rows="4"
               oninput="this.setAttribute('data-has-content', this.value ? 'true' : '')"
               class="peer w-full text-[var(--color-3)] placeholder-transparent shadow-sm bg-transparent text-lg font-normal leading-7 rounded-2xl border border-gray-200 focus:outline-none p-4 resize-none"></textarea>
             <label for="message"
               class="absolute left-4 top-4 text-[var(--color-3)] text-base transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-lg peer-focus:top-2 peer-focus:text-sm peer-focus:text-[var(--color-3)]">
-              Message
+              Tin nhắn
             </label>
           </div>
 
           <!-- Button -->
-          <button
+          <button type="submit"
             class="w-full h-10 text-[var(--color-2)] text-base font-semibold leading-6 rounded-full transition-all opacity-80 duration-300 bg-[var(--color-4)] hover:opacity-100 shadow-sm">
             Gửi
           </button>
+          </form>
 
           <!-- Custom Input Styling -->
           <style>
@@ -148,11 +150,30 @@ import "../styles/global.css";
           <!-- Input số -->
           <script>
             const phoneInput = document.getElementById('phone');
-            phoneInput.addEventListener('input', function () {
+            phoneInput?.addEventListener('input', function () {
               this.value = this.value.replace(/[^0-9]/g, '');
               this.setAttribute('data-has-content', this.value ? 'true' : '');
             });
+
+            const form = document.getElementById("contact-form");
+            form?.addEventListener("submit", async(e) => {
+              e.preventDefault();
+
+              const formData = new FormData(form);
+              const res = await fetch("/api/new-contact", {
+                method: "POST",
+                body: formData,
+              })
+              if(!res.ok){
+                alert("Đã gửi Liên hệ, chúng tôi sẽ sớm phản hồi bạn");
+                window.location.href = "/contactus"
+              }else{
+                const error = await res.text();
+                alert("❌ Lỗi khi gửi Liên hệ. Bạn vui lòng liên hệ trực tiếp qua SĐT" + error);
+              }
+            })
           </script>
+          
         </div>
       </div>
     </div>

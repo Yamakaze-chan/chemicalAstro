@@ -1,0 +1,160 @@
+---
+import { onMount } from "astro/client";
+---
+
+<section class="min-h-screen bg-gray-50 py-16 px-6 pt-24">
+  <div id="editnew" class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-12 mt-[5%]"></div>
+</section>
+
+<style>
+  .btn {
+    background-color: #e5e7eb;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .btn:hover {
+    background-color: #d1d5db;
+  }
+
+  #editor img {
+    display: block;
+    width: 120%;
+    height: auto;
+    margin: 1rem auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<script type="module">
+const newEdit = document.getElementById('editnew');
+const urlParams = new URLSearchParams(window.location.search);
+const id = parseInt(urlParams.get("id"));
+
+const response = await fetch("/api/news.json");
+const news = await response.json();
+const item = news.find(n => n.id === id);
+
+if (!item) {
+  newEdit.innerHTML = `<p class="text-red-500 text-center text-lg">❌ Không tìm thấy tin tức.</p>`;
+} else {
+  newEdit.innerHTML = `
+  <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-xl w-full">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">✏️ Sửa Tin Tức</h1>
+
+    <form id="edit-form" class="space-y-6">
+      <input type="hidden" name="id" value="${item.id}" />
+
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">📝 Tiêu đề</label>
+        <input type="text" name="title" value="${item.title}" required
+          class="w-full border border-gray-300 rounded px-4 py-2" />
+      </div>
+
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">👤 Tác giả</label>
+        <input type="text" name="author" value="${item.author}" required
+          class="w-full border border-gray-300 rounded px-4 py-2" />
+      </div>
+
+      <div id="toolbar" class="flex flex-wrap gap-2 mb-2">
+        <button type="button" onclick="execCmd('bold')" class="btn">B</button>
+        <button type="button" onclick="execCmd('italic')" class="btn">I</button>
+        <button type="button" onclick="execCmd('underline')" class="btn">U</button>
+        <button type="button" onclick="execCmd('insertOrderedList')" class="btn">OL</button>
+        <button type="button" onclick="execCmd('insertUnorderedList')" class="btn">UL</button>
+        <button type="button" onclick="execCmd('insertImage')" class="btn">🖼</button>
+        <button type="button" onclick="insertTable()" class="btn">📋 Table</button>
+        <button type="button" onclick="execCmd('createLink')" class="btn">🔗 Link</button>
+        <button type="button" onclick="execCmd('removeFormat')" class="btn">❌ Clear</button>
+      </div>
+
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">📜 Nội dung</label>
+        <div id="editor" contenteditable="true" class="bg-white border border-gray-300 rounded px-4 py-2 h-96 overflow-y-auto"></div>
+        <input type="hidden" name="content" id="content" />
+      </div>
+
+      <div class="flex justify-end">
+        <button type="submit"
+          class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 font-semibold shadow">
+          ✅ Lưu thay đổi
+        </button>
+      </div>
+
+      <p id="status" class="mt-4 text-sm text-green-600 font-semibold"></p>
+    </form>
+  </div>
+  `;
+
+  const editor = document.getElementById("editor");
+  editor.innerHTML = item.content || "";
+
+  // Áp dụng lại style cho ảnh đã tồn tại trong nội dung
+  editor.querySelectorAll("img").forEach(img => {
+    img.style.display = "block";
+    img.style.maxWidth = "100%";
+    img.style.height = "auto";
+    img.style.margin = "1rem auto";
+    img.style.borderRadius = "0.5rem";
+    img.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+  });
+
+  const form = document.getElementById("edit-form");
+  const statusEl = document.getElementById("status");
+  const contentInput = document.getElementById("content");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    contentInput.value = editor.innerHTML;
+
+    const formData = new FormData(form);
+    const res = await fetch("/api/update-news", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      statusEl.textContent = "✅ Cập nhật thành công!";
+    } else {
+      statusEl.textContent = "❌ Lỗi cập nhật: " + (data.message || "Không xác định");
+    }
+  });
+}
+
+window.execCmd = function (command) {
+  if (command === 'insertImage') {
+    const url = prompt("Nhập URL hình ảnh:");
+    if (url) {
+      const imgTag = `<img src="${url}" style="display:block;max-width:100%;margin:1rem auto;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);" />`;
+      document.execCommand('insertHTML', false, imgTag);
+    }
+  } else if (command === 'createLink') {
+    const url = prompt("Nhập URL liên kết:");
+    if (url) document.execCommand('createLink', false, url);
+  } else {
+    document.execCommand(command, false, null);
+  }
+};
+
+window.insertTable = function () {
+  const rows = prompt("Số hàng:", 2);
+  const cols = prompt("Số cột:", 2);
+  if (!rows || !cols) return;
+
+  let table = "<table border='1' style='border-collapse:collapse;width:100%;'>";
+  for (let i = 0; i < rows; i++) {
+    table += "<tr>";
+    for (let j = 0; j < cols; j++) {
+      table += "<td>&nbsp;</td>";
+    }
+    table += "</tr>";
+  }
+  table += "</table><br/>";
+  document.execCommand('insertHTML', false, table);
+};
+</script>

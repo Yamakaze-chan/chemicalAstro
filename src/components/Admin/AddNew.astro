@@ -1,0 +1,124 @@
+---
+
+---
+
+ <section class="max-w-5xl mx-auto px-4 py-12 mt-12">
+      <h1 class="text-3xl font-bold mb-8 text-center">Thêm tin tức</h1>
+      <form id="news-form" class="space-y-8 bg-white p-6 rounded-xl shadow border">
+      <!-- Tiêu đề -->
+    <div>
+      <label class="block mb-1 font-semibold text-gray-700">📝 Tiêu đề</label>
+      <input type="text" name="title" required class="w-full border border-gray-300 rounded px-4 py-2" />
+    </div>
+
+    <!-- Tác giả -->
+    <div>
+      <label class="block mb-1 font-semibold text-gray-700">👤 Tác giả</label>
+      <input type="text" name="author" required class="w-full border border-gray-300 rounded px-4 py-2" />
+    </div>
+
+    <!-- Thanh công cụ -->
+    <div id="toolbar" class="flex flex-wrap gap-2 mb-4">
+    <button type="button" onclick="execCmd('bold')" class="font-bold px-4 py-2 rounded-md bg-gray-100 text-gray-800 shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">B</button>
+    
+    <button type="button" onclick="execCmd('italic')" class="italic px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">I</button>
+    
+    <button type="button" onclick="execCmd('underline')" class="underline px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">U</button>
+    
+    <button type="button" onclick="execCmd('insertImage')" class="px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">🖼</button>
+    
+    <button type="button" onclick="insertTable()" class="px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">📋 Table</button>
+    
+    <button type="button" onclick="execCmd('createLink')" class="px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">🔗 Link</button>
+    
+    <button type="button" onclick="execCmd('removeFormat')" class="px-4 py-2 rounded-md bg-red-100 text-red-700 font-medium shadow-sm hover:bg-red-600 hover:text-white transition duration-150">❌ Clear</button>
+  </div>
+
+    <!-- Nội dung chính -->
+    <div>
+      <label class="block mb-1 font-semibold text-gray-700">📰 Nội dung</label>
+      <!-- Editor hiển thị -->
+      <div id="editor" contenteditable="true" class="bg-white border border-gray-300 rounded px-4 py-2 h-96 overflow-y-auto"></div>
+      <!-- Trường ẩn để lấy HTML khi submit -->
+      <input type="hidden" name="content" id="content" />
+    </div>
+
+    <!-- Nút submit -->
+    <div class="text-right">
+    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+        ✅ Thêm tin
+    </button>
+    </div>
+
+    <p id="status" class="mt-4 text-sm text-green-600 font-semibold"></p>
+      </form>
+ </section>
+<style>
+  .btn {
+    background-color: #e5e7eb;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .btn:hover {
+    background-color: #d1d5db;
+  }
+</style>
+<script>
+  const form = document.getElementById("news-form");
+  const contentInput = document.getElementById("content");
+  const editor = document.getElementById("editor");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    contentInput.value = editor.innerHTML;
+
+    const formData = new FormData(form);
+
+    const res = await fetch("/api/add-news", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (res.ok) {
+      alert("✅ Đã thêm tin tức!");
+      window.location.href = "/admin/news"; // chuyển về trang news
+    } else {
+      const error = await res.text();
+      alert("❌ Lỗi khi thêm tin: " + error);
+    }
+  });
+
+  // Toolbar hỗ trợ
+  window.execCmd = function (command) {
+    if (command === 'insertImage') {
+      const url = prompt("Nhập URL hình ảnh:");
+      if (url) document.execCommand('insertImage', false, url);
+    } else if (command === 'createLink') {
+      const url = prompt("Nhập URL liên kết:");
+      if (url) document.execCommand('createLink', false, url);
+    } else {
+      document.execCommand(command, false, null);
+    }
+  };
+
+  window.insertTable = function () {
+  const rows = prompt("Số hàng:", 2);
+  const cols = prompt("Số cột:", 2);
+  if (!rows || !cols) return;
+
+  let table = `<table class="w-full border border-black border-collapse my-2">`;
+  for (let i = 0; i < rows; i++) {
+    table += "<tr>";
+    for (let j = 0; j < cols; j++) {
+      table += `<td class="border border-black p-2">&nbsp;</td>`;
+    }
+    table += "</tr>";
+  }
+  table += "</table><br/>";
+  document.execCommand('insertHTML', false, table);
+};
+</script>
