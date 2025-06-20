@@ -138,14 +138,14 @@ const tags = [...new Set(products.flatMap(p => p.tags || []))];
       <div class="grid grid-cols-1 space-y-1.5">
         <a 
           href="/product" 
-          class="block px-6 py-3 hover:bg-gray-200 hover:text-[var(--color-3)] rounded-md text-white font-semibold text-lg"
+          class="block px-6 py-3 hover:bg-gray-200 hover:text-[var(--color-3)] rounded-md text-white font-semibold text-sm"
         >
           Tất cả sản phẩm
         </a>
         {tags.map(tag => (
           <a 
             href={`/producttype?type=${encodeURIComponent(tag)}`} 
-            class="block px-6 py-3 hover:bg-gray-200 hover:text-[var(--color-3)] rounded-md text-white font-semibold text-lg"
+            class="block px-6 py-3 hover:bg-gray-200 hover:text-[var(--color-3)] rounded-md text-white font-semibold text-sm"
           >
             {tag}
           </a>

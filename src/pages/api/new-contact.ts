@@ -14,9 +14,22 @@ export const POST: APIRoute = async ({ request }) =>{
     const businessCategory = formData.get("businessCategory")?.toString() || "";
     const messageCustomer = formData.get("messageCustomer")?.toString() || "";
 
-    if (!nameCustomer || !email || !phone || !businessType || !businessCategory) {
-        return new Response("Thiếu thông tin bắt buộc", { status: 400 });
-    }
+    const missingFields = [];
+      if (!nameCustomer) missingFields.push("Họ và tên");
+      if (!email) missingFields.push("Email");
+      if (!phone) missingFields.push("Số điện thoại");
+      if (!businessType) missingFields.push("Bạn là");
+      if (!businessCategory) missingFields.push("Kiểu kinh doanh");
+
+      if (missingFields.length > 0) {
+        return new Response(JSON.stringify({
+          error: "Thiếu thông tin bắt buộc",
+          missing: missingFields
+        }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
 
   const filePath = path.resolve("src/data/contact.json");
 
@@ -40,8 +53,5 @@ export const POST: APIRoute = async ({ request }) =>{
     fs.writeFileSync(filePath, JSON.stringify(existing, null, 2));
     return new Response(null, {
     status: 303,
-    // headers: {
-    //   Location: "/contact?success=1",
-    // },
   });
 }
