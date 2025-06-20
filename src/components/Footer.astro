@@ -17,15 +17,18 @@
         <h3 class="text-lg font-semibold mb-1">Công Ty</h3>
         <div class="flex items-center space-x-2 mt-2">
         <i class="fa-solid fa-building"></i>
-        <p>Name Company</p>
+        <p>An Bình ChemTech</p>
         </div>
         <div class="flex items-center space-x-2 mt-2">
         <i class="fa-solid fa-location-dot"></i>
-        <p>123 Đường ABC, Quận 1, TP.HCM</p>
-        </div>
+        <p class="flex flex-col">
+          <span>113 Nguyễn Cửu Vân, Phường 17, Quận Bình Thạnh,</span>
+          <span>TP.Hồ Chí Minh</span>
+        </p>
+      </div>
         <div class="flex items-center space-x-2 mt-2">
            <i class="fa-solid fa-phone"></i>
-          <span>+84 000000000</span>
+          <span>0388165009</span>
         </div>
       </div>
       
@@ -48,44 +51,52 @@
           <p class="font-medium">Subscribe to our newsletter</p>
         </div>
         <p class="text-sm">Our bi-weekly newsletter delivers serverless, AI, tech trends, podcasts and blogs straight to your inbox.</p>
-        <form id="subscribe-form" class="flex flex-col sm:flex-row gap-2 mt-2">
-  <input
-    type="email"
-    name="email"
-    placeholder="Enter email address"
-    required
-    class="bg-white px-4 py-2 rounded focus:outline-none w-full sm:w-auto text-black"
-  />
-  <button
-    type="submit"
-    class="bg-[var(--color-4)] hover:bg-[var(--color-1)] px-4 py-2 rounded text-white"
-  >
-    Subscribe
-  </button>
-</form>
+        
+        
+       <form
+        id="subscribe-form"
+        class="flex flex-col gap-3 max-w-md"
+      >
 
-    <script>
-          const form = document.getElementById("subscribe-form");
+        <input
+          type="email"
+          name="email"
+          placeholder="Email liên hệ"
+          required
+          class="bg-white px-4 py-2 rounded focus:outline-none text-black"
+        />
 
-          form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const email = form.email.value;
-
-            const res = await fetch("/api/subscribe", {
-              method: "POST",
-              body: JSON.stringify({ email }),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-
-            const data = await res.json();
-            alert(data.message);
-            form.reset();
-          });
-        </script>
-
+        <button
+          type="submit"
+          class="bg-[var(--color-4)] hover:bg-[var(--color-1)] px-4 py-2 rounded text-white"
+        >
+          Gửi liên hệ
+        </button>
+      </form>
       </div>
     </div>
   </div>
 </footer>
+<script>
+const form = document.getElementById("subscribe-form");
+
+form?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(form); // ✅ FormData sẽ tự tạo multipart/form-data
+  const res = await fetch("/api/subscribe", {
+    method: "POST",
+    body: formData, // KHÔNG set headers!
+  });
+
+  if (res.ok) {
+    alert("✅ Đã gửi liên hệ, chúng tôi sẽ phản hồi bạn sớm!");
+    window.location.href = "/";
+  } else {
+    const error = await res.text();
+    alert("❌ Gửi thất bại: " + error);
+  }
+});
+
+
+</script>
