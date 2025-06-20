@@ -1,14 +1,22 @@
 ---
 // No props required for now
 ---
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+  integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
 <footer class="bg-[var(--color-3)] text-[var(--color-2)] text-sm">
-  <div class="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-    
+  <div
+    class="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+  >
     <!-- Logos -->
     <div class="flex flex-col space-y-4 items-center md:items-start">
-      <img src="" alt="Logo" loading="lazy" class="w-48 h-auto">
-      <img src="" alt="Logo" loading="lazy" class="w-48 h-auto">
+      <img src="" alt="Logo" loading="lazy" class="w-48 h-auto" />
+      <img src="" alt="Logo" loading="lazy" class="w-48 h-auto" />
     </div>
 
     <!-- Address Sections -->
@@ -16,22 +24,21 @@
       <div>
         <h3 class="text-lg font-semibold mb-1">Công Ty</h3>
         <div class="flex items-center space-x-2 mt-2">
-        <i class="fa-solid fa-building"></i>
-        <p>An Bình ChemTech</p>
+          <i class="fa-solid fa-building"></i>
+          <p>An Bình ChemTech</p>
         </div>
         <div class="flex items-center space-x-2 mt-2">
-        <i class="fa-solid fa-location-dot"></i>
-        <p class="flex flex-col">
-          <span>113 Nguyễn Cửu Vân, Phường 17, Quận Bình Thạnh,</span>
-          <span>TP.Hồ Chí Minh</span>
-        </p>
-      </div>
+          <i class="fa-solid fa-location-dot"></i>
+          <p class="flex flex-col">
+            <span>113 Nguyễn Cửu Vân, Phường 17, Quận Bình Thạnh,</span>
+            <span>TP.Hồ Chí Minh</span>
+          </p>
+        </div>
         <div class="flex items-center space-x-2 mt-2">
-           <i class="fa-solid fa-phone"></i>
+          <i class="fa-solid fa-phone"></i>
           <span>0388165009</span>
         </div>
       </div>
-      
     </div>
 
     <!-- Socials and Newsletter -->
@@ -50,53 +57,52 @@
           <i class="fa-solid fa-envelope"></i>
           <p class="font-medium">Subscribe to our newsletter</p>
         </div>
-        <p class="text-sm">Our bi-weekly newsletter delivers serverless, AI, tech trends, podcasts and blogs straight to your inbox.</p>
-        
-        
-       <form
-        id="subscribe-form"
-        class="flex flex-col gap-3 max-w-md"
-      >
+        <p class="text-sm">
+          Our bi-weekly newsletter delivers serverless, AI, tech trends,
+          podcasts and blogs straight to your inbox.
+        </p>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email liên hệ"
-          required
-          class="bg-white px-4 py-2 rounded focus:outline-none text-black"
-        />
+        <form id="subscribe-form" class="flex flex-col gap-3 max-w-md">
+          <input
+            type="email"
+            name="email"
+            id="SubcribeEmail"
+            placeholder="Email liên hệ"
+            required
+            class="bg-white px-4 py-2 rounded focus:outline-none text-black"
+          />
 
-        <button
-          type="submit"
-          class="bg-[var(--color-4)] hover:bg-[var(--color-1)] px-4 py-2 rounded text-white"
-        >
-          Gửi liên hệ
-        </button>
-      </form>
+          <button
+            type="button"
+            id="SubscribeBtn"
+            class="bg-[var(--color-4)] hover:bg-[var(--color-1)] px-4 py-2 rounded text-white"
+          >
+            Gửi liên hệ
+          </button>
+        </form>
       </div>
     </div>
   </div>
 </footer>
 <script>
-const form = document.getElementById("subscribe-form");
+  const SubcribeButton = document.getElementById("SubscribeBtn");
+  SubcribeButton?.addEventListener("click", async () => {
+    const mail = document.getElementById("SubcribeEmail");
+    const SubcribeEmail = (mail as HTMLInputElement).value;
+    const res = await fetch("/api/subscribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: SubcribeEmail }),
+    });
 
-form?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(form); // ✅ FormData sẽ tự tạo multipart/form-data
-  const res = await fetch("/api/subscribe", {
-    method: "POST",
-    body: formData, // KHÔNG set headers!
+    if (res.ok) {
+      alert("✅ Đã gửi liên hệ, chúng tôi sẽ phản hồi bạn sớm!");
+      window.location.href = "/";
+    } else {
+      const error = await res.text();
+      alert("❌ Gửi thất bại: " + error);
+    }
   });
-
-  if (res.ok) {
-    alert("✅ Đã gửi liên hệ, chúng tôi sẽ phản hồi bạn sớm!");
-    window.location.href = "/";
-  } else {
-    const error = await res.text();
-    alert("❌ Gửi thất bại: " + error);
-  }
-});
-
-
 </script>
