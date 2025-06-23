@@ -1,16 +1,57 @@
 ---
 import "../../styles/global.css";
 ---
+<style>
+@media (min-width: 400px) and (max-width: 500px) {
+  .mi4ma5 {
+    top: 12% !important;
+    right: 5% !important;
+  }
+}
+@media (min-width: 501px) and (max-width: 767px) {
+  .mi5ma7 {
+    width: 25%;
+    top: 12% !important;
+    right: 0% !important;
+  }
+}
+@media (min-width: 786px) and (max-width: 1023px) {
+.mi7ma1 {
+width: 20%;
+top: 10% !important;
+right: 0% !important;
+}
+}
+@media (min-width: 1024px) {
+  .ma1 {
+    width: 20%;
+    top: 8% !important;
+    right: 7% !important;
+  }
+}
+</style>
 <section id="homepage-hero" class="relative w-full h-full flex justify-center m-0">
     <div class="w-full h-full absolute">
         <img src="/assets/grid.svg" class="absolute -z-11 w-full h-full hidden md:block object-cover"/>
-        <img src="/assets/Phosphate-3D-balls.png" class="absolute w-[30%] -z-10 max-w-none top-[10%] right-[5%]"/>
+        <img 
+            src="/assets/Phosphate-3D-balls.png"
+            class="absolute z-[-10]
+            w-[25%] max-w-[180px] top-[20%] right-[10%]        
+            sm:w-[30%] sm:max-w-[240px] sm:top-[10%]          
+            md:top-[15%] md:right-[5%]                         
+            lg:top-[8%] lg:right-[12%]
+            mi4ma5 mi5ma7 mi7ma1 ma1
+            "                       
+                        
+            alt="Phosphate"
+            />
+
     </div>
     <div class="mt-[15%] sm:mt-[10%] md:mt-[5%] w-[85%] h-full flex flex-col justify-center items-center gap-8">
         <h1 class="text-[48px] md:text-[96px] font-bold text-center">
             Leading 
             <br>
-            <span class="text-[var(--color-4)]">The Serverless</span>
+            <span class="text-[var(--color-4)]">The Phosphate</span>
             <br>
             Revolution.
         </h1> 

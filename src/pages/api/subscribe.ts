@@ -1,41 +1,48 @@
 import type { APIRoute } from "astro";
-import { sendEmail } from "../../utils/sendEmail";
+import nodemailer from "nodemailer";
 
-export const POST: APIRoute = async ({ request }) => {
+
+export const POST = async ({ request }: { request: Request }) => {
   try {
-    const contentType = request.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      return new Response(
-        JSON.stringify({ message: "Content-Type phải là application/json" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    const contentType = await request.headers.get('content-type');
+    let data: { email: String };
+    if (contentType?.includes('application/json')) {
+      data = await request.json();
+    } else {
+      const text = await request.text();
+      data = { email: text };
     }
-
-    const { email } = await request.json();
-
-    if (!email || !email.includes("@")) {
-      return new Response(JSON.stringify({ message: "Email không hợp lệ!" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    await sendEmail({
-      email: "nxtaanhp@gmail.com", // ✏️ Thay bằng email bạn muốn nhận
-      subject: "New Subscriber",
-      text: `Email mới: ${email}`,
-      html: `<p>Người dùng mới đã đăng ký: <strong>${email}</strong></p>`,
+    console.log('Received subscription:', data);
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_EMAIL,
+        pass: process.env.GMAIL_PASSWORD,
+      },
     });
 
-    return new Response(JSON.stringify({ message: "Đăng ký thành công!" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
+    await transporter.sendMail({
+      from: `"Website" <${process.env.GMAIL_EMAIL}>`,
+      to: process.env.GMAIL_EMAIL,
+      subject: "📥 Liên hệ mới",
+      html: `<p>Khách hàng Liên Hệ với email: <strong>${data.email}</strong>, Hãy nhanh chóng phản hồi!</p>`,
     });
-  } catch (error) {
-    console.error("Lỗi gửi email:", error);
+
     return new Response(
-      JSON.stringify({ message: "Gửi email thất bại hoặc dữ liệu lỗi!" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ success: true, message: data }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  } catch (err) {
+    console.error('Subscription error:', err);
+    return new Response(
+      JSON.stringify({ success: false, message: 'Failed to subscribe.' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
     );
   }
 };

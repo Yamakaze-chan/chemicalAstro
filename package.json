@@ -8,18 +8,18 @@
     "preview": "astro preview",
     "astro": "astro",
     "host": "astro dev --host",
-    "abc":"npx astro build && npx wrangler dev"
+    "abc": "npx astro build && npx wrangler dev"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.5.5",
     "@tailwindcss/vite": "^4.1.8",
     "astro": "^5.9.1",
     "dotenv": "^16.5.0",
-    "nodemailer": "^7.0.3",
     "swiper": "^11.2.8",
     "tailwindcss": "^4.1.8"
   },
   "devDependencies": {
+    "nodemailer": "^7.0.3",
     "wrangler": "^4.20.3"
   }
 }

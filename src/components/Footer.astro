@@ -1,34 +1,51 @@
 ---
 // No props required for now
 ---
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+  integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
 <footer class="bg-[var(--color-3)] text-[var(--color-2)] text-sm">
-  <div class="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-    
-    <!-- Logos -->
-    <div class="flex flex-col space-y-4 items-center md:items-start">
-      <img src="" alt="Logo" loading="lazy" class="w-48 h-auto">
-      <img src="" alt="Logo" loading="lazy" class="w-48 h-auto">
+  <div
+    class="max-w-7xl mx-auto py-4 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+  >
+   <!-- Google Map -->
+    <div class="w-full">
+      <h3 class="text-xl font-semibold text-[var(--color-2)] mb-2">Bản đồ</h3>
+      <div class="overflow-hidden rounded-xl shadow-lg border border-gray-200">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.215448714314!2d106.70421477408773!3d10.794804258856395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528b15b6af95b%3A0x34b33f3ff9d034d3!2zMzUvMTEzIMSQLiBOZ3V54buFbiBD4butdSBWw6JuLCBQaMaw4budbmcgMTcsIELDrG5oIFRo4bqhbmgsIEjhu5MgQ2jDrSBNaW5oLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2s!4v1750665990167!5m2!1svi!2s"
+          width="100%" height="240" style="border:0;" allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
     </div>
+
 
     <!-- Address Sections -->
     <div class="space-y-8">
       <div>
         <h3 class="text-lg font-semibold mb-1">Công Ty</h3>
         <div class="flex items-center space-x-2 mt-2">
-        <i class="fa-solid fa-building"></i>
-        <p>Name Company</p>
+          <i class="fa-solid fa-building"></i>
+          <p>An Bình ChemTech</p>
         </div>
         <div class="flex items-center space-x-2 mt-2">
-        <i class="fa-solid fa-location-dot"></i>
-        <p>123 Đường ABC, Quận 1, TP.HCM</p>
+          <i class="fa-solid fa-location-dot"></i>
+          <p class="flex flex-col">
+            <span>113 Nguyễn Cửu Vân, Phường 17, Quận Bình Thạnh,</span>
+            <span>TP.Hồ Chí Minh</span>
+          </p>
         </div>
         <div class="flex items-center space-x-2 mt-2">
-           <i class="fa-solid fa-phone"></i>
-          <span>+84 000000000</span>
+          <i class="fa-solid fa-phone"></i>
+          <span>0388165009</span>
         </div>
       </div>
-      
     </div>
 
     <!-- Socials and Newsletter -->
@@ -47,45 +64,73 @@
           <i class="fa-solid fa-envelope"></i>
           <p class="font-medium">Subscribe to our newsletter</p>
         </div>
-        <p class="text-sm">Our bi-weekly newsletter delivers serverless, AI, tech trends, podcasts and blogs straight to your inbox.</p>
-        <form id="subscribe-form" class="flex flex-col sm:flex-row gap-2 mt-2">
-  <input
-    type="email"
-    name="email"
-    placeholder="Enter email address"
-    required
-    class="bg-white px-4 py-2 rounded focus:outline-none w-full sm:w-auto text-black"
-  />
-  <button
-    type="submit"
-    class="bg-[var(--color-4)] hover:bg-[var(--color-1)] px-4 py-2 rounded text-white"
-  >
-    Subscribe
-  </button>
-</form>
+        <p class="text-sm">
+          Our bi-weekly newsletter delivers serverless, AI, tech trends,
+          podcasts and blogs straight to your inbox.
+        </p>
 
-    <script>
-          const form = document.getElementById("subscribe-form");
+        <form id="subscribe-form" class="flex flex-col gap-3 max-w-md">
+          <input
+            type="email"
+            name="email"
+            id="SubcribeEmail"
+            placeholder="Email liên hệ"
+            required
+            class="bg-white px-4 py-2 rounded focus:outline-none text-black"
+          />
 
-          form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const email = form.email.value;
-
-            const res = await fetch("/api/subscribe", {
-              method: "POST",
-              body: JSON.stringify({ email }),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-
-            const data = await res.json();
-            alert(data.message);
-            form.reset();
-          });
-        </script>
-
+          <button
+            type="button"
+            id="SubscribeBtn"
+            class="cursor-pointer bg-[var(--color-4)] hover:bg-[var(--color-1)] px-4 py-2 rounded text-white"
+          >
+            Gửi liên hệ
+          </button>
+          <span id="SubscribeStatus" class="text-sm mt-2"></span>
+        </form>
       </div>
     </div>
   </div>
 </footer>
+<script>
+  const SubcribeButton = document.getElementById("SubscribeBtn");
+  const statusMsg = document.getElementById("SubscribeStatus");
+  const emailInput = document.getElementById("SubcribeEmail");
+
+  SubcribeButton?.addEventListener("click", async () => {
+
+    const mail = document.getElementById("SubcribeEmail");
+    const SubcribeEmail = (mail as HTMLInputElement).value;
+
+    if (!SubcribeEmail) return;
+
+    // Tạm khóa nút và hiển thị đang gửi
+    SubcribeButton.disabled = true;
+    const originalText = SubcribeButton.innerText;
+    SubcribeButton.innerText = "Đang gửi...";
+
+    try{
+    const res = await fetch("/api/subscribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: SubcribeEmail }),
+    });
+
+    if (res.ok) {
+      alert("✅ Đã gửi liên hệ, chúng tôi sẽ phản hồi bạn sớm!");
+      window.location.href = "/";
+    } else {
+      const error = await res.text();
+      alert("❌ Gửi thất bại: " + error);
+    }
+  }catch(err){
+    alert("❌ Lỗi kết nối đến máy chủ.");
+  }finally{
+    // Bỏ disable và khôi phục nội dung nút
+      SubcribeButton.disabled = false;
+      SubcribeButton.innerText = originalText;
+  }
+  });
+</script>
