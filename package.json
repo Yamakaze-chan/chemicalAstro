@@ -19,6 +19,7 @@
     "tailwindcss": "^4.1.8"
   },
   "devDependencies": {
+    "@types/nodemailer": "^6.4.17",
     "nodemailer": "^7.0.3",
     "wrangler": "^4.20.3"
   }

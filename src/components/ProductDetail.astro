@@ -8,7 +8,7 @@ import products from "../data/products.json";
 
 const productDetail = document.getElementById('product-detail')
 const urlParams = new URLSearchParams(window.location.search);
-const id = parseInt(urlParams.get("id"));
+const id = parseInt(urlParams.get("id")!);
 
 const product = products.find(p => p.id === id);
 
@@ -104,7 +104,7 @@ if (!product) {
             ? "Ứng dụng"
             : "Đóng gói & Bảo quản";
 
-          const content = product[section];
+          const content = (product as Record<string, any>)[section];
           const displayText =
             typeof content === "string" && content.trim() !== ""
               ? content
@@ -124,12 +124,13 @@ if (!product) {
 
 }
 
-const mainImage = document.getElementById("main-image");
+const mainImage = document.getElementById("main-image") as HTMLImageElement;
 const thumbnails = document.querySelectorAll("#thumbnails img");
 
 thumbnails.forEach(thumb => {
+  const image = thumb as HTMLImageElement;
   thumb.addEventListener("click", () => {
-    mainImage!.src = thumb.src;
+    mainImage!.src = image.src;
     thumbnails.forEach(t => t.classList.remove("ring-2", "ring-blue-400"));
     thumb.classList.add("ring-2", "ring-blue-400");
   });
