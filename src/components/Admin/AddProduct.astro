@@ -7,7 +7,7 @@ const success = Astro.url.searchParams.get("success");
 
       {success && <div class="text-green-600 text-center font-semibold mb-4">✅ Sản phẩm đã được lưu!</div>}
 
-      <form method="POST" action="/api/addproduct" id="product-form" class="space-y-8 bg-white p-6 rounded-xl shadow border">
+      <form method="POST" action="/api/addproduct" enctype="multipart/form-data" id="product-form" class="space-y-8 bg-white p-6 rounded-xl shadow border">
         <!-- THÔNG TIN CHUNG -->
         <div class="grid md:grid-cols-2 gap-6">
           <div>
@@ -57,53 +57,59 @@ const success = Astro.url.searchParams.get("success");
             <input name="tags" type="text" placeholder="VD: hóa chất, phụ gia, công nghiệp" class="w-full border p-2 rounded" />
             <p class="text-sm text-gray-500 mt-1">Cách nhau bằng dấu phẩy.</p>
           </div>
-          <div>
-            <label class="font-semibold block mb-1">🖼️ Ảnh đại diện (URL)</label>
-            <input name="image" type="text" placeholder="https://..." class="w-full border p-2 rounded" />
-          </div>
+
+          <div class="grid md:grid-cols-2 gap-6">
+  <div>
+    <label class="font-semibold block mb-1">🖼️ Ảnh đại diện</label>
+    <input id="thumbnailInput" name="thumbnail" type="file" accept="image/*" class="block w-full mb-2" />
+    <div>
+      <strong>Xem trước ảnh đại diện:</strong>
+      <div id="thumbnailPreview" class="mt-2">
+        <p class="text-gray-500">Chưa có ảnh</p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <label class="font-semibold block mb-1">🖼️ Ảnh sản phẩm</label>
+    <input id="imagesInput" name="images" type="file" multiple accept="image/*" class="block w-full mb-2" />
+    <div>
+      <strong>Xem trước ảnh sản phẩm:</strong>
+      <div id="imagesPreview" class="mt-2 flex flex-wrap gap-4"></div>
+    </div>
+  </div>
+</div>
+
         </div>
 
         <!-- CHỈ TIÊU KỸ THUẬT -->
         <div>
           <h2 class="text-xl font-bold mb-3">📊 Chỉ tiêu kỹ thuật</h2>
 
-          <div class="overflow-x-auto">
-            <table class="min-w-full border border-gray-300 text-sm text-left">
-              <thead class="bg-gray-100 text-gray-700 font-semibold">
-                <tr>
-                  <th class="border px-4 py-2">Tên chỉ tiêu</th>
-                  <th class="border px-4 py-2">Thực phẩm</th>
-                  <th class="border px-4 py-2">Công nghiệp</th>
-                  <th class="border px-4 py-2 w-12">Xoá</th>
-                </tr>
-              </thead>
-              <tbody id="spec-list">
-                <tr class="spec-row">
-                  <td class="border px-4 py-2">
-                    <input type="text" name="spec-name" placeholder="VD: Hàm lượng" class="p-2 rounded w-full" />
-                  </td>
-                  <td class="border px-4 py-2">
-                    <input type="text" name="spec-food" placeholder="VD: 94%" class="p-2 rounded w-full" />
-                  </td>
-                  <td class="border px-4 py-2">
-                    <input type="text" name="spec-tech" placeholder="VD: 94%" class="p-2 rounded w-full" />
-                  </td>
-                  <td class="border px-4 py-2 text-center">
-                    <button type="button" class="text-red-600 font-bold" onclick="this.closest('tr').remove()">✖</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+<!-- Thêm cột -->
+<div class="flex items-center gap-2 mb-4">
+  <input type="text" id="new-column-name" placeholder="Tên cột mới" class="border p-2 rounded w-60" />
+  <button type="button" id="add-column-btn" class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600">➕ Thêm cột</button>
+</div>
 
-          <button
-            type="button"
-            id="add-spec-row"
-            class="mt-3 bg-gray-200 px-4 py-1 rounded hover:bg-gray-300"
-          >
-            ➕ Thêm dòng chỉ tiêu
-          </button>
-        </div>
+<!-- Bảng nhập -->
+<div class="overflow-x-auto">
+  <table class="min-w-full border border-gray-300 text-sm text-left">
+    <thead class="bg-gray-100 text-gray-700 font-semibold">
+      <tr id="spec-header">
+        <!-- cột sẽ được thêm ở đây -->
+      </tr>
+    </thead>
+    <tbody id="spec-list">
+      <!-- dòng sẽ được thêm ở đây -->
+    </tbody>
+  </table>
+</div>
+
+  <!-- Thêm dòng -->
+  <button type="button" id="add-spec-row" class="mt-3 bg-gray-200 px-4 py-1 rounded hover:bg-gray-300">
+    ➕ Thêm dòng
+  </button>
 
 
         <div class="text-right">
@@ -115,29 +121,185 @@ const success = Astro.url.searchParams.get("success");
       </form>
     </section>
 
-    <script type="module">
+<script type="module">
   const specList = document.getElementById("spec-list");
-  const addSpecBtn = document.getElementById("add-spec-row");
+  const specHeader = document.getElementById("spec-header");
+  const addSpecRowBtn = document.getElementById("add-spec-row");
+  const addColumnBtn = document.getElementById("add-column-btn");
+  const newColNameInput = document.getElementById("new-column-name");
 
-  addSpecBtn.addEventListener("click", () => {
-    const row = document.createElement("tr");
-    row.className = "spec-row";
-    row.innerHTML = `
-      <td class="border px-4 py-2">
-        <input type="text" name="spec-name" placeholder="VD: Hàm lượng" class="p-2 rounded w-full" />
-      </td>
-      <td class="border px-4 py-2">
-        <input type="text" name="spec-food" placeholder="VD: 94%" class="p-2 rounded w-full" />
-      </td>
-      <td class="border px-4 py-2">
-        <input type="text" name="spec-tech" placeholder="VD: 94%" class="p-2 rounded w-full" />
-      </td>
-      <td class="border px-4 py-2 text-center">
-        <button type="button" class="text-red-600 font-bold" onclick="this.closest('tr').remove()">✖</button>
-      </td>
-    `;
-    specList.appendChild(row);
+  let columnNames = [];
+
+const thumbnailInput = document.getElementById("thumbnailInput");
+const thumbnailPreview = document.getElementById("thumbnailPreview");
+
+const imagesInput = document.getElementById("imagesInput");
+const imagesPreview = document.getElementById("imagesPreview");
+
+
+thumbnailInput.addEventListener("change", function () {
+  thumbnailPreview.innerHTML = "";
+  const file = this.files[0];
+  if (!file) {
+    thumbnailPreview.innerHTML = `<p class="text-gray-500">Chưa có ảnh</p>`;
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = document.createElement("img");
+    img.src = e.target.result;
+    img.className = "w-32 h-32 object-cover rounded-lg border-2 border-blue-500 shadow";
+    thumbnailPreview.appendChild(img);
+  };
+  reader.readAsDataURL(file);
+});
+
+imagesInput.addEventListener("change", function () {
+  imagesPreview.innerHTML = "";
+  const files = Array.from(this.files || []);
+  if (files.length === 0) {
+    imagesPreview.innerHTML = `<p class="text-gray-500">Chưa có ảnh</p>`;
+    return;
+  }
+
+  files.forEach((file) => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.className = "w-28 h-28 object-cover rounded border";
+      imagesPreview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
   });
+});
+
+
+  function renderHeader() {
+    const hasColumns = columnNames.length > 0;
+
+    specHeader.innerHTML =
+      columnNames
+        .map(
+          col => `
+        <th class="break-words whitespace-normal border px-4 py-2 relative group hover:bg-red-50">
+          ${col}
+          <button 
+            type="button" 
+            class="absolute top-0 right-0 text-red-500 opacity-0 group-hover:opacity-100 transition"
+            onclick="removeColumn('${col}')"
+          >❌</button>
+        </th>`
+        )
+        .join("") +
+      (hasColumns ? `<th class="border px-4 py-2 w-12"></th>` : "");
+  }
+
+  window.removeColumn = function (colToRemove) {
+    columnNames = columnNames.filter(col => col !== colToRemove);
+    if (columnNames.length === 0) {
+      specList.innerHTML = "";
+    }
+    renderHeader();
+    renderRows();
+  };
+
+  function renderRows() {
+    const rows = Array.from(specList.children);
+    const hasColumns = columnNames.length > 0;
+
+    rows.forEach(row => {
+      const oldInputs = row.querySelectorAll("textarea");
+      const oldData = {};
+      oldInputs.forEach(input => {
+        const col = input.dataset.col;
+        if (col) oldData[col] = input.value;
+      });
+
+      row.innerHTML =
+        columnNames
+          .map(
+            col => `
+          <td class="border px-4 py-2 align-top break-words whitespace-normal">
+            <textarea 
+              name="spec-${col}" 
+              data-col="${col}" 
+              class="p-2 rounded w-full break-words whitespace-normal resize-none overflow-hidden min-h-[40px]"
+              oninput="autoResize(this)"
+            >${oldData[col] || ""}</textarea>
+          </td>`
+          )
+          .join("") +
+        (hasColumns
+          ? `<td class="border px-4 py-2 text-center">
+              <button type="button" class="text-red-600 font-bold" onclick="this.closest('tr').remove()">❌</button>
+            </td>`
+          : "");
+
+      // Resize lại sau khi render
+      const textareas = row.querySelectorAll("textarea");
+      textareas.forEach(t => autoResize(t));
+    });
+  }
+
+  addColumnBtn.addEventListener("click", () => {
+    const colName = newColNameInput.value.trim();
+    if (!colName || columnNames.includes(colName)) return;
+
+    columnNames.push(colName);
+    renderHeader();
+    renderRows();
+    newColNameInput.value = "";
+  });
+
+  addSpecRowBtn.addEventListener("click", () => {
+    const row = document.createElement("tr");
+    row.innerHTML =
+      columnNames
+        .map(
+          col => `
+        <td class="border px-4 py-2 align-top break-words whitespace-normal">
+          <textarea 
+            name="spec-${col}" 
+            data-col="${col}" 
+            class="p-2 rounded w-full break-words whitespace-normal resize-none overflow-hidden min-h-[40px]"
+            oninput="autoResize(this)"
+          ></textarea>
+        </td>`
+        )
+        .join("") +
+      `<td class="border px-4 py-2 text-center">
+        <button type="button" class="text-red-600 font-bold" onclick="this.closest('tr').remove()">❌</button>
+      </td>`;
+    specList.appendChild(row);
+    row.querySelectorAll("textarea").forEach(t => autoResize(t));
+    syncRowHeights();
+  });
+
+  window.autoResize = function (el) {
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+    syncRowHeights();
+  };
+
+  function syncRowHeights() {
+    const rows = document.querySelectorAll("#spec-list tr");
+
+    rows.forEach(row => {
+      row.style.height = "auto";
+      const cells = row.querySelectorAll("td");
+      let maxHeight = 0;
+      cells.forEach(cell => {
+        cell.style.height = "auto";
+        const h = cell.scrollHeight;
+        if (h > maxHeight) maxHeight = h;
+      });
+      cells.forEach(cell => {
+        cell.style.height = maxHeight + "px";
+      });
+    });
+  }
 </script>
+
 
 

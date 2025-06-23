@@ -36,7 +36,7 @@ import "../styles/global.css";
           <!-- Google Map -->
           <div class="w-full rounded-xl overflow-hidden shadow-lg">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.432716186844!2d106.70042427582522!3d10.774019959326205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3eebf67925%3A0x24c07dfe968790d3!2zMTIzIMSQLiBBQkMgQ8aw4budbmcgMSwgUFAuIEjhu5MgQ2jDrSBNaW5oLCBWaWV0bmFt!5e0!3m2!1svi!2s!4v1718000000000!5m2!1svi!2s"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.215448714314!2d106.70421477408773!3d10.794804258856395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528b15b6af95b%3A0x34b33f3ff9d034d3!2zMzUvMTEzIMSQLiBOZ3V54buFbiBD4butdSBWw6JuLCBQaMaw4budbmcgMTcsIELDrG5oIFRo4bqhbmgsIEjhu5MgQ2jDrSBNaW5oLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2s!4v1750665990167!5m2!1svi!2s"
               width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"
               referrerpolicy="no-referrer-when-downgrade">
             </iframe>
@@ -202,7 +202,7 @@ import "../styles/global.css";
           <!-- Submit Button -->
           <div class="col-span-full mt-4">
             <button type="submit"
-              class="w-full h-12 text-base font-semibold rounded-full transition-all duration-300 bg-[var(--color-4)] text-[var(--color-2)] hover:opacity-100 opacity-90 shadow-md">
+              class="cursor-pointer w-full h-12 text-base font-semibold rounded-full transition-all duration-300 bg-[var(--color-4)] text-[var(--color-2)] hover:opacity-100 opacity-90 shadow-md">
               Gửi
             </button>
           </div>
@@ -232,6 +232,23 @@ import "../styles/global.css";
               e.preventDefault();
 
               const formData = new FormData(form);
+
+              const phone = formData.get("phone")?.toString().trim() || "";
+              const email = formData.get("email")?.toString().trim() || "";
+              // Kiểm tra số điện thoại
+              const isValidPhone = /^0\d{9}$/.test(phone);
+              if (!isValidPhone) {
+                alert("❌ Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số và bắt đầu bằng số 0.");
+                return;
+              }
+
+              // Kiểm tra định dạng email
+              const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+              if (!isValidEmail) {
+                alert("❌ Email không hợp lệ. Vui lòng nhập đúng định dạng email.");
+                return;
+              }
+
               const res = await fetch("/api/new-contact", {
                 method: "POST",
                 body: formData,

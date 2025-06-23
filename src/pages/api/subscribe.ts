@@ -1,52 +1,6 @@
 import type { APIRoute } from "astro";
 import nodemailer from "nodemailer";
 
-// export const POST: APIRoute = async ({ request }) => {
-//   if (request.headers.get("Content-Type") === "application/json") {
-//     const body = await request.json();
-//     const name = body.name;
-//     console.log(body)
-
-//     return new Response(
-//       JSON.stringify({
-//         message: "Your name was: " + name,
-//       }),
-//       {
-//         status: 200,
-//       },
-//     );
-//   }
-//   // try {
-//   //   const formData = await request;
-//   //   console.log(formData.body)
-//   //   console.log(params)
-//   //   const email = formData.get("email")?.toString();
-
-//   //   if (!email) {
-//   //     return new Response("Thiếu địa chỉ email", { status: 400 });
-//   //   }
-
-//   //   const transporter = nodemailer.createTransport({
-//   //     service: "gmail",
-//   //     auth: {
-//   //       user: process.env.GMAIL_EMAIL,
-//   //       pass: process.env.GMAIL_PASSWORD,
-//   //     },
-//   //   });
-
-//   //   await transporter.sendMail({
-//   //     from: '"Website" <yourgmail@gmail.com>',
-//   //     to: "yourgmail@gmail.com",
-//   //     subject: "📥 Liên hệ mới",
-//   //     html: `<p>Khách hàng đăng ký với email: <strong>${email}</strong></p>`,
-//   //   });
-
-//   //   return new Response("OK", { status: 200 });
-//   // } catch (err) {
-//   //   console.error("Lỗi gửi email:", err);
-//   //   return new Response("Lỗi máy chủ khi gửi email", { status: 500 });
-//   // }
-// };
 
 export const POST = async ({ request }: { request: Request }) => {
   try {
@@ -68,10 +22,10 @@ export const POST = async ({ request }: { request: Request }) => {
     });
 
     await transporter.sendMail({
-      from: '"Website" <yourgmail@gmail.com>',
-      to: "yourgmail@gmail.com",
+      from: `"Website" <${process.env.GMAIL_EMAIL}>`,
+      to: process.env.GMAIL_EMAIL,
       subject: "📥 Liên hệ mới",
-      html: `<p>Khách hàng đăng ký với email: <strong>${data.email}</strong></p>`,
+      html: `<p>Khách hàng Liên Hệ với email: <strong>${data.email}</strong>, Hãy nhanh chóng phản hồi!</p>`,
     });
 
     return new Response(

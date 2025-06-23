@@ -30,29 +30,44 @@
     <span id="selected-date-display" class="text-sm text-gray-600 mt-1 min-h-[1.5rem]"></span>
   </div>
 
+  <!-- Bộ lọc trạng thái -->
+<div class="flex flex-col w-full md:w-80">
+  <label for="filter-status" class="text-sm font-medium text-gray-700 mb-1">Lọc theo trạng thái:</label>
+  <select
+    id="filter-status"
+    class="border rounded px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    <option value="">Tất cả</option>
+    <option value="unread">❌ Chưa xem</option>
+    <option value="read">✅ Đã xem</option>
+  </select>
+  <span class="text-sm text-gray-600 mt-1 min-h-[1.5rem]">&nbsp;</span>
 </div>
 
 </div>
 
-    <div class="overflow-x-auto">
-      <table class="min-w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow">
-        <thead class="bg-[var(--color-3)] text-white">
-          <tr>
-            <th class="px-4 py-3 text-left">Ngày gửi</th>
-            <th class="px-4 py-3 text-left">Họ và Tên</th>
-            <th class="px-4 py-3 text-left">Email</th>
-            <th class="px-4 py-3 text-left">SĐT</th>
-            <th class="px-4 py-3 text-left">Loại khách</th>
-            <th class="px-4 py-3 text-left">Lĩnh vực</th>
-            <th class="px-4 py-3 text-left">Trạng thái</th>
-            <th class="px-4 py-3 text-left">Hành động</th>
-          </tr>
-        </thead>
-        <tbody id="contact-table-body" class="text-gray-700">
-          <!-- Nội dung sẽ được render bằng JS -->
-        </tbody>
-      </table>
-    </div>
+</div>
+
+    <div class="overflow-auto rounded-xl shadow border border-gray-200">
+  <table class="min-w-[1000px] w-full bg-white text-sm">
+    <thead class="bg-[var(--color-3)] text-white">
+      <tr>
+        <th class="px-4 py-3 text-left whitespace-nowrap">Ngày gửi</th>
+        <th class="px-4 py-3 text-left whitespace-nowrap">Họ và Tên</th>
+        <th class="px-4 py-3 text-left whitespace-nowrap">Email</th>
+        <th class="px-4 py-3 text-left whitespace-nowrap">SĐT</th>
+        <th class="px-4 py-3 text-left whitespace-nowrap">Loại khách</th>
+        <th class="px-4 py-3 text-left whitespace-nowrap">Lĩnh vực</th>
+        <th class="px-4 py-3 text-left whitespace-nowrap">Trạng thái</th>
+        <th class="px-4 py-3 text-left whitespace-nowrap">Hành động</th>
+      </tr>
+    </thead>
+    <tbody id="contact-table-body" class="text-gray-700">
+      <!-- Nội dung sẽ được render bằng JS -->
+    </tbody>
+  </table>
+</div>
+
     <div id="pagination" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
   </div>
 </section>
@@ -104,12 +119,12 @@
 
     function renderTablePage(contactPageData) {
       if (contactPageData.length === 0) {
-        contactTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-gray-500">Không có liên hệ nào.</td></tr>`;
-        paginationContainer.innerHTML = "";
+        contactTableBody!.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-gray-500">Không có liên hệ nào.</td></tr>`;
+        paginationContainer!.innerHTML = "";
         return;
       }
 
-      contactTableBody.innerHTML = contactPageData.map((c) => {
+      contactTableBody!.innerHTML = contactPageData.map((c) => {
         const date = new Date(c.createdAt);
         const dateStr = date.toLocaleDateString("vi-VN");
         const timeStr = date.toLocaleTimeString("vi-VN", {
@@ -144,16 +159,16 @@
           e.preventDefault();
           const id = btn.dataset.id;
           const row = btn.closest("tr");
-          const statusCell = row.querySelector(".status-cell");
+          const statusCell = row?.querySelector(".status-cell");
 
           // Nếu đã là "Đã xem" thì không cần gửi lại
-          if (statusCell.textContent.includes("✅")) {
+          if (statusCell!.textContent!.includes("✅")) {
             window.location.href = `/admin/contactdetail?id=${id}`;
             return;
           }
 
           // Cập nhật trạng thái UI
-          statusCell.textContent = "✅ Đã xem";
+          statusCell!.textContent = "✅ Đã xem";
 
           fetch("/api/update-contact-status", {
             method: "POST",
@@ -186,12 +201,14 @@
 
 const filterDateInput = document.getElementById("filter-date");
 const searchInput = document.getElementById("search-input");
+const filterStatusInput = document.getElementById("filter-status");
 
 const dateDisplay = document.getElementById("selected-date-display");
 
 function applyFilterAndSearch() {
-  const searchValue = searchInput.value.trim().toLowerCase();
-  const selectedDate = filterDateInput.value; // yyyy-mm-dd
+  const searchValue = searchInput?.value.trim().toLowerCase();
+  const selectedDate = filterDateInput?.value; // yyyy-mm-dd
+  const selectedStatus = filterStatusInput?.value;
 
   filteredContact = contact.filter((c) => {
     const matchSearch =
@@ -201,11 +218,10 @@ function applyFilterAndSearch() {
     const contactDate = new Date(c.createdAt);
     const formattedDate = contactDate.toISOString().split("T")[0]; // yyyy-mm-dd
 
-    const matchDate = selectedDate
-      ? formattedDate === selectedDate
-      : true;
+    const matchDate = selectedDate ? formattedDate === selectedDate : true;
+    const matchStatus = selectedStatus ? c.status === selectedStatus : true;
 
-    return matchSearch && matchDate;
+    return matchSearch && matchDate && matchStatus;
   });
 
   paginationInstance.render(filteredContact);
@@ -213,16 +229,17 @@ function applyFilterAndSearch() {
   // ✅ Hiển thị ngày người dùng đã chọn theo định dạng dd/mm/yyyy
   if (selectedDate) {
     const [year, month, day] = selectedDate.split("-");
-    dateDisplay.textContent = `Bạn đã chọn: ${day}/${month}/${year}`;
+    dateDisplay!.textContent = `Bạn đã chọn: ${day}/${month}/${year}`;
   } else {
-    dateDisplay.textContent = "";
+    dateDisplay!.textContent = "";
   }
 }
 
 
     // Lắng nghe sự kiện thay đổi
-    filterDateInput.addEventListener("change", applyFilterAndSearch);
-    searchInput.addEventListener("input", applyFilterAndSearch);
+    filterDateInput?.addEventListener("change", applyFilterAndSearch);
+    searchInput?.addEventListener("input", applyFilterAndSearch);
+    filterStatusInput?.addEventListener("change", applyFilterAndSearch);
 
 
     paginationInstance.render(filteredContact);
