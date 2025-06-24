@@ -45,7 +45,7 @@ export function initPagination({ data = [], itemsPerPage = 12, onRenderPage, pag
         "px-4 py-2 text-gray-400 border border-gray-200 cursor-default";
     } else {
       button.textContent = p;
-      button.className = `px-4 py-2 rounded border text-sm transition ${
+      button.className = `px-4 py-2 rounded border text-sm transition cursor-pointer ${
         p === currentPage
           ? "bg-[var(--color-3)] text-white border-[var(--color-3)]"
           : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"

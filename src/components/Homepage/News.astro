@@ -2,13 +2,13 @@
 import news from "../../data/news.json";
 
 // ⚡ Trích ảnh đầu tiên từ content
-function getFirstImage(content) {
+function getFirstImage(content: string): string {
   const match = content.match(/<img[^>]*src=["']([^"']+)["']/i);
   return match ? match[1] : "/images/placeholder.jpg";
 }
 
 // ⚡ Trích mô tả từ <h2> hoặc <p>
-function getFirstText(content) {
+function getFirstText(content: string) {
   const match = content.match(/<(h2|p)[^>]*>(.*?)<\/\1>/i);
   if (!match) return "";
   const rawText = match[2];
@@ -16,7 +16,7 @@ function getFirstText(content) {
 }
 
 // ⚡ Định dạng ngày giờ
-function formatDate(isoString) {
+function formatDate(isoString: string) {
   const date = new Date(isoString);
   return date.toLocaleString("vi-VN", {
     day: "2-digit",
@@ -29,7 +29,7 @@ function formatDate(isoString) {
 
 // ⚡ Chuẩn hóa & chỉ lấy 4 tin mới nhất
 const enrichedNews = news
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
   .slice(0, 4)
   .map(item => ({
     ...item,

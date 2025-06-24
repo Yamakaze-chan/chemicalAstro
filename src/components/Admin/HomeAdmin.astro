@@ -9,17 +9,17 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
 
 <section class="pt-24 px-4 pb-12 bg-gray-100 min-h-screen">
   <div class="max-w-screen-xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-8">Tổng quan quản trị</h1>
+    <h1 class="text-3xl font-bold text-[var(--color-3)] mb-8">Tổng quan quản trị</h1>
 
     <!-- Thống kê -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
       <!-- Sản phẩm -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Tổng Sản phẩm</h2>
-          <p class="text-3xl font-extrabold text-indigo-600 mt-3">{totalProducts}</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)]">Tổng Sản phẩm</h2>
+          <p class="text-3xl font-extrabold text-[var(--color-3)] mt-3">{totalProducts}</p>
         </div>
-        <a href="/admin/products" class="mt-5 inline-block text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/products" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           📦 Xem chi tiết
         </a>
       </div>
@@ -27,10 +27,10 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
       <!-- Tin tức -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Tin Tức hiện có</h2>
-          <p class="text-3xl font-extrabold text-green-600 mt-3">{totalNews}</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)">Tin Tức hiện có</h2>
+          <p class="text-3xl font-extrabold text-[var(--color-3) mt-3">{totalNews}</p>
         </div>
-        <a href="/admin/news" class="mt-5 inline-block text-sm font-medium text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/news" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           📰 Xem chi tiết
         </a>
       </div>
@@ -38,10 +38,10 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
       <!-- Liên hệ -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Liên Hệ chưa xem</h2>
-          <p class="text-3xl font-extrabold text-blue-600 mt-3">{unreadContacts}</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)]">Liên Hệ chưa xem</h2>
+          <p class="text-3xl font-extrabold text-[var(--color-3)] mt-3">{unreadContacts}</p>
         </div>
-        <a href="/admin/contact" class="mt-5 inline-block text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/contact" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           🔍 Xem chi tiết
         </a>
       </div>
@@ -50,20 +50,25 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     <!-- Chọn sản phẩm nổi bật -->
     <div class="max-w-7xl mx-auto">
       <div class="mb-6 flex justify-between items-center flex-col sm:flex-row gap-4">
-        <h1 class="text-3xl font-bold">🌟 Chọn sản phẩm nổi bật (tối đa 4)</h1>
+        <h1 class="text-3xl text-[var(--color-3)] font-bold">🌟 Chọn sản phẩm nổi bật (tối đa 4)</h1>
         <input
           id="search-input"
           type="text"
           placeholder="🔍 Tìm theo tên sản phẩm..."
-          class="w-full sm:w-80 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          class="w-full sm:w-80 px-4 py-2 border border-gray-300 rounded-lg shadow-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
         />
       </div>
 
-      <div id="product-selection" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"></div>
+      <div class="relative min-h-[550px] flex flex-col justify-between mb-8">
+      <div id="product-selection" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
       <div id="pagination-controls" class="flex justify-center gap-2 flex-wrap mt-4"></div>
-      <button id="save-button" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-        💾 Lưu danh sách sản phẩm nổi bật
-      </button>
+    </div>
+
+      <div class="flex justify-center">
+        <button id="save-button" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+          💾 Lưu danh sách sản phẩm nổi bật
+        </button>
+      </div>
       <p id="status" class="mt-4 text-green-600 font-semibold"></p>
     </div>
   </div>
@@ -87,7 +92,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     for (let i = 1; i <= totalPages; i++) {
       const btn = document.createElement("button");
       btn.textContent = i;
-      btn.className = `px-3 py-1 rounded ${i === currentPage ? "bg-blue-600 text-white" : "bg-white border"} hover:bg-blue-100 transition`;
+      btn.className = `px-3 py-1 rounded ${i === currentPage ? "bg-[var(--color-4)] text-white" : "bg-white border"} hover:bg-[var(--color-3)] hover:text-white transition cursor-pointer`;
       btn.addEventListener("click", () => {
         currentPage = i;
         renderProducts(filteredProducts);
@@ -96,49 +101,68 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     }
   }
 
-  function renderProducts(list) {
-    selectionEl.innerHTML = "";
+function renderProducts(list) {
+  selectionEl.innerHTML = "";
 
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const pageItems = list.slice(start, end);
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = list.slice(start, end);
 
-    pageItems.forEach(product => {
-      const isSelected = selected.has(product.id);
-      const card = document.createElement("div");
-      card.className = `border rounded-lg p-4 bg-white shadow relative hover:shadow-lg transition-all duration-200 ${isSelected ? "ring-2 ring-blue-600" : ""}`;
+  pageItems.forEach(product => {
+    const isSelected = selected.has(product.id);
 
-      card.innerHTML = `
-        <div class="flex flex-col h-full items-center text-center">
-          <img src="${product.image}" alt="${product.name}"
-            class="w-24 h-24 object-contain mb-3 rounded-full border-2 border-blue-300 bg-white shadow-md" />
-          <h2 class="text-sm font-semibold text-gray-800 mb-3 min-h-[3rem] px-1">${product.name}</h2>
-          <button class="select-btn mt-auto w-full px-3 py-1 rounded font-medium 
-                  transition duration-200 ${isSelected ? "bg-red-500 hover:bg-red-600 text-white" : "bg-blue-500 hover:bg-blue-600 text-white"}">
-            ${isSelected ? "Bỏ chọn" : "Chọn"}
-          </button>
-        </div>
-      `;
+    // Tạo phần tử cha
+    const card = document.createElement("div");
+    card.className = `border rounded-lg p-4 bg-white shadow relative hover:shadow-lg transition-all duration-200`;
+    if (isSelected) card.classList.add("ring-2", "ring-blue-600");
 
-      const btn = card.querySelector(".select-btn");
-      btn.addEventListener("click", () => {
-        if (selected.has(product.id)) {
-          selected.delete(product.id);
-        } else {
-          if (selected.size >= 4) {
-            alert("Chỉ được chọn tối đa 4 sản phẩm nổi bật.");
-            return;
-          }
-          selected.set(product.id, product);
+    // Tạo nội dung sản phẩm
+    const container = document.createElement("div");
+    container.className = "flex flex-col h-full items-center text-center";
+
+    const img = document.createElement("img");
+    img.src = product.image;
+    img.alt = product.name;
+    img.className = "w-24 h-24 object-contain mb-3 rounded-full border-2 border-blue-300 bg-white shadow-md";
+
+    const title = document.createElement("h2");
+    title.className = "text-sm font-semibold text-[var(--color-3)] mb-3 min-h-[3rem] px-1";
+    title.textContent = product.name;
+
+    const btn = document.createElement("button");
+    btn.className = `select-btn mt-auto w-full px-3 py-1 rounded font-medium transition duration-200 ${
+      isSelected ? "bg-red-500 hover:bg-red-600 text-white" : "bg-blue-500 hover:bg-blue-600 text-white"
+    }`;
+    btn.textContent = isSelected ? "Bỏ chọn" : "Chọn";
+
+    btn.addEventListener("click", () => {
+      if (selected.has(product.id)) {
+        selected.delete(product.id);
+        btn.textContent = "Chọn";
+        btn.className = "select-btn mt-auto w-full px-3 py-1 rounded font-medium bg-blue-500 hover:bg-blue-600 text-white";
+        card.classList.remove("ring-2", "ring-blue-600");
+      } else {
+        if (selected.size >= 4) {
+          alert("Chỉ được chọn tối đa 4 sản phẩm nổi bật.");
+          return;
         }
-        renderProducts(filteredProducts); // cập nhật lại giao diện
-      });
-
-      selectionEl.appendChild(card);
+        selected.set(product.id, product);
+        btn.textContent = "Bỏ chọn";
+        btn.className = "select-btn mt-auto w-full px-3 py-1 rounded font-medium bg-red-500 hover:bg-red-600 text-white";
+        card.classList.add("ring-2", "ring-blue-600");
+      }
     });
 
-    renderPagination(list.length);
-  }
+    container.appendChild(img);
+    container.appendChild(title);
+    container.appendChild(btn);
+    card.appendChild(container);
+    selectionEl.appendChild(card);
+  });
+
+  renderPagination(list.length);
+}
+
 
   async function loadProducts() {
     const res = await fetch("/api/products.json");

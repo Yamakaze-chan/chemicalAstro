@@ -3,7 +3,7 @@ const success = Astro.url.searchParams.get("success");
 ---
 
     <section class="max-w-5xl mx-auto px-4 py-12 mt-12">
-      <h1 class="text-3xl font-bold mb-8 text-center">🧪 Thêm Sản Phẩm Hóa Học</h1>
+      <h1 class="text-3xl font-bold mb-8 text-center">Thêm Sản Phẩm Hóa Học</h1>
 
       {success && <div class="text-green-600 text-center font-semibold mb-4">✅ Sản phẩm đã được lưu!</div>}
 
@@ -15,7 +15,7 @@ const success = Astro.url.searchParams.get("success");
             <input name="name" type="text" required class="w-full border p-2 rounded" />
           </div>
           <div>
-            <label class="font-semibold block mb-1">Công thức phân tử</label>
+            <label class="font-semibold block mb-1">Công thức phân tử</label> 
             <input name="formula" type="text" class="w-full border p-2 rounded" />
           </div>
           <div>
@@ -59,26 +59,26 @@ const success = Astro.url.searchParams.get("success");
           </div>
 
           <div class="grid md:grid-cols-2 gap-6">
-  <div>
-    <label class="font-semibold block mb-1">🖼️ Ảnh đại diện</label>
-    <input id="thumbnailInput" name="thumbnail" type="file" accept="image/*" class="block w-full mb-2" />
-    <div>
-      <strong>Xem trước ảnh đại diện:</strong>
-      <div id="thumbnailPreview" class="mt-2">
-        <p class="text-gray-500">Chưa có ảnh</p>
-      </div>
-    </div>
-  </div>
+          <div>
+            <label class="font-semibold block mb-1">🖼️ Ảnh đại diện</label>
+            <input id="thumbnailInput" name="thumbnail" type="file" accept="image/*"  class="block w-full mb-2 border border-gray-300 border-solid rounded-md px-3 py-2 text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-[var(--color-3)] file:text-white hover:file:bg-[var(--color-4)] cursor-pointer" />
+            <div>
+              <strong>Xem trước ảnh đại diện:</strong>
+              <div id="thumbnailPreview" class="mt-2">
+                <p class="text-gray-500">Chưa có ảnh</p>
+              </div>
+            </div>
+          </div>
 
-  <div>
-    <label class="font-semibold block mb-1">🖼️ Ảnh sản phẩm</label>
-    <input id="imagesInput" name="images" type="file" multiple accept="image/*" class="block w-full mb-2" />
-    <div>
-      <strong>Xem trước ảnh sản phẩm:</strong>
-      <div id="imagesPreview" class="mt-2 flex flex-wrap gap-4"></div>
-    </div>
-  </div>
-</div>
+          <div>
+            <label class="font-semibold block mb-1">🖼️ Ảnh sản phẩm</label>
+            <input id="imagesInput" name="images" type="file" multiple accept="image/*" class="block w-full mb-2 border border-gray-300 border-solid rounded-md px-3 py-2 text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-[var(--color-3)] file:text-white hover:file:bg-[var(--color-4)] cursor-pointer" />
+            <div>
+              <strong>Xem trước ảnh sản phẩm:</strong>
+              <div id="imagesPreview" class="mt-2 flex flex-wrap gap-4"></div>
+            </div>
+          </div>
+        </div>
 
         </div>
 
@@ -136,6 +136,36 @@ const thumbnailPreview = document.getElementById("thumbnailPreview");
 const imagesInput = document.getElementById("imagesInput");
 const imagesPreview = document.getElementById("imagesPreview");
 
+document.getElementById("product-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = new FormData(form);
+
+  // Bỏ hết ảnh trong form cũ (nếu cần)
+  formData.delete("images");
+
+  // Gửi ảnh từ selectedImages (đã được xử lý xóa)
+  selectedImages.forEach((file) => {
+    formData.append("images", file);
+  });
+
+  // Gửi ảnh đại diện thủ công (vì FileList không còn trong form nếu chọn lại)
+  const thumbnailFile = thumbnailInput.files[0];
+  if (thumbnailFile) {
+    formData.set("thumbnail", thumbnailFile);
+  }
+
+  const response = await fetch("/api/addproduct", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (response.redirected) {
+    window.location.href = response.url;
+  }
+});
+
 
 thumbnailInput.addEventListener("change", function () {
   thumbnailPreview.innerHTML = "";
@@ -154,25 +184,57 @@ thumbnailInput.addEventListener("change", function () {
   reader.readAsDataURL(file);
 });
 
-imagesInput.addEventListener("change", function () {
-  imagesPreview.innerHTML = "";
-  const files = Array.from(this.files || []);
-  if (files.length === 0) {
-    imagesPreview.innerHTML = `<p class="text-gray-500">Chưa có ảnh</p>`;
-    return;
-  }
+let selectedImages = [];
 
-  files.forEach((file) => {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const img = document.createElement("img");
-      img.src = e.target.result;
-      img.className = "w-28 h-28 object-cover rounded border";
-      imagesPreview.appendChild(img);
-    };
-    reader.readAsDataURL(file);
+imagesInput.addEventListener("change", function () {
+  const newFiles = Array.from(this.files || []);
+
+  newFiles.forEach((file) => {
+    // Tránh thêm ảnh trùng
+    const isDuplicate = selectedImages.some(
+      (f) => f.name === file.name && f.size === file.size
+    );
+    if (!isDuplicate) {
+      selectedImages.push(file);
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const container = document.createElement("div");
+        container.className = "relative";
+
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.className = "w-28 h-28 object-cover rounded border shadow";
+
+        const removeBtn = document.createElement("button");
+        removeBtn.innerHTML = "❌";
+        removeBtn.className =
+          "absolute -top-2 -right-2 bg-white rounded-full border border-gray-300 text-red-500 text-sm px-1 hover:bg-red-100";
+
+        // Gắn sự kiện xóa riêng cho ảnh hiện tại
+        removeBtn.addEventListener("click", () => {
+          // Xóa ảnh khỏi danh sách đã chọn
+          selectedImages = selectedImages.filter(
+            (f) => !(f.name === file.name && f.size === file.size)
+          );
+
+          // Xóa ảnh khỏi giao diện
+          container.remove();
+        });
+
+        container.appendChild(img);
+        container.appendChild(removeBtn);
+        imagesPreview.appendChild(container);
+      };
+
+      reader.readAsDataURL(file);
+    }
   });
+
+  // Reset để có thể chọn cùng ảnh nếu muốn
+  this.value = "";
 });
+
 
 
   function renderHeader() {

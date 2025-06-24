@@ -29,11 +29,20 @@
     const id = parseInt(idParam);
     const contactItem = contact.find(c => c.id === id);
 
-    const businessTypeMap = {
+    type BusinessType = "retail" | "service" | "other";
+
+    const businessTypeMap: Record<BusinessType, string> = {
       retail: "Cá nhân",
       service: "Doanh nghiệp",
       other: "Khác",
     };
+
+    function getBusinessTypeLabel(type: string): string {
+      if (type in businessTypeMap) {
+        return businessTypeMap[type as BusinessType];
+      }
+      return "Không xác định";
+    }
 
     const businessCategoryMap = {
       retail: "Bán lẻ",
@@ -42,24 +51,34 @@
       other: "Khác",
     };
 
+    type BusinessCategory = keyof typeof businessCategoryMap;
+    
+
+    function getBusinessCategoryLabel(category: any): string {
+      if (category in businessCategoryMap) {
+        return businessCategoryMap[category as BusinessCategory];
+      }
+      return "Không xác định";
+    }
+
     if (!contactItem) {
       contactdetail.innerHTML = `<p class="text-red-500 text-xl font-semibold">Không tìm thấy liên hệ của khách hàng.</p>`;
     } else {
       contactdetail.innerHTML = `
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-3xl mx-auto">
-          <h1 class="text-4xl font-bold text-blue-700 mb-8 border-b pb-4 flex items-center gap-2">
+          <h1 class="text-4xl font-bold text-[var(--color-3)] mb-8 border-b pb-4 flex items-center gap-2">
               Chi tiết liên hệ
           </h1>
 
           <div class="space-y-4 text-lg text-gray-700">
-              <p><strong class="text-gray-900">📅 Thời gian:</strong> ${new Date(contactItem.createdAt).toLocaleString("vi-VN")}</p>
-              <p><strong class="text-gray-900">👤 Họ tên:</strong> ${contactItem.nameCustomer}</p>
-              <p><strong class="text-gray-900">📧 Email:</strong> ${contactItem.email}</p>
-              <p><strong class="text-gray-900">📞 Số điện thoại:</strong> ${contactItem.phone}</p>
-              <p><strong class="text-gray-900">🏢 Loại hình kinh doanh:</strong> ${businessTypeMap[contactItem.businessType] || "Không xác định"}</p>
-              <p><strong class="text-gray-900">📦 Ngành hàng:</strong> ${businessCategoryMap[contactItem.businessCategory] || "Không xác định"}</p>
-              <p><strong class="text-gray-900">📝 Tin nhắn:</strong> ${contactItem.messageCustomer}</p>
-          </div>
+            <p><strong class="text-gray-900">📅 Thời gian:</strong> ${new Date(contactItem.createdAt).toLocaleString("vi-VN")}</p>
+            <p><strong class="text-gray-900">👤 Họ tên:</strong> ${contactItem.nameCustomer}</p>
+            <p><strong class="text-gray-900">📧 Email:</strong> ${contactItem.email}</p>
+            <p><strong class="text-gray-900">📞 Số điện thoại:</strong> ${contactItem.phone}</p>
+            <p><strong class="text-gray-900">🏢 Loại hình kinh doanh:</strong> ${getBusinessTypeLabel(contactItem.businessType)}</p>
+            <p><strong class="text-gray-900">📦 Lĩnh Vực:</strong> ${getBusinessCategoryLabel(contactItem.businessCategory)}</p>
+            <p><strong class="text-gray-900">📝 Tin nhắn:</strong> ${contactItem.messageCustomer}</p>
+        </div>
         </div>
       `;
     }
