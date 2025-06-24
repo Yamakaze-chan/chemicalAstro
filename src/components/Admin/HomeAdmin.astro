@@ -39,7 +39,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
           <h2 class="text-lg font-semibold text-[var(--color-3)]">Liên Hệ chưa xem</h2>
-          <p class="text-3xl font-extrabold text-[var(--color-3)] mt-3">{unreadContacts}</p>
+          <p class="text-3xl font-extrabold text-red-500 mt-3">{unreadContacts}</p>
         </div>
         <a href="/admin/contact" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           🔍 Xem chi tiết
@@ -50,7 +50,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     <!-- Chọn sản phẩm nổi bật -->
     <div class="max-w-7xl mx-auto">
       <div class="mb-6 flex justify-between items-center flex-col sm:flex-row gap-4">
-        <h1 class="text-3xl text-[var(--color-3)] font-bold">🌟 Chọn sản phẩm nổi bật (tối đa 4)</h1>
+        <h1 class="text-3xl text-[var(--color-3)] font-bold">Chọn sản phẩm nổi bật (tối đa 4)</h1>
         <input
           id="search-input"
           type="text"
