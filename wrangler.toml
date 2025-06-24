@@ -1,0 +1,9 @@
+name = "my-astro-app"
+type = "javascript"
+main = "dist/_worker.js"
+compatibility_date = "2025-03-25"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[build]
+command = "npm run build"

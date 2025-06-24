@@ -1,7 +1,7 @@
 ---
 ---
 
-<section class="min-h-screen bg-gray-50 py-16 px-6">
+<section class="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-16 px-6">
   <div class="max-w-7xl mx-auto mt-[5%]">
     <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-10">Liên Hệ Của Khách Hàng</h1>
 <div class="mb-6 flex flex-col md:flex-row md:items-end gap-6 justify-center">
@@ -13,7 +13,7 @@
       type="text"
       id="search-input"
       placeholder="🔍 Tên hoặc SĐT..."
-      class="border rounded px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      class="border rounded px-4 py-2 shadow-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
     <!-- span giữ chiều cao tương ứng -->
     <span class="text-sm text-transparent mt-1 min-h-[1.5rem]">placeholder</span>
@@ -25,7 +25,7 @@
     <input
       type="date"
       id="filter-date"
-      class="border rounded px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      class="border rounded px-4 py-2 shadow-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
     <span id="selected-date-display" class="text-sm text-gray-600 mt-1 min-h-[1.5rem]"></span>
   </div>
@@ -35,7 +35,7 @@
   <label for="filter-status" class="text-sm font-medium text-gray-700 mb-1">Lọc theo trạng thái:</label>
   <select
     id="filter-status"
-    class="border rounded px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    class="border rounded px-4 py-2 shadow-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
   >
     <option value="">Tất cả</option>
     <option value="unread">❌ Chưa xem</option>
@@ -48,27 +48,32 @@
 
 </div>
 
-    <div class="overflow-auto rounded-xl shadow border border-gray-200">
-  <table class="min-w-[1000px] w-full bg-white text-sm">
-    <thead class="bg-[var(--color-3)] text-white">
-      <tr>
-        <th class="px-4 py-3 text-left whitespace-nowrap">Ngày gửi</th>
-        <th class="px-4 py-3 text-left whitespace-nowrap">Họ và Tên</th>
-        <th class="px-4 py-3 text-left whitespace-nowrap">Email</th>
-        <th class="px-4 py-3 text-left whitespace-nowrap">SĐT</th>
-        <th class="px-4 py-3 text-left whitespace-nowrap">Loại khách</th>
-        <th class="px-4 py-3 text-left whitespace-nowrap">Lĩnh vực</th>
-        <th class="px-4 py-3 text-left whitespace-nowrap">Trạng thái</th>
-        <th class="px-4 py-3 text-left whitespace-nowrap">Hành động</th>
-      </tr>
-    </thead>
-    <tbody id="contact-table-body" class="text-gray-700">
-      <!-- Nội dung sẽ được render bằng JS -->
-    </tbody>
-  </table>
+    <div class="overflow-auto bg-white shadow border border-gray-200">
+  <!-- ✅ Bọc toàn bộ bảng và phân trang -->
+  <div class="min-h-[600px] flex flex-col justify-between">
+    <table class="min-w-[1000px] w-full bg-white text-sm">
+      <thead class="bg-[var(--color-3)] text-white">
+        <tr>
+          <th class="px-4 py-3 text-left whitespace-nowrap">Ngày gửi</th>
+          <th class="px-4 py-3 text-left whitespace-nowrap">Họ và Tên</th>
+          <th class="px-4 py-3 text-left whitespace-nowrap">Email</th>
+          <th class="px-4 py-3 text-left whitespace-nowrap">SĐT</th>
+          <th class="px-4 py-3 text-left whitespace-nowrap">Loại khách</th>
+          <th class="px-4 py-3 text-left whitespace-nowrap">Lĩnh vực</th>
+          <th class="px-4 py-3 text-left whitespace-nowrap">Trạng thái</th>
+          <th class="px-4 py-3 text-left whitespace-nowrap">Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="contact-table-body" class="text-[var(--color-3)]">
+        <!-- Nội dung sẽ được render bằng JS -->
+      </tbody>
+    </table>
+
+    <!-- ✅ Pagination luôn nằm dưới -->
+    <div id="pagination" class="flex justify-center gap-2 mt-6 flex-wrap p-4"></div>
+  </div>
 </div>
 
-    <div id="pagination" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
   </div>
 </section>
 
@@ -76,7 +81,7 @@
   import contact from "../../data/contact.json";
   import { initPagination } from "../../utils/pagination.js";
 
-  const getBusinessTypeLabel = (type) => {
+  const getBusinessTypeLabel = (type: string) => {
     switch (type) {
       case "retail": return "Cá nhân";
       case "service": return "Doanh nghiệp";
@@ -85,7 +90,7 @@
     }
   };
 
-  const getBusinessCategoryLabel = (category) => {
+  const getBusinessCategoryLabel = (category: string) => {
     switch (category) {
       case "retail": return "Bán lẻ";
       case "service": return "Dịch vụ";
@@ -155,6 +160,7 @@
 
     function setupMarkReadEvents() {
       document.querySelectorAll(".mark-read-btn").forEach((btn) => {
+        if (!(btn instanceof HTMLElement)) return;
         btn.addEventListener("click", (e) => {
           e.preventDefault();
           const id = btn.dataset.id;
@@ -206,9 +212,9 @@ const filterStatusInput = document.getElementById("filter-status");
 const dateDisplay = document.getElementById("selected-date-display");
 
 function applyFilterAndSearch() {
-  const searchValue = searchInput?.value.trim().toLowerCase();
-  const selectedDate = filterDateInput?.value; // yyyy-mm-dd
-  const selectedStatus = filterStatusInput?.value;
+  const searchValue = (searchInput as HTMLInputElement)?.value.trim().toLowerCase();
+  const selectedDate = (filterDateInput as HTMLInputElement)?.value; // yyyy-mm-dd
+  const selectedStatus = (filterStatusInput as HTMLSelectElement)?.value;
 
   filteredContact = contact.filter((c) => {
     const matchSearch =

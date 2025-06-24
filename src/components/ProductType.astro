@@ -25,23 +25,24 @@ const urlParams = new URLSearchParams(window.location.search);
 const tagFromURL = urlParams.get("type");
 
 // Lọc sản phẩm theo tag
+
 const filteredProducts = products.filter(p => p.tags?.includes(tagFromURL));
 
 // Hiển thị tiêu đề
 if (tagFromURL) {
-  heading.innerHTML = `TẤT CẢ SẢN PHẨM THUỘC <span class="text-[var(--color-1)]">${tagFromURL}</span>`;
+  heading!.innerHTML = `TẤT CẢ SẢN PHẨM THUỘC <span class="text-[var(--color-1)]">${tagFromURL}</span>`;
 } else {
-  heading.innerHTML = `TẤT CẢ SẢN PHẨM`;
+  heading!.innerHTML = `TẤT CẢ SẢN PHẨM`;
 }
 
 function renderProducts(productArray) {
   if (filteredProducts.length === 0) {
-    productType.innerHTML = `<p class="text-red-500">Hiện chưa có sản phẩm!</p>`;
-    pagination.innerHTML = "";
+    productType!.innerHTML = `<p class="text-red-500">Hiện chưa có sản phẩm!</p>`;
+    pagination!.innerHTML = "";
     return;
   }
 
-  productType.innerHTML = productArray.map(product => `
+  productType!.innerHTML = productArray.map(product => `
     <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition duration-300">
       <a href="/productdetail?id=${product.id}">
         <img src="${product.image}" alt="${product.name}"

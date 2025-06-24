@@ -67,14 +67,14 @@
   }
 </style>
 <script>
-  const form = document.getElementById("news-form");
+  const form = document.getElementById("news-form") as HTMLFormElement;
   const contentInput = document.getElementById("content");
   const editor = document.getElementById("editor");
 
-  form.addEventListener("submit", async (e) => {
+  form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    contentInput.value = editor.innerHTML;
+    (contentInput as HTMLTextAreaElement).value = editor?.innerHTML ?? "";
 
     const formData = new FormData(form);
 
@@ -93,6 +93,12 @@
   });
 
   // Toolbar hỗ trợ
+  declare global {
+  interface Window {
+    execCmd: (command: string) => void;
+    insertTable: (...args: any[]) => any;
+  }
+}
   window.execCmd = function (command) {
     if (command === 'insertImage') {
       const url = prompt("Nhập URL hình ảnh:");
@@ -101,14 +107,20 @@
       const url = prompt("Nhập URL liên kết:");
       if (url) document.execCommand('createLink', false, url);
     } else {
-      document.execCommand(command, false, null);
+      document.execCommand(command, false, undefined);
     }
   };
 
-  window.insertTable = () => {
-  const rows = prompt("Số hàng:", 2);
-  const cols = prompt("Số cột:", 2);
-  if (!rows || !cols) return;
+  window.insertTable = function () {
+  const rowsStr = prompt("Số hàng:", "2");
+  const colsStr = prompt("Số cột:", "2");
+
+  if (!rowsStr || !colsStr) return;
+
+  const rows = parseInt(rowsStr, 10);
+  const cols = parseInt(colsStr, 10);
+
+  if (isNaN(rows) || isNaN(cols)) return;
 
   let table = `<table class="w-full border border-black border-collapse my-2">`;
   for (let i = 0; i < rows; i++) {

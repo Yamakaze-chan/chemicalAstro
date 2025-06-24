@@ -38,8 +38,8 @@ import { initPagination } from "../utils/pagination.js";
 
   const pagination = document.getElementById('pagination');
    // Render các checkbox danh mục
-      const renderTagCheckboxes = () => {
-    tagList.innerHTML = `
+      function renderTagCheckboxes() {
+    tagList!.innerHTML = `
       <li>
         <input type="checkbox" value="all" class="filter-checkbox all-checkbox" checked>
         Tất cả sản phẩm
@@ -47,7 +47,7 @@ import { initPagination } from "../utils/pagination.js";
     `;
 
     allTags.forEach(tag => {
-      tagList.innerHTML += `
+      tagList!.innerHTML += `
         <li>
           <input type="checkbox" value="${tag}" class="filter-checkbox">
           ${tag}
@@ -78,16 +78,16 @@ import { initPagination } from "../utils/pagination.js";
     `;
   });
 
-  productList.innerHTML = html;
+  productList!.innerHTML = html;
 }
 
-const setupFilterEvents = () => {
-    const allCheckbox = document.querySelector('.all-checkbox');
-    const otherCheckboxes = document.querySelectorAll('.filter-checkbox:not(.all-checkbox)');
+function setupFilterEvents() {
+    const allCheckbox = document.querySelector('.all-checkbox') as HTMLInputElement | null;
+    const otherCheckboxes = document.querySelectorAll<HTMLInputElement>('.filter-checkbox:not(.all-checkbox)');
 
-    allCheckbox.addEventListener('change', () => {
+    allCheckbox?.addEventListener('change', () => {
       if (allCheckbox.checked) {
-        otherCheckboxes.forEach(cb => cb.checked = false);
+        otherCheckboxes.forEach(cb => (cb as HTMLInputElement).checked = false);
         renderFilteredAndPaginate([]);
       }
     });
@@ -95,7 +95,7 @@ const setupFilterEvents = () => {
     otherCheckboxes.forEach(cb => {
       cb.addEventListener('change', () => {
         if (cb.checked) {
-          allCheckbox.checked = false;
+          allCheckbox!.checked = false;
         }
 
         const selectedTags = Array.from(otherCheckboxes)
@@ -103,7 +103,7 @@ const setupFilterEvents = () => {
           .map(cb => cb.value);
 
         if (selectedTags.length === 0) {
-          allCheckbox.checked = true;
+          allCheckbox!.checked = true;
           renderFilteredAndPaginate([]);
           return;
         }
@@ -121,7 +121,7 @@ const setupFilterEvents = () => {
   });
 
 
-  function renderFilteredAndPaginate(selectedTags) {
+  function renderFilteredAndPaginate(selectedTags: string[]) {
     if (selectedTags.length === 0) {
       filteredProducts = [...products];
     } else {
