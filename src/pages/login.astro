@@ -1,36 +1,22 @@
 ---
-import EditNew from '../../components/Admin/EditNew.astro';
-import Header from '../../components/Admin/Header.astro';
-import Footer from '../../components/Admin/Footer.astro';
-import "../../styles/admin.css";
-import "../../styles/global.css";
-import { requireLogin, requireRole } from "../../lib/auth";
-
-// Kiểm tra đăng nhập trước
-const user = requireLogin(Astro.cookies);
-
-if (!user) {
-  return Astro.redirect("/login");
-}
-
-// Sau đó kiểm tra quyền
-if (user.role !== "admin" && user.role !== "user") {
-  return Astro.redirect("/login");
-}
+import Login from '../components/Login.astro';
 ---
 
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ted Martins - Admin</title>
+    <title>Ted Martins - Login</title>
 
-  
     <!-- Ionicons support -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Optional global CSS -->
+    <link rel="stylesheet" href="/styles/global.css" />
+    <link rel = "stylesheet" href="/styles/homepage.css" />
 
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
     <script
@@ -43,10 +29,8 @@ if (user.role !== "admin" && user.role !== "user") {
 
   <body>
 
-    <Header user={user}/>  
+    
+    <Login />
 
-    <EditNew />
-
-    <Footer user={user}/>
   </body>
 </html>

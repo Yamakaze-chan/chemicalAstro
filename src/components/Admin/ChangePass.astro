@@ -1,0 +1,68 @@
+---
+import { requireRole } from '../../lib/auth';
+const user = requireRole(Astro.cookies, ["user", "admin"]);
+if (!user) {
+  return Astro.redirect("/login");
+}
+---
+
+<section class="max-w-xl mx-auto px-4 py-12 mt-[5%]">
+  <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Thông tin tài khoản</h1>
+
+  <div class="bg-white p-6 rounded shadow mb-8">
+    <p class="text-lg text-gray-700"><strong>Tên đăng nhập:</strong> {user.username}</p>
+    <p class="text-lg text-gray-700"><strong>Quyền:</strong> {user.role}</p>
+  </div>
+
+  <form id="change-password-form" class="bg-white p-6 rounded shadow">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">🔒 Đổi mật khẩu</h2>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">Mật khẩu cũ</label>
+      <input type="password" name="oldPassword" required class="w-full border px-4 py-2 rounded" />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700">Mật khẩu mới</label>
+      <input type="password" name="newPassword" required class="w-full border px-4 py-2 rounded" />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700">Xác nhận mật khẩu mới</label>
+      <input type="password" name="confirmPassword" required class="w-full border px-4 py-2 rounded" />
+    </div>
+
+    <div class="flex justify-center">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+            Đổi mật khẩu
+        </button>
+        </div>
+    <p id="status-msg" class="text-sm mt-3 text-red-500"></p>
+  </form>
+</section>
+
+<script>
+document.getElementById("change-password-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const status = document.getElementById("status-msg");
+
+  const oldPassword = form.oldPassword.value;
+  const newPassword = form.newPassword.value;
+  const confirmPassword = form.confirmPassword.value;
+
+  if (newPassword !== confirmPassword) {
+    status.textContent = "❌ Mật khẩu xác nhận không khớp.";
+    return;
+  }
+
+  const res = await fetch("/api/change-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ oldPassword, newPassword }),
+  });
+
+  const msg = await res.text();
+  status.textContent = res.ok ? "✅ " + msg : "❌ " + msg;
+  status.classList.toggle("text-green-600", res.ok);
+  status.classList.toggle("text-red-500", !res.ok);
+});
+</script>

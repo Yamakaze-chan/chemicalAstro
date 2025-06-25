@@ -1,7 +1,7 @@
 ---
-import EditNew from '../../components/Admin/EditNew.astro';
 import Header from '../../components/Admin/Header.astro';
 import Footer from '../../components/Admin/Footer.astro';
+import ChangePass from '../../components/Admin/ChangePass.astro';
 import "../../styles/admin.css";
 import "../../styles/global.css";
 import { requireLogin, requireRole } from "../../lib/auth";
@@ -26,7 +26,6 @@ if (user.role !== "admin" && user.role !== "user") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ted Martins - Admin</title>
 
-  
     <!-- Ionicons support -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -45,7 +44,7 @@ if (user.role !== "admin" && user.role !== "user") {
 
     <Header user={user}/>  
 
-    <EditNew />
+    <ChangePass />
 
     <Footer user={user}/>
   </body>

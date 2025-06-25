@@ -1,20 +1,17 @@
 ---
-import EditNew from '../../components/Admin/EditNew.astro';
 import Header from '../../components/Admin/Header.astro';
 import Footer from '../../components/Admin/Footer.astro';
+import Accounts from '../../components/Admin/Accounts.astro';
 import "../../styles/admin.css";
 import "../../styles/global.css";
-import { requireLogin, requireRole } from "../../lib/auth";
+import { requireLogin } from "../../lib/auth";
 
-// Kiểm tra đăng nhập trước
 const user = requireLogin(Astro.cookies);
-
 if (!user) {
   return Astro.redirect("/login");
 }
 
-// Sau đó kiểm tra quyền
-if (user.role !== "admin" && user.role !== "user") {
+if (user.role !== "admin") {
   return Astro.redirect("/login");
 }
 ---
@@ -26,7 +23,6 @@ if (user.role !== "admin" && user.role !== "user") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ted Martins - Admin</title>
 
-  
     <!-- Ionicons support -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -45,7 +41,7 @@ if (user.role !== "admin" && user.role !== "user") {
 
     <Header user={user}/>  
 
-    <EditNew />
+    <Accounts />
 
     <Footer user={user}/>
   </body>

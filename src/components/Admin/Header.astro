@@ -1,4 +1,5 @@
 ---
+const { user } = Astro.props;
 ---
 
 <header class="z-10 fixed top-0 w-full bg-gray-800 text-white shadow-md">
@@ -21,10 +22,21 @@
     <!-- Menu điều hướng -->
     <nav :class="{ 'block': open, 'hidden': !open }" class="md:flex space-x-4 hidden">
       <a href="/admin" class="block px-4 py-2 hover:bg-gray-700 rounded">Dashboard</a>
+      {user?.role === "admin" && (
+        <>
+          <a href="/admin/accounts" class="block px-4 py-2 hover:bg-gray-700 rounded">Quản Lí Người Dùng</a>
+        </>
+      )}
+      {user?.role === "user" && (
+        <>
+
+        </>
+      )}
+      <a href="/admin/changepass" class="block px-4 py-2 hover:bg-gray-700 rounded">Tài khoản</a>
       <a href="/admin/products" class="block px-4 py-2 hover:bg-gray-700 rounded">Sản phẩm</a>
       <a href="/admin/news" class="block px-4 py-2 hover:bg-gray-700 rounded">Tin Tức</a>
       <a href="/admin/contact" class="block px-4 py-2 hover:bg-gray-700 rounded">Liên Hệ</a>
-      <a href="/logout" class="block px-4 py-2 bg-red-600 hover:bg-red-500 rounded">Đăng xuất</a>
+      <a href="/api/logout" class="block px-4 py-2 bg-red-600 hover:bg-red-500 rounded">Đăng xuất</a>
     </nav>
   </div>
 </header>

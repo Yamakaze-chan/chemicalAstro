@@ -75,5 +75,12 @@ export function initPagination({ data = [], itemsPerPage = 12, onRenderPage, pag
       changePage(1);
     },
     goToPage: changePage,
+
+    updateData(newData) {
+      data = newData;
+      totalPages = Math.ceil(data.length / itemsPerPage);
+      currentPage = 1;
+      changePage(currentPage);
+    },
   };
 }

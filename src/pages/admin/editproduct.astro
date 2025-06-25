@@ -4,6 +4,19 @@ import Header from '../../components/Admin/Header.astro';
 import Footer from '../../components/Admin/Footer.astro';
 import "../../styles/admin.css";
 import "../../styles/global.css";
+import { requireLogin, requireRole } from "../../lib/auth";
+
+// Kiểm tra đăng nhập trước
+const user = requireLogin(Astro.cookies);
+
+if (!user) {
+  return Astro.redirect("/login");
+}
+
+// Sau đó kiểm tra quyền
+if (user.role !== "admin" && user.role !== "user") {
+  return Astro.redirect("/login");
+}
 ---
 
 <!DOCTYPE html>
@@ -29,10 +42,10 @@ import "../../styles/global.css";
 
   <body>
 
-    <Header />  
+    <Header user={user}/>  
 
     <EditProduct />
 
-    <Footer />
+    <Footer user={user}/>
   </body>
 </html>
