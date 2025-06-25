@@ -1,0 +1,255 @@
+---
+---
+
+<section class="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-16 px-6">
+  <div class="max-w-7xl mx-auto mt-[5%]">
+    <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-10">Quản lí tài khoản</h1>
+<div class="mb-6 flex flex-col md:flex-row md:items-end gap-6 justify-center">
+
+  <div class="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+  <!-- Tìm kiếm (nằm giữa trên mobile, trái trên desktop) -->
+  <div class="flex flex-col w-full md:w-[300px] mx-auto md:mx-0">
+    <label for="search-input" class="text-sm font-medium text-gray-700 mb-1">Tìm kiếm:</label>
+    <input
+      type="text"
+      id="search-input"
+      placeholder="🔍 Nhập tên tài khoản..."
+      class="border rounded px-4 py-2 shadow-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <!-- Nút thêm (bên phải) -->
+  <div class="text-center md:text-right w-full md:w-auto">
+    <button id="open-create-modal" class="bg-[var(--color-4)] hover:bg-[var(--color-3)] text-white px-6 py-2 rounded text-lg w-full md:w-auto">
+      ➕ Tạo tài khoản mới
+    </button>
+  </div>
+</div>
+
+<div id="create-modal" class="fixed inset-0 z-50 bg-black/70 bg-opacity-50 flex justify-center items-center hidden">
+  <form id="create-user-form" class="bg-white p-6 rounded shadow-md w-full max-w-md">
+    <h2 class="text-xl font-bold mb-4 text-gray-800">➕ Tạo tài khoản mới</h2>
+    <div class="mb-4">
+      <label class="block text-gray-700">Tên đăng nhập</label>
+      <input type="text" name="username" class="w-full border px-4 py-2 rounded" required />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700">Mật khẩu</label>
+      <input type="password" name="password" class="w-full border px-4 py-2 rounded" required />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700">Quyền</label>
+      <select name="role" class="w-full border px-4 py-2 rounded">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="flex justify-end gap-2">
+      <button type="button" id="close-create-modal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Hủy</button>
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Tạo tài khoản</button>
+    </div>
+  </form>
+</div>
+
+</div>
+
+   <div class="overflow-x-auto bg-white shadow-xl">
+  <!-- Bọc cả bảng và phân trang -->
+  <div class="min-h-[700px] flex flex-col justify-between">
+    <table class="w-full min-w-[768px] text-sm table-fixed border-collapse">
+      <thead class="bg-[var(--color-4)] text-white uppercase text-xs font-semibold">
+        <tr class="border-b border-gray-300">
+          <th class="w-[10%] px-4 py-3 text-center">ID</th>
+          <th class="w-[25%] px-4 py-3 text-center">Tên đăng nhập</th>
+          <th class="w-[20%] px-4 py-3 text-left">Mật khẩu</th>
+          <th class="w-[15%] px-4 py-3 text-left">Quyền</th>
+          <th class="w-[20%] px-4 py-3 text-center">Hành động</th>
+        </tr>
+      </thead>
+
+      <tbody id="accounts-table-body">
+        <!-- JS render -->
+      </tbody>
+    </table>
+
+    <!-- Pagination luôn nằm dưới -->
+    <div id="pagination" class="flex justify-center gap-2 mt-6 flex-wrap p-4"></div>
+  </div>
+</div>
+
+  </div>
+</section>
+
+<script>
+    import { initPagination } from "../../utils/pagination.js";
+
+    const pagination = document.getElementById("pagination");
+
+    interface User {
+    id: number;
+    username: string;
+    role: string;
+    }
+
+    interface PaginationInstance {
+    render: (data: User[]) => void;
+    goToPage: (page: number) => void;
+    updateData: (data: User[]) => void;
+    }
+
+    let users: { id: number; username: string; role: string }[] = [];     
+    let filteredUser = [];   
+    let paginationInstance: PaginationInstance;
+
+// Hàm render danh sách user cho mỗi trang
+function renderAccounts(pageUsers: User[]) {
+  const body = document.getElementById("accounts-table-body");
+  if (!body) return;
+
+  if (pageUsers.length === 0) {
+    body.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500 py-4">Không có người dùng nào.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = pageUsers.map(user => `
+    <tr class="border-b border-gray-200">
+      <td class="w-[10%] px-4 py-3 text-center">${user.id}</td>
+      <td class="w-[25%] px-4 py-3 text-center">${user.username}</td>
+      <td class="w-[20%] px-4 py-3 text-left">••••••••</td>
+      <td class="w-[15%] px-4 py-3 text-left">${user.role}</td>
+      <td class="w-[20%] px-4 py-3">
+        <div class="flex justify-center gap-2">
+          <button onclick="resetPassword(${user.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Cấp lại</button>
+          <button onclick="deleteUser(${user.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Xóa</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+// Gọi API để lấy danh sách người dùng và cập nhật phân trang
+async function fetchUsers() {
+  const res = await fetch('/api/users');
+  const body = document.getElementById("accounts-table-body");
+
+  if (!res.ok) {
+    body!.innerHTML = `<tr><td colspan="5" class="text-center text-red-500 py-4">Không thể tải danh sách người dùng</td></tr>`;
+    return;
+  }
+
+  users = await res.json();
+  filteredUser = [...users];
+
+  if (paginationInstance) {
+    paginationInstance.updateData(filteredUser);
+  } else {
+    paginationInstance = initPagination({
+      data: filteredUser,
+      itemsPerPage: 10,
+      onRenderPage: renderAccounts,
+      paginationContainer: pagination,
+    });
+  }
+
+  paginationInstance.render(filteredUser);
+}
+
+fetchUsers();
+
+// Xử lý tạo tài khoản
+const form = document.getElementById("create-user-form") as HTMLFormElement | null;
+form?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target as HTMLFormElement);
+
+  const data = {
+    username: (formData.get("username") || "").toString().trim(),
+    password: (formData.get("password") || "").toString(),
+    role: (formData.get("role") || "").toString(),
+  };
+
+  const res = await fetch('/api/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (res.ok) {
+    alert("✅ Tạo tài khoản thành công!");
+    form!.reset();
+    fetchUsers();
+  } else {
+    const msg = await res.text();
+    alert("❌ Tạo thất bại: " + msg);
+  }
+});
+
+// Reset mật khẩu
+declare global {
+  interface Window {
+    resetPassword: (id: string) => Promise<void>;
+    deleteUser: (id: string) => Promise<void>;
+  }
+}
+
+window.resetPassword = async function(id) {
+  const newPassword = prompt("Nhập mật khẩu mới:");
+  if (!newPassword) return;
+
+  const res = await fetch('/api/users', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, newPassword })
+  });
+
+  if (res.ok) {
+    alert("Cấp lại mật khẩu thành công!");
+  } else {
+    alert("Thất bại!");
+  }
+};
+
+// Xóa tài khoản
+window.deleteUser = async function(id) {
+  if (!confirm("Bạn có chắc muốn xóa người dùng này?")) return;
+
+  const res = await fetch('/api/users', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+
+  if (res.ok) {
+    alert("Đã xóa thành công!");
+    fetchUsers();
+  } else {
+    alert("Xóa thất bại!");
+  }
+};
+
+// Tìm kiếm
+const searchInput = document.getElementById("search-input");
+
+function SearchUser() {
+  const keyword = (searchInput as HTMLInputElement)?.value.trim().toLowerCase();
+
+  filteredUser = users.filter(u => u.username.toLowerCase().includes(keyword));
+  paginationInstance.render(filteredUser);
+}
+
+searchInput?.addEventListener("input", SearchUser);
+
+// Modal
+const btnOpen = document.getElementById("open-create-modal");
+btnOpen?.addEventListener("click", () => {
+  document.getElementById("create-modal")?.classList.remove("hidden");
+});
+
+const btnClose = document.getElementById("close-create-modal");
+btnClose?.addEventListener("click", () => {
+  document.getElementById("create-modal")?.classList.add("hidden");
+});
+
+
+</script>

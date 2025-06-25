@@ -1,0 +1,60 @@
+---
+const error = Astro.url.searchParams.get("error");
+import "../styles/global.css";
+---
+
+<section class="bg-[linear-gradient(to_bottom,_var(--color-4)_0%,_var(--color-1)_40%,_var(--color-1)_60%,_var(--color-4)_100%)] min-h-screen flex justify-center items-center bg-cover bg-center bg-no-repeat px-4">
+      <form method="POST" action="/api/login" class="w-full max-w-sm bg-white shadow-xl rounded-2xl p-8 relative">
+
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Đăng Nhập</h2>
+
+        {error && (
+          <p class="text-center text-red-600 font-medium bg-red-100 rounded p-2 mb-4">
+            {decodeURIComponent(error)}
+          </p>
+        )}
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="username">Tên đăng nhập</label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            required
+            autofocus
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Nhập tên đăng nhập"
+          />
+        </div>
+
+        <div class="mb-6 relative">
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Mật khẩu</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+            placeholder="••••••••"
+          />
+          <button
+            type="button"
+            onclick="togglePassword()"
+            class="absolute top-[38px] right-3 text-gray-500 hover:text-gray-700 text-sm"
+          >
+            👁️
+          </button>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200"
+        >
+          Đăng nhập
+        </button>
+      </form>
+    </section>
+
+    <script src="/js/login.js" defer></script>
+
+
