@@ -78,7 +78,6 @@
 </section>
 
 <script>
-  import contact from "../../data/contact.json";
   import { initPagination } from "../../utils/pagination.js";
 
   const getBusinessTypeLabel = (type: string) => {
@@ -101,16 +100,27 @@
   };
   
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     const currentPath = window.location.pathname;
 
     // ✅ Reload nếu từ trang chi tiết quay lại để cập nhật trạng thái mới
-     if (
+    if (
     localStorage.getItem("contactPageNeedReload") === "true" &&
     currentPath.startsWith("/admin/contact")
   ) {
     localStorage.removeItem("contactPageNeedReload");
     location.reload();
+    return;
+  }
+
+  // ✅ Fetch từ API MongoDB
+    let contact = [];
+    try {
+    const res = await fetch("/api/contact");
+    if (!res.ok) throw new Error("Failed to load contact data");
+    contact = await res.json();
+  } catch (err) {
+    console.error("Lỗi khi tải dữ liệu liên hệ:", err);
     return;
   }
 

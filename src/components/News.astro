@@ -1,21 +1,19 @@
 ---
-import news from "../data/news.json";
+import { getDB } from "../lib/mongodb"; // đường dẫn tùy vào cấu trúc dự án
 
-// ⚡ Trích ảnh đầu tiên từ content
+// Fetch dữ liệu trực tiếp từ MongoDB
+const db = await getDB();
+const rawNews = await db.collection("news").find().sort({ createdAt: -1 }).toArray();
+
+// Tiền xử lý
 function getFirstImage(content) {
-  const match = content.match(/<img[^>]*src=["']([^"']+)["']/i);
+  const match = content?.match(/<img[^>]*src=["']([^"']+)["']/i);
   return match ? match[1] : "/images/placeholder.jpg";
 }
-
-// ⚡ Trích mô tả từ <h2> hoặc <p>
 function getFirstText(content) {
-  const match = content.match(/<(h2|p)[^>]*>(.*?)<\/\1>/i);
-  if (!match) return "";
-  const rawText = match[2];
-  return rawText.replace(/<[^>]+>/g, "").trim();
+  const match = content?.match(/<(h2|p)[^>]*>(.*?)<\/\1>/i);
+  return match ? match[2].replace(/<[^>]+>/g, "").trim() : "";
 }
-
-// ⚡ Định dạng ngày giờ
 function formatDate(isoString) {
   const date = new Date(isoString);
   return date.toLocaleString("vi-VN", {
@@ -27,8 +25,7 @@ function formatDate(isoString) {
   });
 }
 
-// ⚡ Chuẩn hóa dữ liệu
-const enrichedNews = news.map(item => ({
+const enrichedNews = rawNews.map(item => ({
   ...item,
   imageSrc: item.imageSrc || getFirstImage(item.content),
   imageAlt: item.imageAlt || item.title,

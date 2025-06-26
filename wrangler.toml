@@ -1,9 +1,17 @@
 name = "my-astro-app"
 type = "javascript"
-main = "dist/_worker.js"
+main = "custom-worker.js"
 compatibility_date = "2025-03-25"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 
 [build]
 command = "npm run build"
+
+[[bindings]]
+type = "bucket"
+name = "ASSETS"
+bucket = "./dist"
+
+[vars]
+DB_LINK_MONGODB = "mongodb+srv://nxtaanhp:anh123@chemical.hwgwjcg.mongodb.net/?retryWrites=true&w=majority"

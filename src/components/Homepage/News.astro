@@ -1,22 +1,20 @@
 ---
-import news from "../../data/news.json";
+import { getDB } from "../../lib/mongodb"; // đường dẫn tùy vào cấu trúc dự án
 
-// ⚡ Trích ảnh đầu tiên từ content
-function getFirstImage(content: string): string {
-  const match = content.match(/<img[^>]*src=["']([^"']+)["']/i);
+// Fetch dữ liệu trực tiếp từ MongoDB
+const db = await getDB();
+const rawNews = await db.collection("news").find().sort({ createdAt: -1 }).toArray();
+
+// Tiền xử lý
+function getFirstImage(content) {
+  const match = content?.match(/<img[^>]*src=["']([^"']+)["']/i);
   return match ? match[1] : "/images/placeholder.jpg";
 }
-
-// ⚡ Trích mô tả từ <h2> hoặc <p>
-function getFirstText(content: string) {
-  const match = content.match(/<(h2|p)[^>]*>(.*?)<\/\1>/i);
-  if (!match) return "";
-  const rawText = match[2];
-  return rawText.replace(/<[^>]+>/g, "").trim();
+function getFirstText(content) {
+  const match = content?.match(/<(h2|p)[^>]*>(.*?)<\/\1>/i);
+  return match ? match[2].replace(/<[^>]+>/g, "").trim() : "";
 }
-
-// ⚡ Định dạng ngày giờ
-function formatDate(isoString: string) {
+function formatDate(isoString) {
   const date = new Date(isoString);
   return date.toLocaleString("vi-VN", {
     day: "2-digit",
@@ -27,20 +25,17 @@ function formatDate(isoString: string) {
   });
 }
 
-// ⚡ Chuẩn hóa & chỉ lấy 4 tin mới nhất
-const enrichedNews = news
-  .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
-  .slice(0, 4)
-  .map(item => ({
-    ...item,
-    imageSrc: item.imageSrc || getFirstImage(item.content),
-    imageAlt: item.imageAlt || item.title,
-    description: getFirstText(item.content),
-    formattedDate: formatDate(item.createdAt),
-  }));
+const enrichedNews = rawNews.map(item => ({
+  ...item,
+  imageSrc: item.imageSrc || getFirstImage(item.content),
+  imageAlt: item.imageAlt || item.title,
+  description: getFirstText(item.content),
+  formattedDate: formatDate(item.createdAt),
+}));
 
 const [latest, ...others] = enrichedNews;
 ---
+
 
 <section class="bg-white py-12 text-[var(--color-3)]">
   <div class="max-w-7xl mx-auto px-4">

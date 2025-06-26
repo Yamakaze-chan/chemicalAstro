@@ -9,6 +9,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  integrations: [tailwindcss()],
   output: 'server',
   adapter: cloudflare(),
   bodyParser: false,

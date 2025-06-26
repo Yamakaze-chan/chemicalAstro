@@ -1,30 +1,17 @@
 import type { APIRoute } from "astro";
-import { requireRole } from "../../lib/auth";
-import path from "path";
-import fs from "fs/promises";
 import bcrypt from "bcrypt";
+import { getDB } from "../../lib/mongodb";
+import { requireRole } from "../../lib/auth";
 
-// Đọc và ghi file user.json
-const filePath = path.resolve("src/data/user.json");
-
-async function getUsers() {
-  const data = await fs.readFile(filePath, "utf-8");
-  return JSON.parse(data);
-}
-
-async function saveUsers(users: any[]) {
-  await fs.writeFile(filePath, JSON.stringify(users, null, 2), "utf-8");
-}
-
-// GET: Trả danh sách người dùng (ẩn mật khẩu)
+// GET: Trả danh sách người dùng
 export const GET: APIRoute = async ({ cookies }) => {
   const user = requireRole(cookies, ["admin"]);
   if (!user) return new Response("Unauthorized", { status: 401 });
 
-  const users = await getUsers();
-  const safeUsers = users.map(({ id, username, role }) => ({ id, username, role }));
+  const db = await getDB(locals.runtime.env);
+  const users = await db.collection("users").find().project({ password: 0 }).toArray();
 
-  return new Response(JSON.stringify(safeUsers), {
+  return new Response(JSON.stringify(users), {
     headers: { "Content-Type": "application/json" },
   });
 };
@@ -35,9 +22,8 @@ export const DELETE: APIRoute = async ({ request, cookies }) => {
   if (!user) return new Response("Unauthorized", { status: 401 });
 
   const { id } = await request.json();
-  let users = await getUsers();
-  users = users.filter((u: any) => u.id !== id);
-  await saveUsers(users);
+  const db = await getDB(locals.runtime.env);
+  await db.collection("users").deleteOne({ id });
 
   return new Response(JSON.stringify({ success: true }), {
     headers: { "Content-Type": "application/json" },
@@ -54,13 +40,11 @@ export const PATCH: APIRoute = async ({ request, cookies }) => {
     return new Response("Thiếu ID hoặc mật khẩu mới", { status: 400 });
   }
 
-  const users = await getUsers();
-  const index = users.findIndex((u: any) => u.id === id);
-  if (index === -1) return new Response("Người dùng không tồn tại", { status: 404 });
-
   const hashed = await bcrypt.hash(newPassword, 10);
-  users[index].password = hashed;
-  await saveUsers(users);
+  const db = await getDB(locals.runtime.env);
+  const result = await db.collection("users").updateOne({ id }, { $set: { password: hashed } });
+
+  if (result.modifiedCount === 0) return new Response("Không tìm thấy người dùng", { status: 404 });
 
   return new Response(JSON.stringify({ success: true }), {
     headers: { "Content-Type": "application/json" },
@@ -77,25 +61,17 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     return new Response("Thiếu thông tin", { status: 400 });
   }
 
-  const users = await getUsers();
-  if (users.find((u) => u.username === username)) {
-    return new Response("Tài khoản đã tồn tại", { status: 409 });
-  }
+  const db = await getDB(locals.runtime.env);
+  const existing = await db.collection("users").findOne({ username });
+  if (existing) return new Response("Tài khoản đã tồn tại", { status: 409 });
 
   const hashed = await bcrypt.hash(password, 10);
   const id = Date.now() + Math.floor(Math.random() * 10000);
-  const newUser = {
-    id: id,
-    username,
-    password: hashed,
-    role,
-  };
+  const newUser = { id, username, password: hashed, role };
 
-  users.push(newUser);
-  await saveUsers(users);
+  await db.collection("users").insertOne(newUser);
 
   return new Response(JSON.stringify({ success: true }), {
     headers: { "Content-Type": "application/json" },
   });
 };
-
