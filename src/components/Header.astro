@@ -1,6 +1,6 @@
 ---
 import { onMount } from "astro/client";
-import "../styles/global.css";
+
 import products from "../data/products.json";
 
 const tags = [...new Set(products.flatMap(p => p.tags || []))];
