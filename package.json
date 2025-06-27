@@ -8,17 +8,25 @@
     "preview": "astro preview",
     "astro": "astro",
     "host": "astro dev --host",
-    "abc": "npx astro build && npx wrangler dev"
+    "abc": "npx astro build && npx wrangler pages dev ./dist",
+    "create_table":"npx wrangler d1 create astro_db",
+    "seed":"npx wrangler d1 execute astro_db --file=./seed.sql --remote"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.5.5",
     "@tailwindcss/vite": "^4.1.8",
     "astro": "^5.9.1",
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
+    "mongodb": "^6.17.0",
     "swiper": "^11.2.8",
     "tailwindcss": "^4.1.8"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.10",
+    "@types/bcrypt": "^5.0.2",
+    "@types/nodemailer": "^6.4.17",
+    "autoprefixer": "^10.4.21",
     "nodemailer": "^7.0.3",
     "wrangler": "^4.20.3"
   }

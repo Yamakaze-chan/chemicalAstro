@@ -6,10 +6,16 @@ dotenv.config();
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://example.com',
   vite: {
     plugins: [tailwindcss()],
   },
   output: 'server',
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    mode: 'directory',
+    platformProxy: {
+      enabled: true,
+    },
+  }),
   bodyParser: false,
 });

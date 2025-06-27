@@ -281,7 +281,7 @@ section {
   const cardsPerPage = 3;
   let currentIndex = 0;
 
-  function renderCards() {
+  const renderCards = () => {
     const visibleProducts = products.slice(currentIndex, currentIndex + cardsPerPage);
 
     cardsContainer.innerHTML = visibleProducts.map(product => {
