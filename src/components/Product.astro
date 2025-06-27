@@ -38,7 +38,7 @@ import { initPagination } from "../utils/pagination.js";
 
   const pagination = document.getElementById('pagination');
    // Render các checkbox danh mục
-      function renderTagCheckboxes() {
+      const renderTagCheckboxes = () => {
     tagList.innerHTML = `
       <li>
         <input type="checkbox" value="all" class="filter-checkbox all-checkbox" checked>
@@ -81,7 +81,7 @@ import { initPagination } from "../utils/pagination.js";
   productList.innerHTML = html;
 }
 
-function setupFilterEvents() {
+const setupFilterEvents = () => {
     const allCheckbox = document.querySelector('.all-checkbox');
     const otherCheckboxes = document.querySelectorAll('.filter-checkbox:not(.all-checkbox)');
 
