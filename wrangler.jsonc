@@ -1,0 +1,17 @@
+{
+  "name": "my-astro-app",
+  // Update to today's date
+  "compatibility_date": "2025-03-25",
+  "pages_build_output_dir": "./dist",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "astro_db",
+      "database_id": "7babf7fb-04a5-4379-914c-8e6cc4cb0357"
+    }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "binding": "STATIC"
+  }
+}
