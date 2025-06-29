@@ -108,23 +108,19 @@
     SubcribeButton.disabled = true;
     const originalText = SubcribeButton.innerText;
     SubcribeButton.innerText = "Đang gửi...";
-
+    console.log("XXXXXXXXXXXXXXXXXXXXX")
     try{
-    const res = await fetch("/api/subscribe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: SubcribeEmail }),
-    });
+    const res = await fetch("/api/users").then((abv)=>{return abv.json()});
+    console.log("AAAA",res)
 
-    if (res.ok) {
-      alert("✅ Đã gửi liên hệ, chúng tôi sẽ phản hồi bạn sớm!");
-      window.location.href = "/";
-    } else {
-      const error = await res.text();
-      alert("❌ Gửi thất bại: " + error);
-    }
+    // if (res.ok) {
+    //   alert("✅ Đã gửi liên hệ, chúng tôi sẽ phản hồi bạn sớm!");
+    //   window.location.href = "/";
+    //   console.log(res)
+    // } else {
+    //   const error = await res.text();
+    //   alert("❌ Gửi thất bại: " + error);
+    // }
   }catch(err){
     alert("❌ Lỗi kết nối đến máy chủ.");
   }finally{
