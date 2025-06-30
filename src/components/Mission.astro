@@ -3,80 +3,33 @@ import "../styles/global.css";
 import "../styles/ourmission.css";
 ---
 
-
-    <!-- MISSION -->
-    <section class="w-full py-12">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-        <h1 
-      class="text-4xl text-[var(--color-1)] font-bold font-inter invisible-before-scroll opacity-0 animate-on-scroll animation-delay-500 mt-[5%]"
-      data-animate="animate-slideDown"
-    >
+<!-- MISSION -->
+<section class="w-full py-12 mb-[2%]">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h1 class="text-4xl text-[var(--color-1)] font-bold font-inter mt-[5%]">
       SỨ MỆNH
     </h1>
-    <p 
-      class="mt-12 text-lg text-black font-roboto invisible-before-scroll opacity-0 animate-on-scroll animation-delay-1500 max-w-2xl mx-auto" 
-      data-animate="animate-slideInLeft"
-    >
+
+    <p class="mt-12 text-lg text-black font-roboto max-w-2xl mx-auto">
       "We guide and encourage our teenagers in building and maintaining..."
     </p>
 
-        <div class="flex justify-center flex-wrap gap-6 mt-10">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEPPz8FeQ0WpkxgJDkhgkwn6sxbn3lizPzg&s"
-            alt="Mission Image 1"
-            class="w-[220px] h-[320px] rounded-xl object-cover shadow-lg transform scale-90 opacity-0 invisible-before-scroll animate-on-scroll animation-delay-2500 transition duration-300 hover:scale-105 hover:brightness-105"
-            data-animate="animate-fadeIn"
-          />
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEPPz8FeQ0WpkxgJDkhgkwn6sxbn3lizPzg&s"
-            alt="Mission Image 2"
-            class="w-[220px] h-[320px] rounded-xl object-cover shadow-lg transform scale-90 opacity-0 invisible-before-scroll animate-on-scroll animation-delay-2700 transition duration-300 hover:scale-105 hover:brightness-105"
-            data-animate="animate-fadeIn"
-          />
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEPPz8FeQ0WpkxgJDkhgkwn6sxbn3lizPzg&s"
-            alt="Mission Image 3"
-            class="w-[220px] h-[320px] rounded-xl object-cover shadow-lg transform scale-90 opacity-0 invisible-before-scroll animate-on-scroll animation-delay-2900 transition duration-300 hover:scale-105 hover:brightness-105"
-            data-animate="animate-fadeIn"
-          />
-        </div>
+    <div class="flex justify-center flex-wrap gap-6 mt-10">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEPPz8FeQ0WpkxgJDkhgkwn6sxbn3lizPzg&s"
+        alt="Mission Image 1"
+        class="w-[220px] h-[320px] rounded-xl object-cover shadow-lg transition duration-300 hover:scale-105 hover:brightness-105"
+      />
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEPPz8FeQ0WpkxgJDkhgkwn6sxbn3lizPzg&s"
+        alt="Mission Image 2"
+        class="w-[220px] h-[320px] rounded-xl object-cover shadow-lg transition duration-300 hover:scale-105 hover:brightness-105"
+      />
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEPPz8FeQ0WpkxgJDkhgkwn6sxbn3lizPzg&s"
+        alt="Mission Image 3"
+        class="w-[220px] h-[320px] rounded-xl object-cover shadow-lg transition duration-300 hover:scale-105 hover:brightness-105"
+      />
     </div>
- </section>
-
-
-<style>
-.invisible-before-scroll {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.6s ease-out;
-}
-
-</style>
-
-<!-- Scroll-triggered animation logic -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          el.classList.remove("invisible-before-scroll");
-
-          // Lấy class animation từ data attribute
-          const animationClass = el.getAttribute("data-animate");
-          if (animationClass) {
-            el.classList.add(animationClass);
-          }
-
-          // Ngưng theo dõi phần tử sau khi đã hiện
-          observer.unobserve(el);
-        }
-      });
-    }, {
-      threshold: 0.1
-    });
-
-    // Tìm mọi phần tử cần animate
-    document.querySelectorAll(".animate-on-scroll").forEach(el => {
-      observer.observe(el);
-    });
-  });
-</script>
-
+  </div>
+</section>

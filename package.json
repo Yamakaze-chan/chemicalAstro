@@ -10,7 +10,9 @@
     "host": "astro dev --host",
     "abc": "npx astro build && npx wrangler dev ./dist/_worker.js --remote",
     "create_table": "npx wrangler d1 create astro_db",
-    "seed": "npx wrangler d1 execute astro_db --file=./seed.sql --remote"
+    "seed": "npx wrangler d1 execute astro_db --file=./seed.sql --remote",
+    "up": "astro build --watch",
+    "up1": "nodemon"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.5.5",
@@ -29,6 +31,7 @@
     "autoprefixer": "^10.4.21",
     "lightningcss": "^1.30.1",
     "nodemailer": "^7.0.3",
+    "nodemon": "^3.1.10",
     "wrangler": "^4.20.3"
   },
   "optionalDependencies": {

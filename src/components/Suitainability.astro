@@ -2,80 +2,36 @@
 import "../styles/global.css";
 import "../styles/ourmission.css";
 ---
-<div class="bg-white">
-    <!-- SUSTAINABILITY -->
-    
-    <section class="py-12 text-center">
-     <div class="max-w-7xl mx-auto px-4">
-    <h1 
-        class="text-4xl text-[var(--color-1)] font-bold font-inter invisible-before-scroll opacity-0 animate-on-scroll animation-delay-500 mt-[5%]"
-        data-animate="animate-slideDown"
-      >
+
+<div class="bg-white mb-[2%]">
+  <!-- SUSTAINABILITY -->
+  <section class="py-12 text-center">
+    <div class="max-w-7xl mx-auto px-4">
+      <h1 class="text-4xl text-[var(--color-1)] font-bold font-inter mt-[5%]">
         TÍNH BỀN VỮNG
       </h1>
-    <div class="flex flex-col md:flex-row items-center justify-center gap-8 mt-10 px-4 md:px-0">
 
-    <!-- Image -->
-    <div class="flex-shrink-0">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEPPz8FeQ0WpkxgJDkhgkwn6sxbn3lizPzg&s"
+      <div class="flex flex-col md:flex-row items-center justify-center gap-8 mt-10 px-4 md:px-0">
+        <!-- Image -->
+        <div class="flex-shrink-0">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEPPz8FeQ0WpkxgJDkhgkwn6sxbn3lizPzg&s"
             alt="Sustainability Image"
-            class="w-[220px] h-[320px] rounded-xl object-cover shadow-lg transform scale-90 opacity-0 invisible-before-scroll animate-on-scroll animation-delay-1500 transition duration-300 hover:scale-105 hover:brightness-105"
-            data-animate="animate-fadeIn"
+            class="w-[220px] h-[320px] rounded-xl object-cover shadow-lg transition duration-300 hover:scale-105 hover:brightness-105"
           />
+        </div>
+
+        <!-- Text -->
+        <div class="max-w-2xl text-center md:text-left">
+          <p class="mt-12 text-lg text-black font-roboto max-w-2xl mx-auto">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard 
+            dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+            It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+            It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently 
+            with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+          </p>
+        </div>
+      </div>
     </div>
-
-    <!-- Text -->
-    <div class=" max-w-2xl text-center md:text-left">
-       <p 
-          class="mt-12 text-lg text-black font-roboto invisible-before-scroll opacity-0 animate-on-scroll animation-delay-1500 max-w-2xl mx-auto" 
-          data-animate="animate-slideInLeft"
-        >
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard 
-        dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
-        It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
-        It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently 
-        with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-        </p>
-   </div>
-</section>
+  </section>
 </div>
-
-<style>
-.invisible-before-scroll {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.6s ease-out;
-}
-
-</style>
-
-<!-- Scroll-triggered animation logic -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          el.classList.remove("invisible-before-scroll");
-
-          // Lấy class animation từ data attribute
-          const animationClass = el.getAttribute("data-animate");
-          if (animationClass) {
-            el.classList.add(animationClass);
-          }
-
-          // Ngưng theo dõi phần tử sau khi đã hiện
-          observer.unobserve(el);
-        }
-      });
-    }, {
-      threshold: 0.1
-    });
-
-    // Tìm mọi phần tử cần animate
-    document.querySelectorAll(".animate-on-scroll").forEach(el => {
-      observer.observe(el);
-    });
-  });
-</script>
-

@@ -1,57 +1,72 @@
-// import type { APIRoute } from "astro";
-// import fs from "fs";
-// import path from "path";
+import type { APIRoute } from "astro";
 
-// export const prerender = false;
+export const prerender = false;
 
-// export const POST: APIRoute = async ({ request }) =>{
-//     const formData = await request.formData();
+export const POST: APIRoute = async ({ request, locals }) => {
+  const db = locals.runtime.env.DB;
+  if (!db) {
+    return new Response("Không tìm thấy DB", { status: 500 });
+  }
 
-//     const nameCustomer = formData.get("nameCustomer")?.toString() || "";
-//     const email = formData.get("email")?.toString() || "";
-//     const phone = formData.get("phone")?.toString() || "";
-//     const businessType = formData.get("businessType")?.toString() || "";
-//     const businessCategory = formData.get("businessCategory")?.toString() || "";
-//     const messageCustomer = formData.get("messageCustomer")?.toString() || "";
+  let body;
+  try {
+    body = await request.json();
+  } catch (err) {
+    return new Response("Dữ liệu không hợp lệ", { status: 400 });
+  }
 
-//     const missingFields = [];
-//       if (!nameCustomer) missingFields.push("Họ và tên");
-//       if (!email) missingFields.push("Email");
-//       if (!phone) missingFields.push("Số điện thoại");
-//       if (!businessType) missingFields.push("Bạn là");
-//       if (!businessCategory) missingFields.push("Kiểu kinh doanh");
+  const nameCustomer = body.nameCustomer?.toString() || "";
+  const email = body.email?.toString() || "";
+  const phone = body.phone?.toString() || "";
+  const businessType = body.businessType?.toString() || "";
+  const businessCategory = body.businessCategory?.toString() || "";
+  const messageCustomer = body.messageCustomer?.toString() || "";
 
-//       if (missingFields.length > 0) {
-//         return new Response(JSON.stringify({
-//           error: "Thiếu thông tin bắt buộc",
-//           missing: missingFields
-//         }), {
-//           status: 400,
-//           headers: { "Content-Type": "application/json" }
-//         });
-//       }
+  const missingFields = [];
+  if (!nameCustomer) missingFields.push("Họ và tên");
+  if (!email) missingFields.push("Email");
+  if (!phone) missingFields.push("Số điện thoại");
+  if (!businessType) missingFields.push("Bạn là");
+  if (!businessCategory) missingFields.push("Kiểu kinh doanh");
 
-//   const filePath = path.resolve("src/data/contact.json");
+  if (missingFields.length > 0) {
+    return new Response(
+      JSON.stringify({
+        error: "Thiếu thông tin bắt buộc",
+        missing: missingFields,
+      }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 
-//   let existing: any[] = [];
-//     if (fs.existsSync(filePath)) {
-//       existing = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-//     }
-//     const id = Date.now() + Math.floor(Math.random() * 10000);
-//     const newContact = {
-//     id,
-//     nameCustomer,
-//     email,
-//     phone,
-//     businessType,
-//     businessCategory,
-//     messageCustomer,
-//     createdAt: new Date().toISOString(),
-//     status: "unread",
-//   };
-//   existing.unshift(newContact);
-//     fs.writeFileSync(filePath, JSON.stringify(existing, null, 2));
-//     return new Response(null, {
-//     status: 303,
-//   });
-// }
+  try {
+    await db
+      .prepare(
+        `INSERT INTO contact 
+        (nameCustomer, email, phone, businessType, businessCategory, messageCustomer, createdAt, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      )
+      .bind(
+        nameCustomer,
+        email,
+        phone,
+        businessType,
+        businessCategory,
+        messageCustomer,
+        new Date().toISOString(),
+        "unread"
+      )
+      .run();
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (err) {
+    console.error("Lỗi thêm liên hệ:", err);
+    return new Response("Lỗi máy chủ", { status: 500 });
+  }
+};

@@ -70,113 +70,123 @@
 
 
 <script>
-  import products from "../../data/products.json";
   import { initPagination } from "../../utils/pagination.js";
 
   const tbody = document.getElementById("product-table-body");
   const pagination = document.getElementById("pagination");
+  const searchInput = document.getElementById("search-input");
+  const tagFilter = document.getElementById("tag-filter");
 
-  function renderProducts(productArray){
-  if (productArray.length === 0) {
-    tbody!.innerHTML = `
-      <tr class="border-b border-gray-300">
-        <td colspan="5" class="text-center py-6 text-gray-500">Không có sản phẩm nào.</td>
-      </tr>
-    `;
-  } else {
-    tbody!.innerHTML = productArray.map((product, index) => `
-      <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-300">
-        <td class="px-4 py-3 text-center">${product.id}</td>
+  let allProducts = [];
+  let filteredProducts = [];
+  let paginationInstance;
 
-        <td class="px-4 py-3 flex justify-center">
-          <img
-            src="${product.image || "/images/placeholder.png"}"
-            alt="${product.name}"
-            class="w-16 h-16 object-contain rounded border-2 border-gray-600 bg-white p-1"
-          />
-        </td>
+  function renderProducts(productArray) {
+    if (productArray.length === 0) {
+      tbody!.innerHTML = `
+        <tr class="border-b border-gray-300">
+          <td colspan="5" class="text-center py-6 text-gray-500">Không có sản phẩm nào.</td>
+        </tr>
+      `;
+    } else {
+      tbody!.innerHTML = productArray.map((product) => `
+        <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-300">
+          <td class="px-4 py-3 text-center">${product.id}</td>
+          <td class="px-4 py-3 flex justify-center">
+            <img
+              src="${product.image || "/images/placeholder.png"}"
+              alt="${product.name}"
+              class="w-16 h-16 object-contain rounded border-2 border-gray-600 bg-white p-1"
+            />
+          </td>
+          <td class="px-4 py-3 font-semibold text-gray-900">${product.name}</td>
+          <td class="px-4 py-3 text-gray-600">${product.tags?.join(", ") || "-"}</td>
+          <td class="px-4 py-3 text-center space-x-3">
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
+              <a href="/admin/productdetail?id=${product.id}" class="text-blue-600 hover:text-blue-800 font-medium transition">Xem</a>
+              <a href="/admin/editproduct?id=${product.id}" class="text-yellow-500 hover:text-yellow-700 font-medium transition">Sửa</a>
+              <button id="delete-btn-${product.id}" class="cursor-pointer text-red-600 hover:text-red-800 font-medium transition">Xóa</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
 
-        <td class="px-4 py-3 font-semibold text-gray-900">${product.name}</td>
+      document.querySelectorAll("button[id^='delete-btn-']").forEach(button => {
+        button.addEventListener("click", async () => {
+          const id = parseInt(button.id.replace("delete-btn-", ""));
+          if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
 
-        <td class="px-4 py-3 text-gray-600">${product.tags?.join(", ") || "-"}</td>
+          try {
+            const res = await fetch("/api/delete-product", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id }),
+            });
 
-        <td class="px-4 py-3 text-center space-x-3">
-          <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
-            <a href="/admin/productdetail?id=${product.id}" class="text-blue-600 hover:text-blue-800 font-medium transition">Xem</a>
-            <a href="/admin/editproduct?id=${product.id}" class="text-yellow-500 hover:text-yellow-700 font-medium transition">Sửa</a>
-            <button id="delete-btn-${product.id}" class="cursor-pointer text-red-600 hover:text-red-800 font-medium transition">Xóa</button>
-          </div>
-        </td>
-      </tr>
-    `).join("");
-    // Gắn sự kiện xóa cho tất cả nút
-  document.querySelectorAll("button[id^='delete-btn-']").forEach(button => {
-    button.addEventListener("click", async () => {
-      const id = parseInt(button.id.replace("delete-btn-", ""));
-      if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
+            if (!res.ok) {
+              const text = await res.text();
+              alert("Lỗi server: " + text);
+              return;
+            }
 
-      try {
-        const res = await fetch("/api/delete-product", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id }), 
+            alert("Đã xóa sản phẩm.");
+            window.location.reload();
+          } catch (error) {
+            alert("Lỗi kết nối máy chủ.");
+            console.error(error);
+          }
         });
+      });
+    }
+  }
 
-        if (!res.ok) {
-          const text = await res.text();
-          alert("Lỗi server: " + text);
-          return;
-        }
+  function applyFilterAndSearch() {
+    const keyword = searchInput?.value.trim().toLowerCase();
+    const selectedTag = tagFilter?.value;
 
-        const result = await res.json();
-        alert("Đã xóa sản phẩm.");
-        window.location.reload(); // reload lại danh sách sản phẩm
-      } catch (error) {
-        alert("Lỗi kết nối máy chủ.");
-        console.error(error);
-      }
+    filteredProducts = allProducts.filter((p) => {
+      const matchSearch = p.name.toLowerCase().includes(keyword);
+      const matchTag = selectedTag === "" || (p.tags && p.tags.includes(selectedTag));
+      return matchSearch && matchTag;
     });
-  });
+
+    paginationInstance.render(filteredProducts);
   }
+
+  async function fetchAndRenderProducts() {
+    try {
+      const res = await fetch("/api/products");
+      if (!res.ok) throw new Error("Lỗi khi tải sản phẩm");
+
+      allProducts = await res.json();
+      filteredProducts = [...allProducts];
+
+      // Gắn tag filter
+      const uniqueTags = Array.from(new Set(allProducts.flatMap(p => p.tags || [])));
+      uniqueTags.forEach(tag => {
+        const option = document.createElement("option");
+        option.value = tag;
+        option.textContent = tag;
+        tagFilter!.appendChild(option);
+      });
+
+      paginationInstance = initPagination({
+        data: filteredProducts,
+        itemsPerPage: 12,
+        onRenderPage: renderProducts,
+        paginationContainer: pagination,
+      });
+
+      paginationInstance.render(filteredProducts);
+
+      searchInput!.addEventListener("input", applyFilterAndSearch);
+      tagFilter!.addEventListener("change", applyFilterAndSearch);
+    } catch (err) {
+      console.error(err);
+      tbody!.innerHTML = `<tr><td colspan="5" class="text-center text-red-500">Không thể tải sản phẩm.</td></tr>`;
+    }
   }
 
-const searchInput = document.getElementById("search-input");
-const tagFilter = document.getElementById("tag-filter");
-let filteredProducts = [...products]; // mặc định
-
-function applyFilterAndSearch() {
-  const keyword = searchInput?.value.trim().toLowerCase();
-  const selectedTag = tagFilter?.value;
-
-  filteredProducts = products.filter((p) => {
-    const matchSearch =
-      p.name.toLowerCase().includes(keyword);
-    const matchTag = selectedTag === "" || (p.tags && p.tags.includes(selectedTag));
-    return matchSearch && matchTag;
-    
-  });
-
-  paginationInstance.render(filteredProducts);
-
-}
-const uniqueTags = Array.from(new Set(products.flatMap(p => p.tags || [])));
-  uniqueTags.forEach(tag => {
-    const option = document.createElement("option");
-    option.value = tag;
-    option.textContent = tag;
-    tagFilter?.appendChild(option);
-  });
-
-    // Lắng nghe sự kiện thay đổi
-    searchInput?.addEventListener("input", applyFilterAndSearch);
-    tagFilter?.addEventListener("change", applyFilterAndSearch);
-
-
-  const paginationInstance = initPagination({
-    data: products,
-    itemsPerPage: 12,
-    onRenderPage: renderProducts,
-    paginationContainer: pagination,
-  });
-   paginationInstance.render(filteredProducts)
+  fetchAndRenderProducts();
 </script>
+

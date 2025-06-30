@@ -71,26 +71,30 @@
   const contentInput = document.getElementById("content");
   const editor = document.getElementById("editor");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  form!.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    contentInput.value = editor.innerHTML;
+  const title = form.querySelector("input[name='title']").value;
+  const author = form.querySelector("input[name='author']").value;
+  const content = editor.innerHTML;
 
-    const formData = new FormData(form);
+  contentInput.value = content;
 
-    const res = await fetch("/api/add-news", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (res.ok) {
-      alert("✅ Đã thêm tin tức!");
-      window.location.href = "/admin/news"; // chuyển về trang news
-    } else {
-      const error = await res.text();
-      alert("❌ Lỗi khi thêm tin: " + error);
-    }
+  const res = await fetch("/api/add-news", {
+    method: "POST",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify({ title, author, content }),
   });
+
+  if (res.ok) {
+    alert("✅ Đã thêm tin tức!");
+    window.location.href = "/admin/news";
+  } else {
+    const error = await res.text();
+    alert("❌ Lỗi khi thêm tin: " + error);
+  }
+});
+
 
   // Toolbar hỗ trợ
   window.execCmd = function (command) {

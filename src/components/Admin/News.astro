@@ -46,83 +46,91 @@
 </section>
 
 <script>
-  import news from "../../data/news.json";
-  import { initPagination } from "../../utils/pagination.js";
+  // import { initPagination } from "../../utils/pagination.js";
 
-  const tbody = document.getElementById("news-table-body");
-  const pagination = document.getElementById("pagination");
+const tbody = document.getElementById("news-table-body");
+// const pagination = document.getElementById("pagination");
 
-  function stripHtml(html) {
-    return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-  }
+function stripHtml(html) {
+  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+}
 
-  function renderNews(newsArray) {
-    if (newsArray.length === 0) {
-      tbody.innerHTML = `
-        <tr class="border-b border-gray-300">
-          <td colspan="4" class="text-center py-6 text-gray-500">Không có tin tức nào.</td>
-        </tr>
-      `;
-    } else {
-      tbody.innerHTML = newsArray.map(item => `
-        <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-300" data-id="${item.id}">
-          <td class="px-4 py-3 text-center whitespace-nowrap">${item.id}</td>
-          <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[200px]" title="${item.title}">${item.title}</td>
-          <td class="px-4 py-3 text-gray-600 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[250px]">
-            ${item.content ? stripHtml(item.content).slice(0, 60) + "..." : "-"}
-          </td>
-          <td class="px-4 py-3 text-center space-x-3 whitespace-nowrap">
-            <a href="/admin/newdetail?id=${item.id}" class="text-blue-600 hover:text-blue-800 font-medium transition">Xem</a>
-            <a href="/admin/editnew?id=${item.id}" class="text-yellow-500 hover:text-yellow-700 font-medium transition">Sửa</a>
-            <button id="delete-btn-${item.id}" class="cursor-pointer text-red-600 hover:text-red-800 font-medium transition" data-id="${item.id}">Xóa</button>
-          </td>
-        </tr>
-      `).join("");
+// let allNews = [];
+// let filteredNews = [];
 
-      document.querySelectorAll('button[id^="delete-btn-"]').forEach(button => {
-        button.addEventListener('click', async () => {
-          const id = parseInt(button.id.replace("delete-btn-", ""));
-          if (!confirm("Bạn có chắc muốn xóa không?")) return;
-          try {
-            const response = await fetch("/api/delete-news", {
-              method: "POST",
-              headers: { "Content-type": "application/json" },
-              body: JSON.stringify({ id }),
-            });
-            if (!response.ok) {
-              const text = await response.text();
-              alert("Lỗi server");
-              return;
-            }
-            const result = await response.json();
-            alert("Đã xóa tin tức");
-            window.location.reload();
-          } catch (error) {
-            alert("Lỗi kết nối");
-            console.error(error);
+function renderNews(newsArray) {
+  if (newsArray.length === 0) {
+    tbody.innerHTML = `
+      <tr class="border-b border-gray-300">
+        <td colspan="4" class="text-center py-6 text-gray-500">Không có tin tức nào.</td>
+      </tr>
+    `;
+  } else {
+    tbody.innerHTML = newsArray.map(item => `
+      <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-300" data-id="${item.id}">
+        <td class="px-4 py-3 text-center whitespace-nowrap">${item.id}</td>
+        <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[200px]" title="${item.title}">${item.title}</td>
+        <td class="px-4 py-3 text-gray-600 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[250px]">
+          ${item.content ? stripHtml(item.content).slice(0, 60) + "..." : "-"}
+        </td>
+        <td class="px-4 py-3 text-center space-x-3 whitespace-nowrap">
+          <a href="/admin/newdetail?id=${item.id}" class="text-blue-600 hover:text-blue-800 font-medium transition">Xem</a>
+          <a href="/admin/editnew?id=${item.id}" class="text-yellow-500 hover:text-yellow-700 font-medium transition">Sửa</a>
+          <button id="delete-btn-${item.id}" class="cursor-pointer text-red-600 hover:text-red-800 font-medium transition" data-id="${item.id}">Xóa</button>
+        </td>
+      </tr>
+    `).join("");
+
+    document.querySelectorAll('button[id^="delete-btn-"]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const id = parseInt(button.id.replace("delete-btn-", ""));
+        if (!confirm("Bạn có chắc muốn xóa không?")) return;
+        try {
+          const response = await fetch("/api/delete-news", {
+            method: "POST",
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({ id }),
+          });
+          if (!response.ok) {
+            alert("Lỗi server");
+            return;
           }
-        });
+          alert("Đã xóa tin tức");
+          fetchAndRenderNews();
+        } catch (error) {
+          alert("Lỗi kết nối");
+          console.error(error);
+        }
       });
-    }
+    });
   }
+}
 
-  const searchInput = document.getElementById("search-input");
-  let filteredNews = [...news];
+async function fetchAndRenderNews() {
+  try {
 
-  function newsSearch() {
-    const keyword = searchInput?.value.trim().toLowerCase();
-    filteredNews = news.filter(n => n.title.toLowerCase().includes(keyword));
-    paginationInstance.render(filteredNews);
+    const res = await fetch("/api/news").then((abv)=>{return abv.json()});
+
+    const newsList = res.data || res; // Nếu API trả về { data: [...] }
+
+    renderNews(newsList);
+  } catch (err) {
+    console.error("Lỗi khi lấy dữ liệu tin tức:", err);
+    tbody!.innerHTML = `
+      <tr class="border-b border-gray-300">
+        <td colspan="4" class="text-center py-6 text-red-500">Lỗi khi tải dữ liệu.</td>
+      </tr>
+    `;
   }
+}
 
-  searchInput?.addEventListener("input", newsSearch);
+// const searchInput = document.getElementById("search-input");
+// searchInput?.addEventListener("input", () => { ... });
 
-  const paginationInstance = initPagination({
-    data: news,
-    itemsPerPage: 6,
-    onRenderPage: renderNews,
-    paginationContainer: pagination,
-  });
+// let paginationInstance;
+// initPagination(...);
 
-  paginationInstance.render(filteredNews);
+// 🚀 Gọi khi trang tải
+fetchAndRenderNews();
+
 </script>

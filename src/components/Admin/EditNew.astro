@@ -34,9 +34,12 @@ const newEdit = document.getElementById('editnew');
 const urlParams = new URLSearchParams(window.location.search);
 const id = parseInt(urlParams.get("id"));
 
-const response = await fetch("/api/news.json");
-const news = await response.json();
-const item = news.find(n => n.id === id);
+const response = await fetch(`/api/news?id=${id}`);
+if (!response.ok) {
+  newEdit.innerHTML = `<p class="text-red-500 text-center text-lg">❌ Không tìm thấy tin tức.</p>`;
+  throw new Error("Không tìm thấy tin tức");
+}
+const item = await response.json();
 
 if (!item) {
   newEdit.innerHTML = `<p class="text-red-500 text-center text-lg">❌ Không tìm thấy tin tức.</p>`;
@@ -107,12 +110,16 @@ if (!item) {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const id = form.querySelector("input[name='id']").value;
+    const title = form.querySelector("input[name='title']").value;
+    const author = form.querySelector("input[name='author']").value;
+    const content = editor.innerHTML;
     contentInput.value = editor.innerHTML;
 
-    const formData = new FormData(form);
     const res = await fetch("/api/update-news", {
       method: "POST",
-      body: formData,
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify({ id, title, author, content }),
     });
 
     const data = await res.json();

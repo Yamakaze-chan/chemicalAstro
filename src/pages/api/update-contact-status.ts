@@ -1,32 +1,38 @@
-// import type { APIRoute } from "astro";
-// import fs from "fs";
-// import path from "path";
+import type { APIRoute } from "astro";
 
-// export const prerender = false;
+export const prerender = false;
 
-// export const POST: APIRoute = async ({ request }) => {
-//   const { id } = await request.json();
+export const POST: APIRoute = async ({ request, locals }) => {
+  const db = locals.runtime.env.DB;
+  if (!db) {
+    return new Response(
+      JSON.stringify({ success: false, message: "Không tìm thấy DB" }),
+      { status: 500 }
+    );
+  } 
 
-//   const filePath = path.resolve("src/data/contact.json");
+  try {
+    const body = await request.json();
+    const id = parseInt(body.id);
 
-//   if (!fs.existsSync(filePath)) {
-//     return new Response("File not found", { status: 404 });
-//   }
+    if (!id || isNaN(id)) {
+      return new Response(
+        JSON.stringify({ success: false, message: "ID không hợp lệ" }),
+        { status: 400 }
+      );
+    }
 
-//     const data: any[] = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-//     const index = data.findIndex(c => String(c.id) === String(id));
+    await db
+      .prepare("UPDATE contact SET status = 'read' WHERE id = ?")
+      .bind(id)
+      .run();
 
-//   if (index === -1) {
-//     return new Response("Contact not found", { status: 404 });
-//   }
-
-//   if (data[index].status !== "read") {
-//     data[index].status = "read";
-//     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-//   }
-
-//   return new Response(JSON.stringify({ success: true }), {
-//     status: 200,
-//     headers: { "Content-Type": "application/json" },
-//   });
-// };
+    return new Response(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.error("Lỗi cập nhật trạng thái liên hệ:", err);
+    return new Response(
+      JSON.stringify({ success: false, message: "Lỗi máy chủ" }),
+      { status: 500 }
+    );
+  }
+};

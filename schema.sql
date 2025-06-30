@@ -21,7 +21,7 @@ CREATE TABLE contact (
   businessType TEXT,
   businessCategory TEXT,
   messageCustomer TEXT,
-  createdAt TEXT NOT NULL,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   status TEXT CHECK(status IN ('read', 'unread')) DEFAULT 'unread'
 );
 
@@ -30,7 +30,7 @@ CREATE TABLE news (
   title TEXT NOT NULL,
   author TEXT NOT NULL,
   content TEXT NOT NULL,
-  createdAt TEXT NOT NULL
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE outstandingproducts (
@@ -74,7 +74,8 @@ CREATE TABLE chemical_tags (
 CREATE TABLE chemical_specifications (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   chemical_id INTEGER NOT NULL,
-  key TEXT NOT NULL,
+  row_index INTEGER NOT NULL,
+  col_key TEXT NOT NULL,
   value TEXT,
   FOREIGN KEY (chemical_id) REFERENCES products(id) ON DELETE CASCADE
 );

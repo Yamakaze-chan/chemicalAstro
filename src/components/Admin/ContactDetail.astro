@@ -8,12 +8,10 @@
 </section>
 
 <script>
-  import contact from "../../data/contact.json";
+  window.addEventListener("DOMContentLoaded", async () => {
+    const contactDetail = document.getElementById("contact-detail");
 
-  window.addEventListener("DOMContentLoaded", () => {
-    const contactdetail = document.getElementById("contact-detail");
-
-    if (!contactdetail) {
+    if (!contactDetail) {
       console.warn("Không tìm thấy phần tử #contact-detail.");
       return;
     }
@@ -22,12 +20,25 @@
     const idParam = urlParams.get("id");
 
     if (!idParam || isNaN(parseInt(idParam))) {
-      contactdetail.innerHTML = `<p class="text-red-500 text-xl font-semibold">ID không hợp lệ hoặc không được cung cấp.</p>`;
+      contactDetail.innerHTML = `<p class="text-red-500 text-xl font-semibold">ID không hợp lệ hoặc không được cung cấp.</p>`;
       return;
     }
 
     const id = parseInt(idParam);
-    const contactItem = contact.find(c => c.id === id);
+
+    let contactList = [];
+    try {
+      const res = await fetch("/api/contact");
+      if (!res.ok) throw new Error("Lỗi khi gọi API");
+
+      contactList = await res.json();
+    } catch (err) {
+      console.error("Lỗi tải dữ liệu liên hệ:", err);
+      contactDetail.innerHTML = `<p class="text-red-500 text-xl font-semibold">Lỗi khi tải dữ liệu liên hệ.</p>`;
+      return;
+    }
+
+    const contactItem = contactList.find((c) => c.id === id);
 
     const businessTypeMap = {
       retail: "Cá nhân",
@@ -43,9 +54,9 @@
     };
 
     if (!contactItem) {
-      contactdetail.innerHTML = `<p class="text-red-500 text-xl font-semibold">Không tìm thấy liên hệ của khách hàng.</p>`;
+      contactDetail.innerHTML = `<p class="text-red-500 text-xl font-semibold">Không tìm thấy liên hệ của khách hàng.</p>`;
     } else {
-      contactdetail.innerHTML = `
+      contactDetail.innerHTML = `
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-3xl mx-auto">
           <h1 class="text-4xl font-bold text-blue-700 mb-8 border-b pb-4 flex items-center gap-2">
               Chi tiết liên hệ
@@ -58,10 +69,11 @@
               <p><strong class="text-gray-900">📞 Số điện thoại:</strong> ${contactItem.phone}</p>
               <p><strong class="text-gray-900">🏢 Loại hình kinh doanh:</strong> ${businessTypeMap[contactItem.businessType] || "Không xác định"}</p>
               <p><strong class="text-gray-900">📦 Ngành hàng:</strong> ${businessCategoryMap[contactItem.businessCategory] || "Không xác định"}</p>
-              <p><strong class="text-gray-900">📝 Tin nhắn:</strong> ${contactItem.messageCustomer}</p>
+              <p><strong class="text-gray-900">📝 Tin nhắn:</strong> ${contactItem.messageCustomer || "Không có"}</p>
           </div>
         </div>
       `;
     }
   });
 </script>
+

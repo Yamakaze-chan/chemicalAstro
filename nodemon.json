@@ -1,0 +1,5 @@
+{
+  "watch": ["dist/_worker.js"],
+  "ext": "js",
+  "exec": "npx wrangler dev ./dist/_worker.js --remote"
+}

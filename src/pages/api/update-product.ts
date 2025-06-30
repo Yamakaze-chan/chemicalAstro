@@ -1,120 +1,101 @@
-// import type { APIRoute } from "astro";
-// import fs from "fs";
-// import path from "path";
-// import crypto from "crypto";
+import type { APIRoute } from "astro";
 
-// export const prerender = false;
+export const prerender = false;
 
-// export const POST: APIRoute = async ({ request }) => {
-//   try {
-//     const formData = await request.formData();
-//     const id = parseInt(formData.get("id")?.toString() || "0");
+export const POST: APIRoute = async ({ locals, request }) => {
+  const db = locals.runtime.env.DB;
+  if (!db) {
+    return new Response("No DB connection", { status: 500 });
+  }
 
-//     const filePath = path.resolve("src/data/products.json");
-//     const rawData = fs.readFileSync(filePath, "utf-8");
-//     const products = JSON.parse(rawData);
+  try {
+    const body = await request.json();
 
-//     const index = products.findIndex((p: any) => p.id === id);
-//     if (index === -1) {
-//       return new Response(JSON.stringify({ success: false, message: "Sản phẩm không tồn tại." }), {
-//         status: 404,
-//         headers: { "Content-Type": "application/json" },
-//       });
-//     }
+    const {
+      id,
+      name,
+      formula,
+      molarMass,
+      cas,
+      einecs,
+      hsCode,
+      appearance,
+      application,
+      storage,
+      tags = [],
+      image = "",
+      images = [],
+      specifications = [],
+    } = body;
 
-//     const rawTags = formData.get("tags")?.toString() || "";
-//     const tags = rawTags.split(",").map(t => t.trim()).filter(Boolean);
+    if (!id || isNaN(Number(id))) {
+      return new Response("ID không hợp lệ", { status: 400 });
+    }
 
-//     // Cập nhật thông tin cơ bản
-//     products[index] = {
-//       ...products[index],
-//       name: formData.get("name")?.toString() || "",
-//       formula: formData.get("formula")?.toString() || "",
-//       molarMass: formData.get("molarMass")?.toString() || "",
-//       cas: formData.get("cas")?.toString() || "",
-//       einecs: formData.get("einecs")?.toString() || "",
-//       hsCode: formData.get("hsCode")?.toString() || "",
-//       appearance: formData.get("appearance")?.toString() || "",
-//       application: formData.get("application")?.toString() || "",
-//       storage: formData.get("storage")?.toString() || "",
-//       tags,
-//     };
+    // --- Bước 1: Kiểm tra sản phẩm ---
+    const product = await db.prepare("SELECT * FROM products WHERE id = ?").bind(id).first();
+    if (!product) {
+      return new Response("Không tìm thấy sản phẩm", { status: 404 });
+    }
 
-//     // === Xử lý ảnh đại diện ===
-//     const uploadDir = path.resolve("public/uploads");
-//     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    // --- Bước 2: Cập nhật bảng products ---
+    await db
+      .prepare(
+        `UPDATE products SET 
+          name = ?, formula = ?, molarMass = ?, cas = ?, einecs = ?, hsCode = ?, 
+          appearance = ?, application = ?, storage = ?, image = ?
+          WHERE id = ?`
+      )
+      .bind(
+        name,
+        formula,
+        molarMass,
+        cas,
+        einecs,
+        hsCode,
+        appearance,
+        application,
+        storage,
+        image,
+        id
+      )
+      .run();
 
-//     const thumbnailFile = formData.get("thumbnail");
-//     if (thumbnailFile instanceof File && thumbnailFile.size > 0) {
-//       const buffer = Buffer.from(await thumbnailFile.arrayBuffer());
-//       const ext = path.extname(thumbnailFile.name);
-//       const fileName = `${crypto.randomUUID()}${ext}`;
-//       const savePath = path.join(uploadDir, fileName);
-//       fs.writeFileSync(savePath, buffer);
-//       products[index].image = `/uploads/${fileName}`;
-//     }
+    // --- Bước 3: Cập nhật tags ---
+    await db.prepare("DELETE FROM chemical_tags WHERE chemical_id = ?").bind(id).run();
+    for (const tag of tags) {
+      await db.prepare("INSERT INTO chemical_tags (chemical_id, tag) VALUES (?, ?)" ).bind(id, tag).run();
+    }
 
-//     // === Xử lý ảnh sản phẩm ===
-//     const oldImages: string[] = products[index].images || [];
+    // --- Bước 4: Cập nhật ảnh sản phẩm (bỏ qua thực thi) ---
+    await db.prepare("DELETE FROM chemical_images WHERE chemical_id = ?").bind(id).run();
+    for (const img of images) {
+      await db.prepare("INSERT INTO chemical_images (chemical_id, image) VALUES (?, ?)").bind(id, img).run();
+    }
 
-//     // Xoá ảnh nếu có yêu cầu
-//     const removeImages = formData.getAll("remove_images[]") as string[];
-//     const updatedImageList = oldImages.filter(img => !removeImages.includes(img));
+    // --- Bước 5: Cập nhật specifications ---
+    await db.prepare("DELETE FROM chemical_specifications WHERE chemical_id = ?").bind(id).run();
 
-//     for (const imgPath of removeImages) {
-//       const absolutePath = path.resolve("public", "." + imgPath); // "/uploads/xxx.jpg"
-//       if (fs.existsSync(absolutePath)) {
-//         fs.unlinkSync(absolutePath);
-//       }
-//     }
+    for (let rowIndex = 0; rowIndex < specifications.length; rowIndex++) {
+      const row = specifications[rowIndex];
+      for (const [colKey, value] of Object.entries(row)) {
+        await db
+          .prepare(
+            "INSERT INTO chemical_specifications (chemical_id, row_index, col_key, value) VALUES (?, ?, ?, ?)"
+          )
+          .bind(id, rowIndex, colKey, value)
+          .run();
+      }
+    }
 
-//     // Thêm ảnh mới
-//     const newImages = formData.getAll("images") as File[];
-//     for (const file of newImages) {
-//       if (file instanceof File && file.size > 0) {
-//         const buffer = Buffer.from(await file.arrayBuffer());
-//         const ext = path.extname(file.name);
-//         const filename = crypto.randomUUID() + ext;
-//         const savePath = path.join(uploadDir, filename);
-//         fs.writeFileSync(savePath, buffer);
-//         updatedImageList.push(`/uploads/${filename}`);
-//       }
-//     }
-
-//     products[index].images = updatedImageList;
-
-//     // === Xử lý bảng chỉ tiêu kỹ thuật ===
-//     const specMap = new Map<number, Record<string, string>>();
-//     for (const [key, value] of formData.entries()) {
-//       const match = key.match(/^spec_(.+)_(\d+)$/);
-//       if (match) {
-//         const field = match[1];
-//         const rowIndex = parseInt(match[2]);
-//         if (!specMap.has(rowIndex)) {
-//           specMap.set(rowIndex, {});
-//         }
-//         specMap.get(rowIndex)![field] = value.toString();
-//       }
-//     }
-
-//     const specifications = Array.from(specMap.entries())
-//       .sort(([a], [b]) => a - b)
-//       .map(([, spec]) => spec);
-
-//     products[index].specifications = specifications;
-
-//     // Lưu lại file JSON
-//     fs.writeFileSync(filePath, JSON.stringify(products, null, 2), "utf-8");
-
-//     return new Response(JSON.stringify({ success: true }), {
-//       status: 200,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return new Response(JSON.stringify({ success: false, message: "Lỗi server" }), {
-//       status: 500,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   }
-// };
+    return new Response(JSON.stringify({ success: true, message: "Cập nhật sản phẩm thành công." }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Lỗi cập nhật sản phẩm:", error);
+    return new Response(JSON.stringify({ success: false, message: "Lỗi máy chủ khi cập nhật sản phẩm." }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+};

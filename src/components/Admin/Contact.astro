@@ -73,7 +73,6 @@
 </section>
 
 <script>
-  import contact from "../../data/contact.json";
   import { initPagination } from "../../utils/pagination.js";
 
   const getBusinessTypeLabel = (type) => {
@@ -188,16 +187,28 @@
         });
       });
     }
-    
+    let contact = [];
+    let filteredContact = [];
 
     const paginationInstance = initPagination({
-      data: contact,
+      data: [],
       itemsPerPage: 10,
       onRenderPage: renderTablePage,
       paginationContainer,
     });
 
-    let filteredContact = [...contact];
+    // Gọi API để lấy dữ liệu liên hệ
+      fetch("/api/contact")
+        .then(res => res.json())
+        .then(data => {
+          contact = data || [];
+          filteredContact = [...contact];
+          paginationInstance.updateData(filteredContact);
+          paginationInstance.render(filteredContact);
+        })
+        .catch(err => {
+          console.error("Lỗi khi tải danh sách liên hệ:", err);
+        });
 
 const filterDateInput = document.getElementById("filter-date");
 const searchInput = document.getElementById("search-input");
