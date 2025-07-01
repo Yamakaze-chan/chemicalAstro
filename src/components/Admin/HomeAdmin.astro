@@ -1,10 +1,5 @@
 ---
-import products from "../../data/products.json";
-const totalProducts = products.length;
-import news from "../../data/news.json";
-const totalNews = news.length;
-import contact from "../../data/contact.json";
-const unreadContacts = contact.filter(item => item.status === "unread").length;
+
 ---
 
 <section class="pt-24 px-4 pb-12 bg-gray-100 min-h-screen">
@@ -17,7 +12,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
           <h2 class="text-lg font-semibold text-gray-700">Tổng Sản phẩm</h2>
-          <p class="text-3xl font-extrabold text-indigo-600 mt-3">{totalProducts}</p>
+          <p id="total-products" class="text-3xl font-extrabold text-indigo-600 mt-3">--</p>
         </div>
         <a href="/admin/products" class="mt-5 inline-block text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           📦 Xem chi tiết
@@ -28,7 +23,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
           <h2 class="text-lg font-semibold text-gray-700">Tin Tức hiện có</h2>
-          <p class="text-3xl font-extrabold text-green-600 mt-3">{totalNews}</p>
+          <p id="total-news" class="text-3xl font-extrabold text-green-600 mt-3">--</p>
         </div>
         <a href="/admin/news" class="mt-5 inline-block text-sm font-medium text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           📰 Xem chi tiết
@@ -39,7 +34,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
           <h2 class="text-lg font-semibold text-gray-700">Liên Hệ chưa xem</h2>
-          <p class="text-3xl font-extrabold text-blue-600 mt-3">{unreadContacts}</p>
+          <p id="unread-contacts" class="text-3xl font-extrabold text-blue-600 mt-3">--</p>
         </div>
         <a href="/admin/contact" class="mt-5 inline-block text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           🔍 Xem chi tiết
@@ -50,7 +45,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     <!-- Chọn sản phẩm nổi bật -->
     <div class="max-w-7xl mx-auto">
       <div class="mb-6 flex justify-between items-center flex-col sm:flex-row gap-4">
-        <h1 class="text-3xl font-bold">🌟 Chọn sản phẩm nổi bật (tối đa 4)</h1>
+        <h1 class="text-3xl font-bold">Chọn sản phẩm nổi bật (tối đa 4)</h1>
         <input
           id="search-input"
           type="text"
@@ -79,7 +74,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
   let filteredProducts = [];
   let currentPage = 1;
   const itemsPerPage = 8; // ✅ Bạn có thể thay đổi số lượng sản phẩm mỗi trang
-
+  console.log("📦 selectionEl:", selectionEl)
   function renderPagination(totalItems) {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     paginationEl.innerHTML = "";
@@ -110,8 +105,8 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
 
       card.innerHTML = `
         <div class="flex flex-col h-full items-center text-center">
-          <img src="${product.image}" alt="${product.name}"
-            class="w-24 h-24 object-contain mb-3 rounded-full border-2 border-blue-300 bg-white shadow-md" />
+          <img src="${product.image || '/images/placeholder.png'}" alt="${product.name}"
+              class="w-24 h-24 object-contain mb-3 rounded-full border-2 border-blue-300 bg-white shadow-md" />
           <h2 class="text-sm font-semibold text-gray-800 mb-3 min-h-[3rem] px-1">${product.name}</h2>
           <button class="select-btn mt-auto w-full px-3 py-1 rounded font-medium 
                   transition duration-200 ${isSelected ? "bg-red-500 hover:bg-red-600 text-white" : "bg-blue-500 hover:bg-blue-600 text-white"}">
@@ -140,23 +135,38 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     renderPagination(list.length);
   }
 
-  async function loadProducts() {
-    const res = await fetch("/api/products.json");
+async function loadProducts() {
+  try {
+    const res = await fetch("/api/products");
     allProducts = await res.json();
+    console.log("✅ All products:", allProducts);
 
-    const featuredRes = await fetch("/api/outstandingproducts.json");
-    const featured = await featuredRes.json();
-
-    featured.forEach(p => selected.set(p.id, p));
+    try {
+      const featuredRes = await fetch("/api/outstandingproducts");
+      if (featuredRes.ok) {
+        const featured = await featuredRes.json();
+        console.log("✅ Featured:", featured);
+        featured.forEach(p => selected.set(p.id, p));
+      } else {
+        console.warn("⚠️ Không thể tải sản phẩm nổi bật");
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi tải sản phẩm nổi bật:", err);
+    }
 
     filteredProducts = allProducts;
     currentPage = 1;
     renderProducts(filteredProducts);
+  } catch (err) {
+    console.error("❌ Lỗi khi tải sản phẩm:", err);
   }
+}
+
 
   document.getElementById("save-button").addEventListener("click", async () => {
     const data = Array.from(selected.values()).map(({ id, name, image }) => ({ id, name, image }));
-    const res = await fetch("/api/outstandingproducts.json", {
+    console.log("📤 Dữ liệu POST gửi lên:", data); // 👉 log dữ liệu gửi lên
+    const res = await fetch("/api/outstandingproducts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -171,6 +181,19 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     currentPage = 1;
     renderProducts(filteredProducts);
   });
+  async function loadStats() {
+  try {
+    const res = await fetch("/api/dashboard-stats");
+    if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu thống kê");
 
+    const { totalProducts, totalNews, unreadContacts } = await res.json();
+    document.getElementById("total-products").textContent = totalProducts;
+    document.getElementById("total-news").textContent = totalNews;
+    document.getElementById("unread-contacts").textContent = unreadContacts;
+  } catch (err) {
+    console.error("❌ Lỗi khi tải thống kê:", err);
+  }
+}
+  loadStats();
   loadProducts();
 </script>

@@ -14,56 +14,66 @@
   </div>
 </section>
 <script>
-import products from "../data/products.json";
-import { initPagination } from "../utils/pagination.js";
+  import { initPagination } from "../utils/pagination.js";
 
-const productType = document.getElementById('product-type');
-const pagination = document.getElementById("pagination");
-const heading = document.getElementById("product-heading");
+  const productType = document.getElementById('product-type');
+  const pagination = document.getElementById("pagination");
+  const heading = document.getElementById("product-heading");
 
-const urlParams = new URLSearchParams(window.location.search);
-const tagFromURL = urlParams.get("type");
+  const urlParams = new URLSearchParams(window.location.search);
+  const tagFromURL = urlParams.get("type");
 
-// Lọc sản phẩm theo tag
-const filteredProducts = products.filter(p => p.tags?.includes(tagFromURL));
-
-// Hiển thị tiêu đề
-if (tagFromURL) {
-  heading.innerHTML = `TẤT CẢ SẢN PHẨM THUỘC <span class="text-[var(--color-1)]">${tagFromURL}</span>`;
-} else {
-  heading.innerHTML = `TẤT CẢ SẢN PHẨM`;
-}
-
-function renderProducts(productArray) {
-  if (filteredProducts.length === 0) {
-    productType.innerHTML = `<p class="text-red-500">Hiện chưa có sản phẩm!</p>`;
-    pagination.innerHTML = "";
-    return;
+  if (tagFromURL) {
+    heading.innerHTML = `TẤT CẢ SẢN PHẨM THUỘC <span class="text-[var(--color-1)]">${tagFromURL}</span>`;
+  } else {
+    heading.innerHTML = `TẤT CẢ SẢN PHẨM`;
   }
 
-  productType.innerHTML = productArray.map(product => `
-    <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition duration-300">
-      <a href="/productdetail?id=${product.id}">
-        <img src="${product.image}" alt="${product.name}"
-          class="w-full h-64 object-contain rounded-md mb-4 hover:scale-105 transition duration-300 bg-white" />
-      </a>
-      <h2 class="text-xl font-semibold mb-2">${product.name}</h2>
-      <a href="/productdetail?id=${product.id}" 
-        class="inline-block bg-[var(--color-3)] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition">
-        Xem chi tiết
-      </a>
-    </div>
-  `).join('');
-}
+  function renderProducts(productArray) {
+    if (productArray.length === 0) {
+      productType.innerHTML = `<p class="text-red-500">Hiện chưa có sản phẩm!</p>`;
+      pagination.innerHTML = "";
+      return;
+    }
 
-// Khởi tạo và render phân trang
-const paginationInstance = initPagination({
-  data: filteredProducts,
-  itemsPerPage: 12,
-  onRenderPage: renderProducts,
-  paginationContainer: pagination,
-});
+    productType.innerHTML = productArray.map(product => `
+      <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition duration-300">
+        <a href="/productdetail?id=${product.id}">
+          <img src="${product.image}" alt="${product.name}"
+            class="w-full h-64 object-contain rounded-md mb-4 hover:scale-105 transition duration-300 bg-white" />
+        </a>
+        <h2 class="text-xl font-semibold mb-2">${product.name}</h2>
+        <a href="/productdetail?id=${product.id}" 
+          class="inline-block bg-[var(--color-3)] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition">
+          Xem chi tiết
+        </a>
+      </div>
+    `).join('');
+  }
 
-paginationInstance.render(filteredProducts);
+  async function loadAndRender() {
+    try {
+      const res = await fetch("/api/products");
+      const products = await res.json();
 
+      const filtered = tagFromURL
+        ? products.filter(p => p.tags?.includes(tagFromURL))
+        : products;
+
+      const paginationInstance = initPagination({
+        data: filtered,
+        itemsPerPage: 12,
+        onRenderPage: renderProducts,
+        paginationContainer: pagination,
+      });
+
+      paginationInstance.render(filtered);
+    } catch (err) {
+      console.error("Lỗi khi gọi API:", err);
+      productType.innerHTML = `<p class="text-red-500">Lỗi khi tải sản phẩm từ server.</p>`;
+    }
+  }
+
+  loadAndRender();
 </script>
+

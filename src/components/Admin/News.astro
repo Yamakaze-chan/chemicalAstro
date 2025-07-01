@@ -3,7 +3,7 @@
 
 <section class="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-16 px-4 pt-24">
   <div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-12">📰 Quản Lý Tin Tức</h1>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-12">Quản Lý Tin Tức</h1>
 
     <div class="mt-6 mb-6 flex justify-end">
       <a href="/admin/addnew"
@@ -46,91 +46,107 @@
 </section>
 
 <script>
-  // import { initPagination } from "../../utils/pagination.js";
+  import { initPagination } from "../../utils/pagination.js";
 
-const tbody = document.getElementById("news-table-body");
-// const pagination = document.getElementById("pagination");
+  const tbody = document.getElementById("news-table-body");
+  const pagination = document.getElementById("pagination");
+  const searchInput = document.getElementById("search-input");
 
-function stripHtml(html) {
-  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-}
+  let allNews = [];
+  let filteredNews = [];
+  let paginationInstance;
 
-// let allNews = [];
-// let filteredNews = [];
+  function stripHtml(html) {
+    return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  }
 
-function renderNews(newsArray) {
-  if (newsArray.length === 0) {
-    tbody.innerHTML = `
-      <tr class="border-b border-gray-300">
-        <td colspan="4" class="text-center py-6 text-gray-500">Không có tin tức nào.</td>
-      </tr>
-    `;
-  } else {
-    tbody.innerHTML = newsArray.map(item => `
-      <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-300" data-id="${item.id}">
-        <td class="px-4 py-3 text-center whitespace-nowrap">${item.id}</td>
-        <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[200px]" title="${item.title}">${item.title}</td>
-        <td class="px-4 py-3 text-gray-600 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[250px]">
-          ${item.content ? stripHtml(item.content).slice(0, 60) + "..." : "-"}
-        </td>
-        <td class="px-4 py-3 text-center space-x-3 whitespace-nowrap">
-          <a href="/admin/newdetail?id=${item.id}" class="text-blue-600 hover:text-blue-800 font-medium transition">Xem</a>
-          <a href="/admin/editnew?id=${item.id}" class="text-yellow-500 hover:text-yellow-700 font-medium transition">Sửa</a>
-          <button id="delete-btn-${item.id}" class="cursor-pointer text-red-600 hover:text-red-800 font-medium transition" data-id="${item.id}">Xóa</button>
-        </td>
-      </tr>
-    `).join("");
+  function renderNews(newsArray) {
+    if (newsArray.length === 0) {
+      tbody!.innerHTML = `
+        <tr class="border-b border-gray-300">
+          <td colspan="4" class="text-center py-6 text-gray-500">Không có tin tức nào.</td>
+        </tr>
+      `;
+    } else {
+      tbody!.innerHTML = newsArray.map(item => `
+        <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-300" data-id="${item.id}">
+          <td class="px-4 py-3 text-center whitespace-nowrap">${item.id}</td>
+          <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[200px]" title="${item.title}">${item.title}</td>
+          <td class="px-4 py-3 text-gray-600 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[250px]">
+            ${item.content ? stripHtml(item.content).slice(0, 60) + "..." : "-"}
+          </td>
+          <td class="px-4 py-3 text-center space-x-3 whitespace-nowrap">
+            <a href="/admin/newdetail?id=${item.id}" class="text-blue-600 hover:text-blue-800 font-medium transition">Xem</a>
+            <a href="/admin/editnew?id=${item.id}" class="text-yellow-500 hover:text-yellow-700 font-medium transition">Sửa</a>
+            <button id="delete-btn-${item.id}" class="cursor-pointer text-red-600 hover:text-red-800 font-medium transition" data-id="${item.id}">Xóa</button>
+          </td>
+        </tr>
+      `).join("");
 
-    document.querySelectorAll('button[id^="delete-btn-"]').forEach(button => {
-      button.addEventListener('click', async () => {
-        const id = parseInt(button.id.replace("delete-btn-", ""));
-        if (!confirm("Bạn có chắc muốn xóa không?")) return;
-        try {
-          const response = await fetch("/api/delete-news", {
-            method: "POST",
-            headers: { "Content-type": "application/json" },
-            body: JSON.stringify({ id }),
-          });
-          if (!response.ok) {
-            alert("Lỗi server");
-            return;
+      document.querySelectorAll('button[id^="delete-btn-"]').forEach(button => {
+        button.addEventListener('click', async () => {
+          const id = parseInt(button.dataset.id);
+          if (!confirm("Bạn có chắc muốn xóa không?")) return;
+          try {
+            const response = await fetch("/api/delete-news", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id }),
+            });
+            if (!response.ok) {
+              alert("Lỗi server");
+              return;
+            }
+            alert("Đã xóa tin tức");
+            fetchAndRenderNews();
+          } catch (error) {
+            alert("Lỗi kết nối");
+            console.error(error);
           }
-          alert("Đã xóa tin tức");
-          fetchAndRenderNews();
-        } catch (error) {
-          alert("Lỗi kết nối");
-          console.error(error);
-        }
+        });
       });
-    });
+    }
   }
-}
 
-async function fetchAndRenderNews() {
-  try {
-
-    const res = await fetch("/api/news").then((abv)=>{return abv.json()});
-
-    const newsList = res.data || res; // Nếu API trả về { data: [...] }
-
-    renderNews(newsList);
-  } catch (err) {
-    console.error("Lỗi khi lấy dữ liệu tin tức:", err);
-    tbody!.innerHTML = `
-      <tr class="border-b border-gray-300">
-        <td colspan="4" class="text-center py-6 text-red-500">Lỗi khi tải dữ liệu.</td>
-      </tr>
-    `;
+  function applySearchAndRender(query) {
+    query = query.toLowerCase();
+    filteredNews = allNews.filter(item =>
+      item.title.toLowerCase().includes(query)
+    );
+    paginationInstance.render(filteredNews);
   }
-}
 
-// const searchInput = document.getElementById("search-input");
-// searchInput?.addEventListener("input", () => { ... });
+  searchInput?.addEventListener("input", (e) => {
+    const keyword = e.target.value;
+    applySearchAndRender(keyword);
+  });
 
-// let paginationInstance;
-// initPagination(...);
+  async function fetchAndRenderNews() {
+    try {
+      const res = await fetch("/api/news");
+      const newsList = (await res.json());
+      newsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-// 🚀 Gọi khi trang tải
-fetchAndRenderNews();
+      allNews = [...newsList];
+      filteredNews = [...newsList];
 
+      paginationInstance = initPagination({
+        data: filteredNews,
+        itemsPerPage: 5,
+        onRenderPage: renderNews,
+        paginationContainer: pagination,
+      });
+
+      paginationInstance.render(filteredNews);
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu tin tức:", err);
+      tbody!.innerHTML = `
+        <tr class="border-b border-gray-300">
+          <td colspan="4" class="text-center py-6 text-red-500">Lỗi khi tải dữ liệu.</td>
+        </tr>
+      `;
+    }
+  }
+
+  fetchAndRenderNews();
 </script>

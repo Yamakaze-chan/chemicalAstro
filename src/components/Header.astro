@@ -1,9 +1,6 @@
 ---
 import { onMount } from "astro/client";
 import "../styles/global.css";
-import products from "../data/products.json";
-
-const tags = [...new Set(products.flatMap(p => p.tags || []))];
 ---
 <header class="z-10 fixed w-full">
     <div class="antialiased bg-gray-100 dark-mode:bg-gray-900">
@@ -135,24 +132,18 @@ const tags = [...new Set(products.flatMap(p => p.tags || []))];
   :class="{ 'opacity-100 visible': openProduct }"
 >
   <div class="px-4 pt-3 pb-5 bg-[var(--color-3)] rounded-md shadow-lg w-max max-w-md">
-    <div class={`grid gap-2 ${tags.length > 8 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+    <div id="tag-list" class="grid gap-2 grid-cols-1 md:grid-cols-2">
       <a 
         href="/product" 
         class="block px-4 py-2 break-words max-w-[160px] hover:bg-gray-200 hover:text-[var(--color-3)] rounded-md text-white font-semibold text-sm"
       >
         Tất cả sản phẩm
       </a>
-      {tags.map(tag => (
-        <a 
-          href={`/producttype?type=${encodeURIComponent(tag)}`} 
-          class="block px-4 py-2 break-words max-w-[160px] hover:bg-gray-200 hover:text-[var(--color-3)] rounded-md text-white font-semibold text-sm"
-        >
-          {tag}
-        </a>
-      ))}
+      <!-- Các tag sẽ được render vào đây -->
     </div>
   </div>
 </div>
+
 
         </div>
 
@@ -166,3 +157,31 @@ const tags = [...new Set(products.flatMap(p => p.tags || []))];
       </div>
   </div>
 </header>
+
+
+<script>
+  async function fetchAndRenderTags() {
+    const container = document.getElementById("tag-list");
+    if (!container) return;
+
+    try {
+      const res = await fetch('/api/products');
+      const products = await res.json();
+
+      const tags = [...new Set(products.flatMap(p => p.tags || []))];
+
+      tags.forEach(tag => {
+        const a = document.createElement("a");
+        a.href = `/producttype?type=${encodeURIComponent(tag)}`;
+        a.textContent = tag;
+        a.className = "block px-4 py-2 break-words max-w-[160px] hover:bg-gray-200 hover:text-[var(--color-3)] rounded-md text-white font-semibold text-sm";
+        container.appendChild(a);
+      });
+    } catch (err) {
+      console.error("Lỗi khi tải tags:", err);
+    }
+  }
+
+  fetchAndRenderTags();
+</script>
+

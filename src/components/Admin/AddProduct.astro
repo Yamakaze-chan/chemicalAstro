@@ -55,6 +55,9 @@
             <input name="tags" type="text" placeholder="VD: hóa chất, phụ gia, công nghiệp" class="w-full border p-2 rounded" />
             <p class="text-sm text-gray-500 mt-1">Cách nhau bằng dấu phẩy.</p>
           </div>
+          <!-- 🌐 Ẩn URL ảnh đã upload -->
+        <input type="hidden" id="thumbnailUrl" name="image" />
+        <input type="hidden" id="imagesUrls" name="images" />
 
           <div class="grid md:grid-cols-2 gap-6">
   <div>
@@ -65,6 +68,10 @@
       <div id="thumbnailPreview" class="mt-2">
         <p class="text-gray-500">Chưa có ảnh</p>
       </div>
+      <!-- Nút mở widget Cloudinary -->
+      <button type="button" id="uploadThumbnailBtn" class="mt-2 px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700">
+        📤 Chọn ảnh đại diện từ Cloudinary
+      </button>
     </div>
   </div>
 
@@ -75,10 +82,13 @@
       <strong>Xem trước ảnh sản phẩm:</strong>
       <div id="imagesPreview" class="mt-2 flex flex-wrap gap-4"></div>
     </div>
+    <!-- Nút upload ảnh sản phẩm -->
+    <button type="button" id="uploadImagesBtn" class="mt-2 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+      📤 Chọn ảnh sản phẩm từ Cloudinary
+    </button>
   </div>
 </div>
-
-        </div>
+</div>
 
         <!-- CHỈ TIÊU KỸ THUẬT -->
         <div>
@@ -118,6 +128,7 @@
 
       </form>
     </section>
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
 <script type="module">
   const specList = document.getElementById("spec-list");
@@ -170,6 +181,62 @@ imagesInput.addEventListener("change", function () {
     };
     reader.readAsDataURL(file);
   });
+});
+
+// cloudinary
+
+// 🌐 Cloudinary upload widget
+const cloudName = "dlwv8fyyj"; // ✅ Cloud name của bạn
+const uploadPreset = "chemical_img"; // ✅ Upload preset của bạn
+
+// Biến dùng để lưu trữ URL
+let cloudImages = [];
+let cloudThumbnail = "";
+
+// Nút upload ảnh đại diện
+document.getElementById("uploadThumbnailBtn").addEventListener("click", () => {
+  cloudinary.createUploadWidget(
+    {
+      cloudName,
+      uploadPreset,
+      multiple: false
+    },
+    (err, result) => {
+      if (!err && result.event === "success") {
+        cloudThumbnail = result.info.secure_url;
+        document.getElementById("thumbnailUrl").value = cloudThumbnail;
+
+        // Xem trước ảnh
+        document.getElementById("thumbnailPreview").innerHTML = `
+          <img src="${cloudThumbnail}" class="w-32 h-32 object-cover rounded border-2 shadow" />
+        `;
+      }
+    }
+  ).open();
+});
+
+// Nút upload ảnh sản phẩm
+document.getElementById("uploadImagesBtn").addEventListener("click", () => {
+  cloudinary.createUploadWidget(
+    {
+      cloudName,
+      uploadPreset,
+      multiple: true
+    },
+    (err, result) => {
+      if (!err && result.event === "success") {
+        const url = result.info.secure_url;
+        cloudImages.push(url);
+        document.getElementById("imagesUrls").value = JSON.stringify(cloudImages);
+
+        // Thêm ảnh vào preview
+        const img = document.createElement("img");
+        img.src = url;
+        img.className = "w-24 h-24 object-cover rounded border";
+        document.getElementById("imagesPreview").appendChild(img);
+      }
+    }
+  ).open();
 });
 
 
@@ -315,10 +382,15 @@ imagesInput.addEventListener("change", function () {
   const storage = form.querySelector("textarea[name='storage']").value;
   const tags = form.querySelector("input[name='tags']").value;
 
-  // 🖼 Ảnh (tạm)
-  const image = "/dummy/thumbnail.jpg";
-  const images = ["/dummy/img1.jpg", "/dummy/img2.jpg"];
+// 🖼 Lấy ảnh thật từ input ẩn (sau khi upload Cloudinary)
+    const image = document.getElementById("thumbnailUrl").value;
 
+    let images = [];
+    try {
+      images = JSON.parse(document.getElementById("imagesUrls").value || "[]");
+    } catch (e) {
+      console.error("Lỗi khi parse images JSON", e);
+    }
   // 📊 Lấy bảng chỉ tiêu kỹ thuật
   const specRows = [];
   const rows = document.querySelectorAll("#spec-list tr");
@@ -360,7 +432,7 @@ imagesInput.addEventListener("change", function () {
     const result = await res.json();
     if (result.success) {
       alert("✅ Thêm sản phẩm thành công!");
-      location.href = "/addproduct?success=true";
+      window.location.href = "/admin/products";
     } else {
       alert("❌ Lỗi: " + (result.message || "Không xác định"));
     }

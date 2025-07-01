@@ -1,6 +1,5 @@
 ---
 import '../../styles/global.css';
-import outstanding from "../../data/outstandingproducts.json";
 ---
 
 <section class="bg-[var(--color-1)] py-16 px-4">
@@ -8,32 +7,8 @@ import outstanding from "../../data/outstandingproducts.json";
     Sản phẩm nổi bật
   </h1>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 max-w-7xl mx-auto">
-    {outstanding.map((item) => (
-      <a
-  href={`/productdetail?id=${item.id}`}
-  class="group block w-full sm:w-[260px] bg-[var(--color-4)] rounded-2xl shadow-lg 
-         hover:scale-105 hover:shadow-2xl hover:ring-2 hover:ring-white 
-         transition-all duration-300 cursor-pointer"
->
-  <div class="flex flex-col h-full items-center text-center p-6">
-    <img
-      src={item.image}
-      alt={item.name}
-      class="w-28 h-28 sm:w-32 sm:h-32 object-contain mb-4 rounded-full border-2 border-white shadow-md"
-    />
-    <h2 class="text-white text-base sm:text-lg md:text-xl font-semibold mb-4 min-h-[3.5rem]">
-      {item.name}
-    </h2>
-    <div
-      class="mt-auto w-full px-4 py-2 bg-white text-[var(--color-3)] font-semibold rounded-lg 
-            group-hover:bg-[var(--color-3)] group-hover:text-white transition duration-300 text-center"
-    >
-      Xem chi tiết
-    </div>
-  </div>
-</a>
-    ))}
+  <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 max-w-7xl mx-auto">
+    
   </div>
 
   <div class="text-center pt-10">
@@ -48,3 +23,41 @@ import outstanding from "../../data/outstandingproducts.json";
     </a>
   </div>
 </section>
+<script type="module">
+  const container = document.getElementById("featured-products");
+
+  async function loadFeaturedProducts() {
+    try {
+      const res = await fetch("/api/outstandingproducts");
+      if (!res.ok) throw new Error("Failed to fetch featured products");
+
+      const products = await res.json();
+      if (!Array.isArray(products)) return;
+
+      container.innerHTML = products.map(item => `
+        <a href="/productdetail?id=${item.id}"
+           class="group block w-full sm:w-[260px] bg-[var(--color-4)] rounded-2xl shadow-lg 
+                  hover:scale-105 hover:shadow-2xl hover:ring-2 hover:ring-white 
+                  transition-all duration-300 cursor-pointer">
+          <div class="flex flex-col h-full items-center text-center p-6">
+            <img src="${item.image || '/images/placeholder.png'}" alt="${item.name}"
+                 class="w-28 h-28 sm:w-32 sm:h-32 object-contain mb-4 rounded-full border-2 border-white shadow-md" />
+            <h2 class="text-white text-base sm:text-lg md:text-xl font-semibold mb-4 min-h-[3.5rem]">
+              ${item.name}
+            </h2>
+            <div class="mt-auto w-full px-4 py-2 bg-white text-[var(--color-3)] font-semibold rounded-lg 
+                        group-hover:bg-[var(--color-3)] group-hover:text-white transition duration-300 text-center">
+              Xem chi tiết
+            </div>
+          </div>
+        </a>
+      `).join("");
+
+    } catch (err) {
+      console.error("❌ Lỗi khi tải sản phẩm nổi bật:", err);
+      container.innerHTML = `<p class="text-white">Không thể tải sản phẩm nổi bật.</p>`;
+    }
+  }
+
+  loadFeaturedProducts();
+</script>
