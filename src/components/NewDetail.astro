@@ -137,11 +137,11 @@ async function fetchAndRenderNewsDetail() {
 
     newDetail!.innerHTML = `
       <div class="w-full space-y-8">
-        <h1 class="text-4xl font-extrabold text-center text-[var(--color-1)]">
+        <h1 class="text-4xl font-extrabold text-justify md:text-center text-[var(--color-1)]">
           ${newItem.title}
         </h1>
 
-        <div class="p-6 rounded-lg text-gray-700 leading-relaxed text-center">
+        <div class="p-6 rounded-lg text-gray-700 leading-relaxed text-justify md:text-center">
           <div class="text-lg inline-block max-w-3xl w-full content-body text-justify">
             ${cleanedContent}
           </div>
