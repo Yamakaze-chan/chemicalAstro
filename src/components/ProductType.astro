@@ -3,7 +3,7 @@
 
 <section class="min-h-screen bg-white py-12 text-[var(--color-3)]">
   <div class="max-w-7xl mx-auto px-4 shadow-2xl pb-12 rounded-xl">
-    <h1 id="product-heading" class="text-3xl mt-[5%] font-bold text-center mb-10">TẤT CẢ SẢN PHẨM THUỘC</h1>
+    <h1 id="product-heading" class="text-3xl mt-[5%] font-bold text-center mb-10 mt-[20%] md:mt-[5%]">TẤT CẢ SẢN PHẨM THUỘC</h1>
 
     <div id="product-type" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
     </div>
@@ -24,19 +24,19 @@
   const tagFromURL = urlParams.get("type");
 
   if (tagFromURL) {
-    heading.innerHTML = `TẤT CẢ SẢN PHẨM THUỘC <span class="text-[var(--color-1)]">${tagFromURL}</span>`;
+    heading!.innerHTML = `TẤT CẢ SẢN PHẨM THUỘC <span class="text-[var(--color-1)]">${tagFromURL}</span>`;
   } else {
-    heading.innerHTML = `TẤT CẢ SẢN PHẨM`;
+    heading!.innerHTML = `TẤT CẢ SẢN PHẨM`;
   }
 
   function renderProducts(productArray) {
     if (productArray.length === 0) {
-      productType.innerHTML = `<p class="text-red-500">Hiện chưa có sản phẩm!</p>`;
-      pagination.innerHTML = "";
+      productType!.innerHTML = `<p class="text-red-500">Hiện chưa có sản phẩm!</p>`;
+      pagination!.innerHTML = "";
       return;
     }
 
-    productType.innerHTML = productArray.map(product => `
+    productType!.innerHTML = productArray.map(product => `
       <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition duration-300">
         <a href="/productdetail?id=${product.id}">
           <img src="${product.image}" alt="${product.name}"
@@ -70,7 +70,7 @@
       paginationInstance.render(filtered);
     } catch (err) {
       console.error("Lỗi khi gọi API:", err);
-      productType.innerHTML = `<p class="text-red-500">Lỗi khi tải sản phẩm từ server.</p>`;
+      productType!.innerHTML = `<p class="text-red-500">Lỗi khi tải sản phẩm từ server.</p>`;
     }
   }
 

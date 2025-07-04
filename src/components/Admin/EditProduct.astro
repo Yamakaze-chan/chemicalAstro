@@ -3,6 +3,7 @@
 
   </div>
 </section>
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
 <script type="module">
 const productEdit = document.getElementById('editproduct');
@@ -119,25 +120,30 @@ async function main() {
           <div>
             <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🖼 Ảnh đại diện</h2>
             <div class="mb-4">
-              <img src="${product.image}" class="w-32 h-32 object-cover rounded border shadow" />
+              <img src="${product.image}" id="thumbnail-preview" class="w-32 h-32 object-cover rounded border shadow" />
               <p class="text-sm text-gray-500 mt-2">Nếu bạn muốn thay đổi, hãy chọn ảnh mới bên dưới:</p>
             </div>
-            <input type="file" name="thumbnail" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
+            <button type="button" id="uploadThumbnailBtn" class="mt-2 px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700">
+              📤 Chọn ảnh đại diện từ Cloudinary
+            </button>
+            <input type="hidden" id="thumbnailUrl" name="image" value="${product.image}" />
           </div>
 
           <div>
             <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🖼 Ảnh sản phẩm</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              ${product.images?.map(url => `
-                <div class="relative">
-                  <img src="${url}" class="w-full h-32 object-cover rounded border" />
-                  <input type="checkbox" name="remove_images[]" value="${url}" class="absolute top-1 right-1 w-5 h-5" title="Xóa ảnh này" />
-                </div>
-              `).join("") || ''}
-            </div>
-            <label class="block mb-1 font-semibold text-gray-700">Thêm ảnh sản phẩm mới</label>
-            <input type="file" name="images" multiple accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4" id="image-preview-list">
+            ${product.images?.map(url => `
+              <div class="relative image-item">
+                <img src="${url}" class="w-full h-32 object-cover rounded border" />
+                <input type="checkbox" name="remove_images[]" value="${url}" class="absolute top-1 right-1 w-5 h-5" title="Xóa ảnh này" />
+              </div>
+            `).join("") || ''}
           </div>
+          <button type="button" id="uploadImagesBtn" class="mt-2 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+            📤 Thêm ảnh sản phẩm từ Cloudinary
+          </button>
+          <input type="hidden" id="imagesUrls" name="images" value='${JSON.stringify(product.images || [])}' />
+            </div>
 
           <div>
             <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🔍 Chỉ tiêu kỹ thuật</h2>
@@ -193,6 +199,8 @@ async function main() {
         application: form.application.value,
         storage: form.storage.value,
         tags: form.tags.value.split(",").map(tag => tag.trim()).filter(Boolean),
+        image: form.image.value,
+        images: JSON.parse(form.images.value || "[]"),
         removeImages: Array.from(form.querySelectorAll("input[name='remove_images[]']:checked")).map(i => i.value),
         specifications: []
       };
@@ -296,6 +304,59 @@ async function main() {
         });
       }
     });
+
+    // Ảnh đại diện từ Cloudinary
+document.getElementById("uploadThumbnailBtn").addEventListener("click", () => {
+  cloudinary.openUploadWidget(
+    {
+      cloudName: "dlwv8fyyj",
+      uploadPreset: "chemical_img",
+      multiple: false,
+      sources: ["local", "url", "camera"],
+      cropping: false,
+    },
+    (error, result) => {
+      if (!error && result.event === "success") {
+        const url = result.info.secure_url;
+        document.getElementById("thumbnailUrl").value = url;
+        document.getElementById("thumbnail-preview").src = url;
+      }
+    }
+  );
+});
+
+// Ảnh sản phẩm từ Cloudinary
+document.getElementById("uploadImagesBtn").addEventListener("click", () => {
+  cloudinary.openUploadWidget(
+    {
+      cloudName: "dlwv8fyyj",
+      uploadPreset: "chemical_img",
+      multiple: true,
+      sources: ["local", "url", "camera"],
+      cropping: false,
+    },
+    (error, result) => {
+      if (!error && result.event === "success") {
+        const url = result.info.secure_url;
+
+        // Cập nhật preview ảnh mới
+        const div = document.createElement("div");
+        div.className = "relative image-item";
+        div.innerHTML = `
+          <img src="${url}" class="w-full h-32 object-cover rounded border" />
+          <input type="checkbox" name="remove_images[]" value="${url}" class="absolute top-1 right-1 w-5 h-5" title="Xóa ảnh này" />
+        `;
+        document.getElementById("image-preview-list").appendChild(div);
+
+        // Cập nhật hidden input
+        const currentImages = JSON.parse(document.getElementById("imagesUrls").value || "[]");
+        currentImages.push(url);
+        document.getElementById("imagesUrls").value = JSON.stringify(currentImages);
+      }
+    }
+  );
+});
+
 
   } catch (err) {
     productEdit.innerHTML = `<p class="text-red-500 text-center">❌ Lỗi tải sản phẩm: ${err.message}</p>`;

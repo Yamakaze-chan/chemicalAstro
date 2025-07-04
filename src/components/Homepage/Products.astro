@@ -7,7 +7,8 @@ import '../../styles/global.css';
     Sản phẩm nổi bật
   </h1>
 
-  <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 max-w-7xl mx-auto">
+  <div id="featured-products" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+
     
   </div>
 
@@ -36,21 +37,35 @@ import '../../styles/global.css';
 
       container.innerHTML = products.map(item => `
         <a href="/productdetail?id=${item.id}"
-           class="group block w-full sm:w-[260px] bg-[var(--color-4)] rounded-2xl shadow-lg 
-                  hover:scale-105 hover:shadow-2xl hover:ring-2 hover:ring-white 
-                  transition-all duration-300 cursor-pointer">
-          <div class="flex flex-col h-full items-center text-center p-6">
+         class="group block w-full sm:w-[260px] bg-[var(--color-4)] shadow-lg 
+              hover:scale-105 hover:shadow-2xl
+              transition-all duration-300 cursor-pointer h-full">
+      
+        <div class="flex flex-col h-full text-center justify-between pb-4">
+          
+          <!-- Phần trên: ảnh + tên -->
+          <div>
             <img src="${item.image || '/images/placeholder.png'}" alt="${item.name}"
-                 class="w-28 h-28 sm:w-32 sm:h-32 object-contain mb-4 rounded-full border-2 border-white shadow-md" />
-            <h2 class="text-white text-base sm:text-lg md:text-xl font-semibold mb-4 min-h-[3.5rem]">
+                class="w-full h-48 sm:h-56 object-cover border border-white shadow-md mb-4" />
+
+            <h2 class="text-white text-base sm:text-lg md:text-xl font-semibold min-h-[3.5rem]">
               ${item.name}
             </h2>
-            <div class="mt-auto w-full px-4 py-2 bg-white text-[var(--color-3)] font-semibold rounded-lg 
-                        group-hover:bg-[var(--color-3)] group-hover:text-white transition duration-300 text-center">
+          </div>
+
+          <!-- Nút xem chi tiết luôn ở đáy -->
+          <div class="mt-6 flex justify-center">
+            <div class="px-4 py-1.5 bg-white text-[var(--color-3)] text-sm font-medium 
+                        group-hover:bg-[var(--color-3)] group-hover:text-white 
+                        transition duration-300">
               Xem chi tiết
             </div>
           </div>
-        </a>
+
+        </div>
+      </a>
+
+
       `).join("");
 
     } catch (err) {
