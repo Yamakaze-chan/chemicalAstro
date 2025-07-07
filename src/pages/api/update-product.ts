@@ -61,6 +61,11 @@ export const POST: APIRoute = async ({ locals, request }) => {
       )
       .run();
 
+      await db
+      .prepare(`UPDATE outstandingproducts SET name = ?, image = ? WHERE id = ?`)
+      .bind(name, image, id)
+      .run();
+
     // --- Bước 3: Cập nhật tags ---
     await db.prepare("DELETE FROM chemical_tags WHERE chemical_id = ?").bind(id).run();
     for (const tag of tags) {

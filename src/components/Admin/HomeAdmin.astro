@@ -4,17 +4,17 @@
 
 <section class="pt-24 px-4 pb-12 bg-gray-100 min-h-screen">
   <div class="max-w-screen-xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-8">Tổng quan quản trị</h1>
+    <h1 class="text-3xl font-bold text-[var(--color-3)] mb-8">Tổng quan quản trị</h1>
 
     <!-- Thống kê -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
       <!-- Sản phẩm -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Tổng Sản phẩm</h2>
-          <p id="total-products" class="text-3xl font-extrabold text-indigo-600 mt-3">--</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)]">Tổng Sản phẩm</h2>
+          <p id="total-products" class="text-3xl font-extrabold text-[var(--color-3)] mt-3">--</p>
         </div>
-        <a href="/admin/products" class="mt-5 inline-block text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/products" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           📦 Xem chi tiết
         </a>
       </div>
@@ -22,10 +22,10 @@
       <!-- Tin tức -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Tin Tức hiện có</h2>
-          <p id="total-news" class="text-3xl font-extrabold text-green-600 mt-3">--</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)">Tin Tức hiện có</h2>
+          <p id="total-news" class="text-3xl font-extrabold text-[var(--color-3) mt-3">--</p>
         </div>
-        <a href="/admin/news" class="mt-5 inline-block text-sm font-medium text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/news" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           📰 Xem chi tiết
         </a>
       </div>
@@ -33,10 +33,10 @@
       <!-- Liên hệ -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Liên Hệ chưa xem</h2>
-          <p id="unread-contacts" class="text-3xl font-extrabold text-blue-600 mt-3">--</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)]">Liên Hệ chưa xem</h2>
+          <p id="unread-contacts" class="text-3xl font-extrabold text-red-500 mt-3">--</p>
         </div>
-        <a href="/admin/contact" class="mt-5 inline-block text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/contact" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           🔍 Xem chi tiết
         </a>
       </div>
@@ -45,20 +45,25 @@
     <!-- Chọn sản phẩm nổi bật -->
     <div class="max-w-7xl mx-auto">
       <div class="mb-6 flex justify-between items-center flex-col sm:flex-row gap-4">
-        <h1 class="text-3xl font-bold">Chọn sản phẩm nổi bật (tối đa 4)</h1>
+        <h1 class="text-3xl text-[var(--color-3)] font-bold">Chọn sản phẩm nổi bật (tối đa 4)</h1>
         <input
           id="search-input"
           type="text"
           placeholder="🔍 Tìm theo tên sản phẩm..."
-          class="w-full sm:w-80 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          class="w-full sm:w-80 px-4 py-2 border border-gray-300 rounded-lg shadow-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
         />
       </div>
 
-      <div id="product-selection" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"></div>
+      <div class="relative min-h-[550px] flex flex-col justify-between mb-8">
+      <div id="product-selection" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
       <div id="pagination-controls" class="flex justify-center gap-2 flex-wrap mt-4"></div>
-      <button id="save-button" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-        💾 Lưu danh sách sản phẩm nổi bật
-      </button>
+    </div>
+
+      <div class="flex justify-center">
+        <button id="save-button" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+          💾 Lưu danh sách sản phẩm nổi bật
+        </button>
+      </div>
       <p id="status" class="mt-4 text-green-600 font-semibold"></p>
     </div>
   </div>
@@ -73,7 +78,7 @@
   let allProducts = [];
   let filteredProducts = [];
   let currentPage = 1;
-  const itemsPerPage = 8; // ✅ Bạn có thể thay đổi số lượng sản phẩm mỗi trang
+  const itemsPerPage = 8;
   console.log("📦 selectionEl:", selectionEl)
   function renderPagination(totalItems) {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -126,7 +131,7 @@
           }
           selected.set(product.id, product);
         }
-        renderProducts(filteredProducts); // cập nhật lại giao diện
+        renderProducts(filteredProducts);
       });
 
       selectionEl.appendChild(card);
