@@ -1,11 +1,11 @@
 ---
-import ProductDetail from '../../components/Admin/ProductDetail.astro';
 import Header from '../../components/Admin/Header.astro';
 import Footer from '../../components/Admin/Footer.astro';
+import Accounts from '../../components/Admin/Accounts.astro';
+import { requireLogin } from '../../lib/auth';
 import "../../styles/admin.css";
 import "../../styles/global.css";
 
-import { requireLogin } from '../../lib/auth';
 const user = await requireLogin(Astro.cookies);
 if (!user || user.role === 'user') {
   return Astro.redirect('/admin/news');
@@ -37,7 +37,7 @@ if (!user || user.role === 'user') {
 
     <Header user={user} />
 
-    <ProductDetail />
+    <Accounts />
 
     <Footer user={user} />
   </body>

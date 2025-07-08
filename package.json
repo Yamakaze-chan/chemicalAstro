@@ -21,6 +21,7 @@
     "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "mongodb": "^6.17.0",
+    "scrypt-js": "^3.0.1",
     "swiper": "^11.2.8",
     "tailwindcss": "^4.1.8"
   },

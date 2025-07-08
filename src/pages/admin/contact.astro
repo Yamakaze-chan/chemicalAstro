@@ -4,6 +4,12 @@ import Footer from '../../components/Admin/Footer.astro';
 import Contact from '../../components/Admin/Contact.astro';
 import "../../styles/admin.css";
 import "../../styles/global.css";
+
+import { requireLogin } from '../../lib/auth';
+const user = await requireLogin(Astro.cookies);
+if (!user || user.role === 'user') {
+  return Astro.redirect('/admin/news');
+}
 ---
 
 <!DOCTYPE html>
@@ -29,10 +35,10 @@ import "../../styles/global.css";
 
   <body>
 
-    <Header />  
+    <Header user={user} />
 
     <Contact />
 
-    <Footer />
+    <Footer user={user} />
   </body>
 </html>

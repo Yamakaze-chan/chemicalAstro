@@ -1,0 +1,70 @@
+---
+const title = "Đăng nhập Quản trị";
+---
+
+<div class="min-h-screen bg-gray-100 flex items-center justify-center">
+  <div class="bg-white shadow-md p-8 rounded-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6">{title}</h1>
+
+    <form id="loginForm" class="flex flex-col gap-4">
+      <input
+        type="text"
+        name="username"
+        placeholder="Tài khoản"
+        class="border rounded px-4 py-2"
+        required
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Mật khẩu"
+        class="border rounded px-4 py-2"
+        required
+      />
+      <button
+        type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+      >
+        Đăng nhập
+      </button>
+      <p id="message" class="text-sm text-center mt-2"></p>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  const form = document.getElementById("loginForm");
+  const msg = document.getElementById("message");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+
+    const formData = new FormData(form);
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      msg.className = "text-green-600";
+      msg.textContent = "Đăng nhập thành công!";
+      localStorage.setItem("user", JSON.stringify(result.user));
+      document.cookie = `user=${encodeURIComponent(JSON.stringify(result.user))}; path=/; max-age=3600`;
+      // 👉 Chuyển hướng tùy theo role
+      setTimeout(() => {
+        window.location.href = "/admin";
+      }, 1000);
+
+    } else {
+      msg.className = "text-red-500";
+      msg.textContent = result.error || "Sai tài khoản hoặc mật khẩu!";
+    }
+  });
+</script>
