@@ -7,4 +7,7 @@
 	--color-5: rgba(242, 227, 213, 0.5);
 
 }
+body {
+  overflow-x: hidden;
+}
 

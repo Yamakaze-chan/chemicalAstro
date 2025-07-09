@@ -93,40 +93,53 @@
   </div>
 </footer>
 <script>
-  const SubcribeButton = document.getElementById("SubscribeBtn");
-  const statusMsg = document.getElementById("SubscribeStatus");
-  const emailInput = document.getElementById("SubcribeEmail");
+  document.getElementById("SubscribeBtn").addEventListener("click", async () => {
+    const emailInput = document.getElementById("SubcribeEmail");
+    const statusSpan = document.getElementById("SubscribeStatus");
+    const subscribeBtn = document.getElementById("SubscribeBtn");
 
-  SubcribeButton?.addEventListener("click", async () => {
+    const email = emailInput.value.trim();
+    if (!email) {
+      statusSpan.textContent = "❌ Vui lòng nhập email";
+      return;
+    }
 
-    const mail = document.getElementById("SubcribeEmail");
-    const SubcribeEmail = (mail as HTMLInputElement).value;
+    const payload = { email };
+    statusSpan.textContent = "⏳ Đang gửi...";
+    subscribeBtn.disabled = true;
 
-    if (!SubcribeEmail) return;
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    // Tạm khóa nút và hiển thị đang gửi
-    SubcribeButton.disabled = true;
-    const originalText = SubcribeButton.innerText;
-    SubcribeButton.innerText = "Đang gửi...";
-    console.log("XXXXXXXXXXXXXXXXXXXXX")
-    try{
-    const res = await fetch("/api/users").then((abv)=>{return abv.json()});
-    console.log("AAAA",res)
+      const text = await res.text();
 
-    // if (res.ok) {
-    //   alert("✅ Đã gửi liên hệ, chúng tôi sẽ phản hồi bạn sớm!");
-    //   window.location.href = "/";
-    //   console.log(res)
-    // } else {
-    //   const error = await res.text();
-    //   alert("❌ Gửi thất bại: " + error);
-    // }
-  }catch(err){
-    alert("❌ Lỗi kết nối đến máy chủ.");
-  }finally{
-    // Bỏ disable và khôi phục nội dung nút
-      SubcribeButton.disabled = false;
-      SubcribeButton.innerText = originalText;
-  }
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        statusSpan.textContent = "❌ Server trả về không đúng JSON: " + text;
+        return;
+      }
+
+      if (data.success) {
+        statusSpan.textContent = "✅ " + data.message;
+        emailInput.value = "";
+      } else {
+        statusSpan.textContent = "❌ " + data.message + ": " + (JSON.stringify(data) || "Không rõ lỗi");
+      }
+    } catch (err) {
+      statusSpan.textContent = "❌ Lỗi khi gửi yêu cầu: " + err.message;
+    } finally {
+      subscribeBtn.disabled = false;
+    }
   });
 </script>
+
+
+

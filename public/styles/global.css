@@ -11,3 +11,6 @@
 	--color--transparent: #0000;
 	--color--black: #1d2635;
 }
+body {
+  overflow-x: hidden;
+}

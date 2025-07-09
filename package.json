@@ -8,7 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "host": "astro dev --host",
-    "abc": "npx astro build && npx wrangler dev ./dist/_worker.js --remote",
+    "abc": "npx astro build && npx wrangler dev --remote",
     "create_table": "npx wrangler d1 create astro_db",
     "seed": "npx wrangler d1 execute astro_db --file=./seed.sql --remote",
     "up": "astro build --watch",

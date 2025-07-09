@@ -11,7 +11,10 @@ import '../../styles/global.css';
     <h1 class="text-center text-white text-xl md:text-4xl font-bold mb-12">
       Sản phẩm nổi bật
     </h1>
-    <div id="featured-products" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+    <div id="featured-products"
+     class="flex overflow-x-auto gap-6 w-full px-2 py-6 hide-scrollbar cursor-grab"
+     onmousedown="this.style.cursor='grabbing'"
+     onmouseup="this.style.cursor='grab'">
       <!-- Các sản phẩm -->
     </div>
     <div class="text-center pt-10">
@@ -28,6 +31,21 @@ import '../../styles/global.css';
     </div>
   </section>
 </div>
+<style>
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  #featured-products.grabbing {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+}
+
+</style>
+
 <script type="module">
   const container = document.getElementById("featured-products");
 
@@ -41,7 +59,7 @@ import '../../styles/global.css';
 
       container.innerHTML = products.map(item => `
         <a href="/productdetail?id=${item.id}"
-        class="group block w-full sm:w-[260px] bg-[var(--color-2)] 
+        class="group flex flex-col min-w-[260px] mx-auto max-w-[260px] flex-shrink-0 bg-[var(--color-2)] 
                 hover:scale-105 hover:shadow-2xl
                 transition-all duration-300 cursor-pointer h-full">
       
@@ -79,4 +97,47 @@ import '../../styles/global.css';
   }
 
   loadFeaturedProducts();
+  // Kéo ngang bằng chuột như mobile, không gây xung đột với click
+let isDown = false;
+let startX;
+let scrollLeft;
+let isDragging = false;
+
+container.addEventListener('mousedown', (e) => {
+  isDown = true;
+  isDragging = false;
+  container.classList.add('grabbing');
+  startX = e.pageX - container.offsetLeft;
+  scrollLeft = container.scrollLeft;
+});
+
+container.addEventListener('mouseleave', () => {
+  isDown = false;
+  container.classList.remove('grabbing');
+});
+
+container.addEventListener('mouseup', () => {
+  setTimeout(() => isDragging = false, 0); // reset sau tick
+  isDown = false;
+  container.classList.remove('grabbing');
+});
+
+container.addEventListener('mousemove', (e) => {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - container.offsetLeft;
+  const walk = (x - startX) * 0.8; 
+  if (Math.abs(walk) > 5) isDragging = true; // chỉ kéo nếu di chuyển đáng kể
+  container.scrollLeft = scrollLeft - walk;
+});
+
+// Chặn click nếu vừa kéo
+container.addEventListener('click', (e) => {
+  if (isDragging) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}, true);
+
+
 </script>
