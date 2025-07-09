@@ -127,7 +127,7 @@ container.addEventListener('mousemove', (e) => {
   e.preventDefault();
   const x = e.pageX - container.offsetLeft;
   const walk = (x - startX) * 0.8; 
-  if (Math.abs(walk) > 5) isDragging = true; // chỉ kéo nếu di chuyển đáng kể
+  if (Math.abs(walk) > 5) isDragging = true;
   container.scrollLeft = scrollLeft - walk;
 });
 
