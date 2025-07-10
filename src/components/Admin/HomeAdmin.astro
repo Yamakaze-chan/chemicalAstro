@@ -81,20 +81,55 @@
   const itemsPerPage = 8;
   console.log("📦 selectionEl:", selectionEl)
   function renderPagination(totalItems) {
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    paginationEl.innerHTML = "";
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  paginationEl.innerHTML = "";
 
-    for (let i = 1; i <= totalPages; i++) {
-      const btn = document.createElement("button");
-      btn.textContent = i;
-      btn.className = `px-3 py-1 rounded ${i === currentPage ? "bg-blue-600 text-white" : "bg-white border"} hover:bg-blue-100 transition`;
+  const pages = [];
+
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    const nearStart = currentPage <= 3;
+    const nearEnd = currentPage >= totalPages - 2;
+
+    pages.push(1);
+
+    if (!nearStart && currentPage > 3) pages.push("...");
+
+    const startMiddle = Math.max(2, currentPage - 1);
+    const endMiddle = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = startMiddle; i <= endMiddle; i++) {
+      if (i > 1 && i < totalPages) pages.push(i);
+    }
+
+    if (!nearEnd && currentPage < totalPages - 2) pages.push("...");
+
+    pages.push(totalPages);
+  }
+
+  pages.forEach(p => {
+    const btn = document.createElement("button");
+    btn.textContent = p;
+
+    if (p === "...") {
+      btn.disabled = true;
+      btn.className = "px-3 py-1 text-gray-400 cursor-default";
+    } else {
+      btn.className = `px-3 py-1 rounded ${
+        p === currentPage ? "bg-blue-600 text-white" : "bg-white border"
+      } hover:bg-blue-100 transition`;
+
       btn.addEventListener("click", () => {
-        currentPage = i;
+        currentPage = p;
         renderProducts(filteredProducts);
       });
-      paginationEl.appendChild(btn);
     }
-  }
+
+    paginationEl.appendChild(btn);
+  });
+}
+
 
   function renderProducts(list) {
     selectionEl.innerHTML = "";

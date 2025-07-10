@@ -48,10 +48,15 @@ CREATE TABLE products (
   cas TEXT,
   einecs TEXT,
   hsCode TEXT,
-  appearance TEXT,
-  application TEXT,
-  storage TEXT,
   image TEXT
+);
+
+CREATE TABLE chemical_properties (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  chemical_id INTEGER NOT NULL,
+  prop_key TEXT NOT NULL,
+  prop_value TEXT,
+  FOREIGN KEY (chemical_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
 -- Related table for multiple images

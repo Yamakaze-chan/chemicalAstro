@@ -8,35 +8,39 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const {
     name, formula, molarMass, cas, einecs, hsCode,
-    appearance, application, storage, tags,
-    image, images = [], specifications = []
+    tags,
+    image, images = [], specifications = [],
+    properties = [],
   } = body;
 
   try {
-    // 1. Insert vào bảng products
     const result = await db.prepare(`
-      INSERT INTO products (name, formula, molarMass, cas, einecs, hsCode, appearance, application, storage, image)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(name, formula, molarMass, cas, einecs, hsCode, appearance, application, storage, image).run();
+      INSERT INTO products (name, formula, molarMass, cas, einecs, hsCode, image)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(name, formula, molarMass, cas, einecs, hsCode, image).run();
 
     const productId = result.meta.last_row_id;
 
-    // 2. Tags
     for (const tag of tags.split(",").map(t => t.trim()).filter(Boolean)) {
-      await db.prepare("INSERT INTO chemical_tags (chemical_id, tag) VALUES (?, ?)").bind(productId, tag).run();
+      await db.prepare(`INSERT INTO chemical_tags (chemical_id, tag) VALUES (?, ?)`)
+        .bind(productId, tag).run();
     }
 
-    // 3. Images
     for (const img of images) {
-      await db.prepare("INSERT INTO chemical_images (chemical_id, image) VALUES (?, ?)").bind(productId, img).run();
+      await db.prepare(`INSERT INTO chemical_images (chemical_id, image) VALUES (?, ?)`)
+        .bind(productId, img).run();
     }
 
-    // 4. Specifications
     for (const { row, col, value } of specifications) {
-      await db.prepare(`
-        INSERT INTO chemical_specifications (chemical_id, row_index, col_key, value)
-        VALUES (?, ?, ?, ?)
-      `).bind(productId, row, col, value).run();
+      await db.prepare(`INSERT INTO chemical_specifications (chemical_id, row_index, col_key, value)
+        VALUES (?, ?, ?, ?)`)
+        .bind(productId, row, col, value).run();
+    }
+
+    for (const { key, value } of properties) {
+      await db.prepare(`INSERT INTO chemical_properties (chemical_id, prop_key, prop_value)
+        VALUES (?, ?, ?)`)
+        .bind(productId, key, value).run();
     }
 
     return new Response(JSON.stringify({ success: true }), {

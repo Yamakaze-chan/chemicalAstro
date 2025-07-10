@@ -58,24 +58,27 @@ async function fetchProductDetail() {
             <h1 class="text-3xl font-extrabold text-[var(--color-1)]">${product.name}</h1>
 
             <div class="text-gray-700 space-y-2">
-              <div><strong>CTPT:</strong> ${product.formula}</div>
-              <div><strong>Khối lượng mol:</strong> ${product.molarMass}</div>
-              <div><strong>Mã CAS:</strong> ${product.cas}</div>
-              <div><strong>HS Code:</strong> ${product.hsCode}</div>
-              <div><strong>Tags:</strong> ${product.tags?.join(", ") || "Không có"}</div>
-              <div><strong>Hình thức:</strong></div>
-              <p class="bg-gray-100 p-2 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
-                ${product.appearance}
-              </p>
-              <div><strong>Ứng dụng:</strong></div>
-              <p class="bg-gray-100 p-2 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
-                ${product.application}
-              </p>
-              <div><strong>Bảo quản:</strong></div>
-              <p class="bg-gray-100 p-2 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
-                ${product.storage}
-              </p>
+              ${product.formula ? `<div><strong>CTPT:</strong> ${product.formula}</div>` : ""}
+              ${product.molarMass ? `<div><strong>Khối lượng mol:</strong> ${product.molarMass}</div>` : ""}
+              ${product.cas ? `<div><strong>Mã CAS:</strong> ${product.cas}</div>` : ""}
+              ${product.hsCode ? `<div><strong>HS Code:</strong> ${product.hsCode}</div>` : ""}
+              ${product.tags && product.tags.length ? `<div><strong>Tags:</strong> ${product.tags.join(", ")}</div>` : ""}
+
+              ${
+                product.properties?.length
+                  ? product.properties.map(
+                      (prop) => `
+                    <div><strong>${prop.key}:</strong></div>
+                    <p class="bg-gray-100 p-2 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
+                      ${prop.value}
+                    </p>
+                  `
+                    ).join("")
+                  : ""
+              }
             </div>
+
+
 
             <!-- Thông số kỹ thuật -->
             <div>
@@ -152,7 +155,7 @@ async function fetchProductDetail() {
 
     thumbnails.forEach((thumb) => {
       thumb.addEventListener("click", () => {
-        mainImage.src = thumb.src;
+        mainImage!.src = thumb.src;
 
         thumbnails.forEach((t) => t.classList.remove("ring-2", "ring-blue-400"));
         thumb.classList.add("ring-2", "ring-blue-400");

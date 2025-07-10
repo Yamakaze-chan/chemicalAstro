@@ -51,11 +51,11 @@
               <div class="lg:w-1/2 space-y-6">
                 <h1 class="text-3xl font-extrabold text-[var(--color-1)]">${product.name}</h1>
                 <div class="text-gray-700 space-y-2">
-                  <div><strong>CTPT:</strong> ${product.formula}</div>
-                  <div><strong>Khối lượng mol:</strong> ${product.molarMass}</div>
-                  <div><strong>Mã CAS:</strong> ${product.cas}</div>
-                  <div><strong>HS Code:</strong> ${product.hsCode}</div>
-                  <div><strong>Tags:</strong> ${product.tags?.join(", ") || "Không có"}</div>
+                  ${product.formula ? `<div><strong>CTPT:</strong> ${product.formula}</div>` : ""}
+                  ${product.molarMass ? `<div><strong>Khối lượng mol:</strong> ${product.molarMass}</div>` : ""}
+                  ${product.cas ? `<div><strong>Mã CAS:</strong> ${product.cas}</div>` : ""}
+                  ${product.hsCode ? `<div><strong>HS Code:</strong> ${product.hsCode}</div>` : ""}
+                  ${(product.tags && product.tags.length) ? `<div><strong>Tags:</strong> ${product.tags.join(", ")}</div>` : ""}
                 </div>
                 <button
                   onclick="window.location.href='/contactus';"
@@ -84,8 +84,8 @@
                       <tbody>
                         ${product.specifications.map(spec => `
                           <tr class="hover:bg-gray-50">
-                            ${Object.keys(spec).map(key => `
-                              <td class="border px-4 py-2 ${key === 'name' ? 'font-bold' : ''}">
+                            ${Object.keys(spec).map((key, index) => `
+                              <td class="border px-4 py-2 ${index === 0 ? 'font-bold' : ''}">
                                 ${spec[key]}
                               </td>
                             `).join("")}
@@ -97,29 +97,23 @@
                 ` : `<p class="text-gray-500 mt-1">Không có thông số kỹ thuật.</p>`}
               </div>
 
-              <!-- Mô tả -->
-              <div class="space-y-8">
-                ${["appearance", "application", "storage"].map(section => {
-                  const title = section === "appearance"
-                    ? "Hình thức"
-                    : section === "application"
-                    ? "Ứng dụng"
-                    : "Đóng gói & Bảo quản";
-
-                  const content = product[section];
-                  const displayText =
-                    typeof content === "string" && content.trim() !== ""
-                      ? content
-                      : "Đang cập nhật...";
-
-                  return `
-                    <div>
-                      <h2 class="text-xl font-bold mb-1">${title}</h2>
-                      <p class="text-gray-600 whitespace-pre-line leading-relaxed">${displayText}</p>
+              <!-- Mô tả (từ properties) -->
+                ${product.properties?.length
+                  ? `
+                    <div class="space-y-8">
+                      ${product.properties.map((prop) => {
+                        if (!prop.value?.trim()) return ""; // Bỏ qua nếu không có nội dung
+                        return `
+                          <div>
+                            <h2 class="text-xl font-bold mb-1 capitalize">${prop.key}</h2>
+                            <p class="text-gray-600 whitespace-pre-line leading-relaxed">${prop.value.trim()}</p>
+                          </div>
+                        `;
+                      }).join("")}
                     </div>
-                  `;
-                }).join("")}
-              </div>
+                  `
+                  : ""
+                }
             </div>
           </div>
         `;

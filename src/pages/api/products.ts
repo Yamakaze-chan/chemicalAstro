@@ -21,10 +21,15 @@ export const GET: APIRoute = async ({ locals, request }) => {
       const product = await db.prepare("SELECT * FROM products WHERE id = ?").bind(id).first();
       if (!product) return new Response("Không tìm thấy sản phẩm", { status: 404 });
 
-      const [images, tags, rawSpecs] = await Promise.all([
+      const [images, tags, rawSpecs, rawProps] = await Promise.all([
         db.prepare("SELECT image FROM chemical_images WHERE chemical_id = ?").bind(id).all(),
         db.prepare("SELECT tag FROM chemical_tags WHERE chemical_id = ?").bind(id).all(),
-        db.prepare("SELECT row_index, col_key, value FROM chemical_specifications WHERE chemical_id = ? ORDER BY row_index ASC").bind(id).all()
+        db.prepare("SELECT row_index, col_key, value FROM chemical_specifications WHERE chemical_id = ? ORDER BY row_index ASC").bind(id).all(),
+        db.prepare(`
+          SELECT prop_key as key, prop_value as value 
+          FROM chemical_properties 
+          WHERE chemical_id = ?
+        `).bind(id).all()
       ]);
 
       const specMap = new Map<number, Record<string, string>>();
@@ -38,6 +43,7 @@ export const GET: APIRoute = async ({ locals, request }) => {
         images: images.results.map(r => r.image),
         tags: tags.results.map(r => r.tag),
         specifications: Array.from(specMap.values()),
+        properties: rawProps.results,
       };
 
       return new Response(JSON.stringify(fullData), {

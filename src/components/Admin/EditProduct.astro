@@ -61,7 +61,7 @@ async function main() {
       productEdit.innerHTML = `<p class="text-red-500 text-center">❌ Không tìm thấy sản phẩm với id=${id}</p>`;
       return;
     }
-
+    let propertyFields = product.properties || [];
     specKeys = product.specifications?.length > 0 ? Object.keys(product.specifications[0]) : [];
 
     productEdit.innerHTML = `
@@ -98,18 +98,18 @@ async function main() {
           </div>
 
           <div class="space-y-6">
-            <div>
-              <label class="block font-semibold text-gray-700 mb-2">Hình Thức</label>
-              <textarea name="appearance" rows="5" class="w-full border px-4 py-2 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none">${product.appearance}</textarea>
-            </div>
-            <div>
-              <label class="block font-semibold text-gray-700 mb-2">Ứng Dụng</label>
-              <textarea name="application" rows="5" class="w-full border px-4 py-2 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none">${product.application}</textarea>
-            </div>
-            <div>
-              <label class="block font-semibold text-gray-700 mb-2">Đóng gói và bảo quản</label>
-              <textarea name="storage" rows="5" class="w-full border px-4 py-2 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none">${product.storage}</textarea>
-            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Thuộc tính chung</h2>
+            <div id="property-fields" class="space-y-4">
+          ${propertyFields.map((prop, i) => `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start property-row relative group">
+            <input type="text" name="property_key_${i}" value="${prop.key}" class="border px-3 py-2 rounded" placeholder="Tên thuộc tính" />
+            <textarea name="property_value_${i}" rows="3" class="border px-3 py-2 rounded">${prop.value}</textarea>
+            <button type="button" class="absolute top-0 right-0 text-red-600 font-bold opacity-0 group-hover:opacity-100 transition remove-property">❌</button>
+          </div>
+        `).join("")}
+        </div>
+        <button type="button" id="add-property-btn" class="mt-2 bg-green-500 text-white px-3 py-1 rounded">➕ Thêm dòng</button>
+        <input type="hidden" name="property_count" id="property-count" value="${propertyFields.length}" />
           </div>
 
           <div>
@@ -124,7 +124,7 @@ async function main() {
               <p class="text-sm text-gray-500 mt-2">Nếu bạn muốn thay đổi, hãy chọn ảnh mới bên dưới:</p>
             </div>
             <button type="button" id="uploadThumbnailBtn" class="mt-2 px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700">
-              📤 Chọn ảnh đại diện từ Cloudinary
+              📤 Chọn ảnh đại diện
             </button>
             <input type="hidden" id="thumbnailUrl" name="image" value="${product.image}" />
           </div>
@@ -140,7 +140,7 @@ async function main() {
             `).join("") || ''}
           </div>
           <button type="button" id="uploadImagesBtn" class="mt-2 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-            📤 Thêm ảnh sản phẩm từ Cloudinary
+            📤 Thêm ảnh sản phẩm
           </button>
           <input type="hidden" id="imagesUrls" name="images" value='${JSON.stringify(product.images || [])}' />
             </div>
@@ -184,50 +184,62 @@ async function main() {
 
     // Submit form
     productEdit.querySelector("#edit-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const form = e.target;
+  e.preventDefault();
+  const form = e.target;
 
-      const data = {
-        id: parseInt(form.id.value),
-        name: form.name.value,
-        formula: form.formula.value,
-        molarMass: form.molarMass.value,
-        cas: form.cas.value,
-        einecs: form.einecs.value,
-        hsCode: form.hsCode.value,
-        appearance: form.appearance.value,
-        application: form.application.value,
-        storage: form.storage.value,
-        tags: form.tags.value.split(",").map(tag => tag.trim()).filter(Boolean),
-        image: form.image.value,
-        images: JSON.parse(form.images.value || "[]"),
-        removeImages: Array.from(form.querySelectorAll("input[name='remove_images[]']:checked")).map(i => i.value),
-        specifications: []
-      };
+  const data = {
+    id: parseInt(form.id.value),
+    name: form.name.value,
+    formula: form.formula.value,
+    molarMass: form.molarMass.value,
+    cas: form.cas.value,
+    einecs: form.einecs.value,
+    hsCode: form.hsCode.value,
+    tags: form.tags.value.split(",").map(tag => tag.trim()).filter(Boolean),
+    image: form.image.value,
+    images: JSON.parse(form.images.value || "[]"),
+    removeImages: Array.from(form.querySelectorAll("input[name='remove_images[]']:checked")).map(i => i.value),
+    specifications: [],
+    properties: []
+  };
 
-      const rows = form.querySelectorAll(".spec-row");
-      rows.forEach((row, rowIndex) => {
-        const spec = {};
-        row.querySelectorAll("input[name^='spec_']").forEach(input => {
-          const parts = input.name.split("_");
-          const key = parts[1];
-          spec[key] = input.value;
-        });
-        data.specifications.push(spec);
-      });
-    console.log("Dữ liệu gửi lên:", data);
-      try {
-        const res = await fetch("/api/update-product", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        const result = await res.json();
-        alert(result.success ? "✅ Cập nhật thành công!" : "❌ Lỗi: " + result.message);
-      } catch (err) {
-        alert("❌ Gửi dữ liệu thất bại!");
-      }
+  // Thu thập thuộc tính động (appearance, application, storage...)
+  const propertyCount = parseInt(form["property_count"].value || "0");
+  for (let i = 0; i < propertyCount; i++) {
+    const key = form[`property_key_${i}`]?.value?.trim();
+    const value = form[`property_value_${i}`]?.value?.trim();
+    if (key) {
+      data.properties.push({ key, value });
+    }
+  }
+
+  // Thu thập chỉ tiêu kỹ thuật (specifications)
+  const rows = form.querySelectorAll(".spec-row");
+  rows.forEach((row, rowIndex) => {
+    const spec = {};
+    row.querySelectorAll("input[name^='spec_']").forEach(input => {
+      const parts = input.name.split("_");
+      const key = parts[1];
+      spec[key] = input.value;
     });
+    data.specifications.push(spec);
+  });
+
+  console.log("Dữ liệu gửi lên:", data);
+
+  try {
+    const res = await fetch("/api/update-product", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    alert(result.success ? "✅ Cập nhật thành công!" : "❌ Lỗi: " + result.message);
+  } catch (err) {
+    alert("❌ Gửi dữ liệu thất bại!");
+  }
+});
+
 
     // Thêm dòng chỉ tiêu
     productEdit.addEventListener("click", (e) => {
@@ -247,7 +259,7 @@ async function main() {
         reindexSpecInputs();
       }
     });
-
+    
     // Xóa dòng chỉ tiêu
     productEdit.addEventListener("click", (e) => {
       if (e.target.classList.contains("remove-spec")) {
@@ -304,6 +316,40 @@ async function main() {
         });
       }
     });
+
+    document.getElementById("add-property-btn").addEventListener("click", () => {
+  const container = document.getElementById("property-fields");
+  const count = container.querySelectorAll(".property-row").length;
+  const div = document.createElement("div");
+  div.className = "grid grid-cols-1 md:grid-cols-2 gap-4 items-start property-row relative group";
+  div.innerHTML = `
+    <input type="text" name="property_key_${count}" class="border px-3 py-2 rounded" placeholder="Tên thuộc tính" />
+    <textarea name="property_value_${count}" rows="3" class="border px-3 py-2 rounded"></textarea>
+    <button type="button" class="absolute top-0 right-0 text-red-600 font-bold opacity-0 group-hover:opacity-100 transition remove-property">❌</button>
+  `;
+  container.appendChild(div);
+  document.getElementById("property-count").value = count + 1;
+});
+
+productEdit.addEventListener("click", (e) => {
+  if (e.target.classList.contains("remove-property")) {
+    const row = e.target.closest(".property-row");
+    if (row) row.remove();
+
+    // Cập nhật lại tên input (name)
+    const rows = document.querySelectorAll(".property-row");
+    rows.forEach((row, i) => {
+      const keyInput = row.querySelector(`input[name^="property_key_"]`);
+      const valueInput = row.querySelector(`textarea[name^="property_value_"]`);
+      if (keyInput) keyInput.name = `property_key_${i}`;
+      if (valueInput) valueInput.name = `property_value_${i}`;
+    });
+
+    // Cập nhật số lượng
+    document.getElementById("property-count").value = rows.length;
+  }
+});
+
 
     // Ảnh đại diện từ Cloudinary
 document.getElementById("uploadThumbnailBtn").addEventListener("click", () => {

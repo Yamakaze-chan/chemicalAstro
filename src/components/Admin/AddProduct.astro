@@ -34,20 +34,15 @@
           </div>
         </div>
 
-        <div>
-          <label class="font-semibold block mb-1">Hình thức</label>
-          <textarea name="appearance" rows="3" class="w-full border p-2 rounded"></textarea>
-        </div>
-        <div>
-          <label class="font-semibold block mb-1">Ứng dụng</label>
-          <textarea name="application" rows="3" class="w-full border p-2 rounded"></textarea>
-        </div>
-        
+        <h2 class="text-xl font-bold mb-3">🧪 Thuộc tính chung</h2>
 
-        <div>
-          <label class="font-semibold block mb-1">Đóng gói và bảo quản</label>
-          <textarea name="storage" rows="3" class="w-full border p-2 rounded"></textarea>
+        <div id="prop-list" class="space-y-4">
+          <!-- Các dòng sẽ render ở đây -->
         </div>
+
+        <button type="button" id="add-prop-row" class="mt-2 bg-gray-200 px-4 py-1 rounded hover:bg-gray-300">
+          ➕ Thêm thuộc tính
+        </button>
 
         <div class="grid md:grid-cols-2 gap-6">
           <div>
@@ -70,7 +65,7 @@
       </div>
       <!-- Nút mở widget Cloudinary -->
       <button type="button" id="uploadThumbnailBtn" class="mt-2 px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700">
-        📤 Chọn ảnh đại diện từ Cloudinary
+        📤 Chọn ảnh đại
       </button>
     </div>
   </div>
@@ -84,7 +79,7 @@
     </div>
     <!-- Nút upload ảnh sản phẩm -->
     <button type="button" id="uploadImagesBtn" class="mt-2 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-      📤 Chọn ảnh sản phẩm từ Cloudinary
+      📤 Chọn ảnh sản phẩm
     </button>
   </div>
 </div>
@@ -137,134 +132,97 @@
   const addColumnBtn = document.getElementById("add-column-btn");
   const newColNameInput = document.getElementById("new-column-name");
 
+  const propList = document.getElementById("prop-list");
+  const addPropBtn = document.getElementById("add-prop-row");
+
   let columnNames = [];
+  let cloudImages = [];
+  let cloudThumbnail = "";
 
-const thumbnailInput = document.getElementById("thumbnailInput");
-const thumbnailPreview = document.getElementById("thumbnailPreview");
+  const thumbnailInput = document.getElementById("thumbnailInput");
+  const thumbnailPreview = document.getElementById("thumbnailPreview");
+  const imagesInput = document.getElementById("imagesInput");
+  const imagesPreview = document.getElementById("imagesPreview");
 
-const imagesInput = document.getElementById("imagesInput");
-const imagesPreview = document.getElementById("imagesPreview");
-
-
-thumbnailInput.addEventListener("change", function () {
-  thumbnailPreview.innerHTML = "";
-  const file = this.files[0];
-  if (!file) {
-    thumbnailPreview.innerHTML = `<p class="text-gray-500">Chưa có ảnh</p>`;
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const img = document.createElement("img");
-    img.src = e.target.result;
-    img.className = "w-32 h-32 object-cover rounded-lg border-2 border-blue-500 shadow";
-    thumbnailPreview.appendChild(img);
-  };
-  reader.readAsDataURL(file);
-});
-
-imagesInput.addEventListener("change", function () {
-  imagesPreview.innerHTML = "";
-  const files = Array.from(this.files || []);
-  if (files.length === 0) {
-    imagesPreview.innerHTML = `<p class="text-gray-500">Chưa có ảnh</p>`;
-    return;
-  }
-
-  files.forEach((file) => {
+  // 🖼 Xử lý ảnh đại diện
+  thumbnailInput.addEventListener("change", function () {
+    thumbnailPreview.innerHTML = "";
+    const file = this.files[0];
+    if (!file) {
+      thumbnailPreview.innerHTML = `<p class="text-gray-500">Chưa có ảnh</p>`;
+      return;
+    }
     const reader = new FileReader();
     reader.onload = function (e) {
       const img = document.createElement("img");
       img.src = e.target.result;
-      img.className = "w-28 h-28 object-cover rounded border";
-      imagesPreview.appendChild(img);
+      img.className = "w-32 h-32 object-cover rounded-lg border-2 border-blue-500 shadow";
+      thumbnailPreview.appendChild(img);
     };
     reader.readAsDataURL(file);
   });
-});
 
-// cloudinary
+  // 🖼 Xử lý ảnh sản phẩm
+  imagesInput.addEventListener("change", function () {
+    imagesPreview.innerHTML = "";
+    const files = Array.from(this.files || []);
+    if (files.length === 0) {
+      imagesPreview.innerHTML = `<p class="text-gray-500">Chưa có ảnh</p>`;
+      return;
+    }
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.className = "w-28 h-28 object-cover rounded border";
+        imagesPreview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
 
-// 🌐 Cloudinary upload widget
-const cloudName = "dlwv8fyyj"; // ✅ Cloud name của bạn
-const uploadPreset = "chemical_img"; // ✅ Upload preset của bạn
+  // ☁️ Cloudinary
+  const cloudName = "dlwv8fyyj";
+  const uploadPreset = "chemical_img";
 
-// Biến dùng để lưu trữ URL
-let cloudImages = [];
-let cloudThumbnail = "";
-
-// Nút upload ảnh đại diện
-document.getElementById("uploadThumbnailBtn").addEventListener("click", () => {
-  cloudinary.createUploadWidget(
-    {
-      cloudName,
-      uploadPreset,
-      multiple: false
-    },
-    (err, result) => {
+  document.getElementById("uploadThumbnailBtn").addEventListener("click", () => {
+    cloudinary.createUploadWidget({ cloudName, uploadPreset, multiple: false }, (err, result) => {
       if (!err && result.event === "success") {
         cloudThumbnail = result.info.secure_url;
         document.getElementById("thumbnailUrl").value = cloudThumbnail;
-
-        // Xem trước ảnh
-        document.getElementById("thumbnailPreview").innerHTML = `
-          <img src="${cloudThumbnail}" class="w-32 h-32 object-cover rounded border-2 shadow" />
-        `;
+        thumbnailPreview.innerHTML = `<img src="${cloudThumbnail}" class="w-32 h-32 object-cover rounded border-2 shadow" />`;
       }
-    }
-  ).open();
-});
+    }).open();
+  });
 
-// Nút upload ảnh sản phẩm
-document.getElementById("uploadImagesBtn").addEventListener("click", () => {
-  cloudinary.createUploadWidget(
-    {
-      cloudName,
-      uploadPreset,
-      multiple: true
-    },
-    (err, result) => {
+  document.getElementById("uploadImagesBtn").addEventListener("click", () => {
+    cloudinary.createUploadWidget({ cloudName, uploadPreset, multiple: true }, (err, result) => {
       if (!err && result.event === "success") {
         const url = result.info.secure_url;
         cloudImages.push(url);
         document.getElementById("imagesUrls").value = JSON.stringify(cloudImages);
-
-        // Thêm ảnh vào preview
         const img = document.createElement("img");
         img.src = url;
         img.className = "w-24 h-24 object-cover rounded border";
-        document.getElementById("imagesPreview").appendChild(img);
+        imagesPreview.appendChild(img);
       }
-    }
-  ).open();
-});
+    }).open();
+  });
 
-
+  // 📊 Bảng chỉ tiêu kỹ thuật
   function renderHeader() {
     const hasColumns = columnNames.length > 0;
-
-    specHeader.innerHTML =
-      columnNames
-        .map(
-          col => `
-        <th class="break-words whitespace-normal border px-4 py-2 relative group hover:bg-red-50">
-          ${col}
-          <button 
-            type="button" 
-            class="absolute top-0 right-0 text-red-500 opacity-0 group-hover:opacity-100 transition"
-            onclick="removeColumn('${col}')"
-          >❌</button>
-        </th>`
-        )
-        .join("") +
-      (hasColumns ? `<th class="border px-4 py-2 w-12"></th>` : "");
+    specHeader.innerHTML = columnNames.map(col => `
+      <th class="break-words whitespace-normal border px-4 py-2 relative group hover:bg-red-50">
+        ${col}
+        <button type="button" class="absolute top-0 right-0 text-red-500 opacity-0 group-hover:opacity-100 transition" onclick="removeColumn('${col}')">❌</button>
+      </th>`).join("") + (hasColumns ? `<th class="border px-4 py-2 w-12"></th>` : "");
   }
 
   window.removeColumn = function (colToRemove) {
     columnNames = columnNames.filter(col => col !== colToRemove);
-    if (columnNames.length === 0) {
-      specList.innerHTML = "";
-    }
+    if (columnNames.length === 0) specList.innerHTML = "";
     renderHeader();
     renderRows();
   };
@@ -281,36 +239,18 @@ document.getElementById("uploadImagesBtn").addEventListener("click", () => {
         if (col) oldData[col] = input.value;
       });
 
-      row.innerHTML =
-        columnNames
-          .map(
-            col => `
-          <td class="border px-4 py-2 align-top break-words whitespace-normal">
-            <textarea 
-              name="spec-${col}" 
-              data-col="${col}" 
-              class="p-2 rounded w-full break-words whitespace-normal resize-none overflow-hidden min-h-[40px]"
-              oninput="autoResize(this)"
-            >${oldData[col] || ""}</textarea>
-          </td>`
-          )
-          .join("") +
-        (hasColumns
-          ? `<td class="border px-4 py-2 text-center">
-              <button type="button" class="text-red-600 font-bold" onclick="this.closest('tr').remove()">❌</button>
-            </td>`
-          : "");
+      row.innerHTML = columnNames.map(col => `
+        <td class="border px-4 py-2 align-top break-words whitespace-normal">
+          <textarea name="spec-${col}" data-col="${col}" class="p-2 rounded w-full break-words whitespace-normal resize-none overflow-hidden min-h-[40px]" oninput="autoResize(this)">${oldData[col] || ""}</textarea>
+        </td>`).join("") + (hasColumns ? `<td class="border px-4 py-2 text-center"><button type="button" class="text-red-600 font-bold" onclick="this.closest('tr').remove()">❌</button></td>` : "");
 
-      // Resize lại sau khi render
-      const textareas = row.querySelectorAll("textarea");
-      textareas.forEach(t => autoResize(t));
+      row.querySelectorAll("textarea").forEach(t => autoResize(t));
     });
   }
 
   addColumnBtn.addEventListener("click", () => {
     const colName = newColNameInput.value.trim();
     if (!colName || columnNames.includes(colName)) return;
-
     columnNames.push(colName);
     renderHeader();
     renderRows();
@@ -319,23 +259,10 @@ document.getElementById("uploadImagesBtn").addEventListener("click", () => {
 
   addSpecRowBtn.addEventListener("click", () => {
     const row = document.createElement("tr");
-    row.innerHTML =
-      columnNames
-        .map(
-          col => `
-        <td class="border px-4 py-2 align-top break-words whitespace-normal">
-          <textarea 
-            name="spec-${col}" 
-            data-col="${col}" 
-            class="p-2 rounded w-full break-words whitespace-normal resize-none overflow-hidden min-h-[40px]"
-            oninput="autoResize(this)"
-          ></textarea>
-        </td>`
-        )
-        .join("") +
-      `<td class="border px-4 py-2 text-center">
-        <button type="button" class="text-red-600 font-bold" onclick="this.closest('tr').remove()">❌</button>
-      </td>`;
+    row.innerHTML = columnNames.map(col => `
+      <td class="border px-4 py-2 align-top break-words whitespace-normal">
+        <textarea name="spec-${col}" data-col="${col}" class="p-2 rounded w-full break-words whitespace-normal resize-none overflow-hidden min-h-[40px]" oninput="autoResize(this)"></textarea>
+      </td>`).join("") + `<td class="border px-4 py-2 text-center"><button type="button" class="text-red-600 font-bold" onclick="this.closest('tr').remove()">❌</button></td>`;
     specList.appendChild(row);
     row.querySelectorAll("textarea").forEach(t => autoResize(t));
     syncRowHeights();
@@ -349,7 +276,6 @@ document.getElementById("uploadImagesBtn").addEventListener("click", () => {
 
   function syncRowHeights() {
     const rows = document.querySelectorAll("#spec-list tr");
-
     rows.forEach(row => {
       row.style.height = "auto";
       const cells = row.querySelectorAll("td");
@@ -365,84 +291,95 @@ document.getElementById("uploadImagesBtn").addEventListener("click", () => {
     });
   }
 
+  // 🧪 Thuộc tính động
+  addPropBtn.addEventListener("click", () => {
+    const row = document.createElement("div");
+    row.className = "flex gap-2 items-start group relative";
+
+
+    row.innerHTML = `
+      <input type="text" name="prop-key" placeholder="Tên thuộc tính" class="border p-2 rounded w-1/3" />
+      <textarea name="prop-value" placeholder="Giá trị" class="border p-2 rounded w-2/3 min-h-[40px] resize-y"></textarea>
+      <button type="button" class="absolute top-1 right-1 text-red-600 font-bold opacity-0 group-hover:opacity-100 transition" title="Xoá dòng">❌</button>
+    `;
+
+    propList.appendChild(row);
+  });
+
+  propList.addEventListener("click", (e) => {
+  if (e.target.tagName === "BUTTON" && e.target.textContent.trim() === "❌") {
+    const row = e.target.closest(".group");
+    if (row) row.remove();
+  }
+});
+
+  // 📤 Gửi form
   document.getElementById("product-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    const form = e.target;
 
-  const form = e.target;
-
-  // 🧪 Lấy giá trị cơ bản
-  const name = form.querySelector("input[name='name']").value;
-  const formula = form.querySelector("input[name='formula']").value;
-  const molarMass = form.querySelector("input[name='molarMass']").value;
-  const cas = form.querySelector("input[name='cas']").value;
-  const einecs = form.querySelector("input[name='einecs']").value;
-  const hsCode = form.querySelector("input[name='hsCode']").value;
-  const appearance = form.querySelector("textarea[name='appearance']").value;
-  const application = form.querySelector("textarea[name='application']").value;
-  const storage = form.querySelector("textarea[name='storage']").value;
-  const tags = form.querySelector("input[name='tags']").value;
-
-// 🖼 Lấy ảnh thật từ input ẩn (sau khi upload Cloudinary)
+    const name = form.querySelector("input[name='name']").value;
+    const formula = form.querySelector("input[name='formula']").value;
+    const molarMass = form.querySelector("input[name='molarMass']").value;
+    const cas = form.querySelector("input[name='cas']").value;
+    const einecs = form.querySelector("input[name='einecs']").value;
+    const hsCode = form.querySelector("input[name='hsCode']").value;
+    const tags = form.querySelector("input[name='tags']").value;
     const image = document.getElementById("thumbnailUrl").value;
 
     let images = [];
     try {
       images = JSON.parse(document.getElementById("imagesUrls").value || "[]");
     } catch (e) {
-      console.error("Lỗi khi parse images JSON", e);
+      console.error("Lỗi parse images", e);
     }
-  // 📊 Lấy bảng chỉ tiêu kỹ thuật
-  const specRows = [];
-  const rows = document.querySelectorAll("#spec-list tr");
-  rows.forEach((row, rowIndex) => {
-    const inputs = row.querySelectorAll("textarea[data-col]");
-    inputs.forEach((input) => {
-      specRows.push({
-        row: rowIndex,
-        col: input.dataset.col,
-        value: input.value,
+
+    const specRows = [];
+    document.querySelectorAll("#spec-list tr").forEach((row, rowIndex) => {
+      row.querySelectorAll("textarea[data-col]").forEach(input => {
+        specRows.push({ row: rowIndex, col: input.dataset.col, value: input.value });
       });
     });
-  });
 
-  // 📨 Gửi JSON
-  try {
-    const res = await fetch("/api/addproduct", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        formula,
-        molarMass,
-        cas,
-        einecs,
-        hsCode,
-        appearance,
-        application,
-        storage,
-        tags,
-        image,
-        images,
-        specifications: specRows,
-      }),
+    const props = [];
+    document.querySelectorAll("#prop-list > div").forEach(row => {
+      const key = row.querySelector("input[name='prop-key']").value.trim();
+      const value = row.querySelector("textarea[name='prop-value']").value.trim();
+      if (key) props.push({ key, value });
     });
 
-    const result = await res.json();
-    if (result.success) {
-      alert("✅ Thêm sản phẩm thành công!");
-      window.location.href = "/admin/products";
-    } else {
-      alert("❌ Lỗi: " + (result.message || "Không xác định"));
+    try {
+      const res = await fetch("/api/addproduct", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          formula,
+          molarMass,
+          cas,
+          einecs,
+          hsCode,
+          tags,
+          image,
+          images,
+          specifications: specRows,
+          properties: props,
+        }),
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        alert("✅ Thêm sản phẩm thành công!");
+        window.location.href = "/admin/products";
+      } else {
+        alert("❌ Lỗi: " + (result.message || "Không xác định"));
+      }
+    } catch (err) {
+      alert("❌ Gửi thất bại: " + err.message);
     }
-  } catch (err) {
-    alert("❌ Gửi thất bại: " + err.message);
-  }
-});
-
-
+  });
 </script>
+
 
 
 
