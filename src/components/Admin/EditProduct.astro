@@ -113,7 +113,7 @@ async function main() {
           </div>
 
           <div>
-            <label class="block font-semibold text-gray-700 mb-1 mt-4">Tags (phân cách bằng dấu phẩy)</label>
+            <label class="block font-semibold text-gray-700 mb-1 mt-4">Tags</label>
             <input type="text" name="tags" value="${Array.isArray(product.tags) ? product.tags.join(', ') : ''}" class="w-full border px-4 py-2 rounded-lg" />
           </div>
 
@@ -135,7 +135,10 @@ async function main() {
             ${product.images?.map(url => `
               <div class="relative image-item">
                 <img src="${url}" class="w-full h-32 object-cover rounded border" />
-                <input type="checkbox" name="remove_images[]" value="${url}" class="absolute top-1 right-1 w-5 h-5" title="Xóa ảnh này" />
+                <label class="absolute top-1 right-1 w-6 h-6 bg-white border border-gray-400 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-100 transition">
+                  <input type="checkbox" name="remove_images[]" value="${url}" class="sr-only peer" />
+                  <span class="text-red-600 text-sm font-bold peer-checked:opacity-100 opacity-0 transition">✕</span>
+                </label>
               </div>
             `).join("") || ''}
           </div>
@@ -389,9 +392,12 @@ document.getElementById("uploadImagesBtn").addEventListener("click", () => {
         const div = document.createElement("div");
         div.className = "relative image-item";
         div.innerHTML = `
-          <img src="${url}" class="w-full h-32 object-cover rounded border" />
-          <input type="checkbox" name="remove_images[]" value="${url}" class="absolute top-1 right-1 w-5 h-5" title="Xóa ảnh này" />
-        `;
+            <img src="${url}" class="w-full h-32 object-cover rounded border" />
+            <label class="absolute top-1 right-1 w-6 h-6 bg-white border border-gray-400 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-100 transition">
+              <input type="checkbox" name="remove_images[]" value="${url}" class="sr-only peer" />
+              <span class="text-red-600 text-sm font-bold peer-checked:opacity-100 opacity-0 transition">✕</span>
+            </label>
+          `;
         document.getElementById("image-preview-list").appendChild(div);
 
         // Cập nhật hidden input

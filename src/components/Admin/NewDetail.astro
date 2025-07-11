@@ -19,6 +19,8 @@
   height: auto !important;
   display: block !important;
   margin: 1rem auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
   object-fit: contain;
 }
 
@@ -93,6 +95,9 @@
   font-style: italic;
   color: #666;
 }
+.content-body p {
+  text-align: left !important;
+}
 </style>
 
 
@@ -102,25 +107,58 @@
   const id = parseInt(urlParams.get("id"));
 
   function cleanHTML(html) {
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = html;
+  const wrapper = document.createElement("div");
+  wrapper.innerHTML = html;
 
-    wrapper.querySelectorAll('[style]').forEach(el => {
-      const style = el.getAttribute('style');
-      if (style) {
-        const safeStyle = style
-          .replace(/(?:^|;)\s*(width|max-width|height|float|clear|margin|position|left|right|top|bottom)[^;]*;?/gi, '')
-          .trim();
-        if (safeStyle) {
-          el.setAttribute('style', safeStyle);
-        } else {
-          el.removeAttribute('style');
-        }
-      }
-    });
+  // Danh sách các style cho phép
+  const allowedStyles = [
+    "text-align",
+    "float",
+    "margin-left",
+    "margin-right",
+    "display",
+    "font-size",
+    "font-style",
+    "font-weight",
+    "color",
+    "background-color",
+    "border",
+    "box-shadow",
+    "padding",
+    "margin",
+    "border-radius"
+  ];
 
-    return wrapper.innerHTML;
-  }
+  wrapper.querySelectorAll("[style]").forEach(el => {
+    const style = el.getAttribute("style");
+    if (!style) return;
+
+    const safeStyles = style
+      .split(";")
+      .map(s => s.trim())
+      .filter(s => allowedStyles.some(allow => s.startsWith(allow)))
+      .join("; ");
+
+    if (safeStyles) {
+      el.setAttribute("style", safeStyles);
+    } else {
+      el.removeAttribute("style");
+    }
+  });
+
+  // Gỡ bỏ <p> bọc quanh ảnh đơn độc
+  wrapper.querySelectorAll("p").forEach(p => {
+    const onlyImg = p.querySelector("img");
+    if (onlyImg && p.childNodes.length === 1) {
+      p.replaceWith(onlyImg);
+    }
+  });
+
+  return wrapper.innerHTML;
+}
+
+
+
 
   async function fetchNewsDetail() {
     if (!id || isNaN(id)) {

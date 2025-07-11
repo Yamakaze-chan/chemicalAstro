@@ -23,9 +23,11 @@ export const POST: APIRoute = async ({ locals, request }) => {
       tags = [],
       image = "",
       images = [],
+      removeImages = [],
       specifications = [],
       properties = [],
     } = body;
+
 
     if (!id || typeof id !== "number" || isNaN(id)) {
       return new Response("ID không hợp lệ", { status: 400 });
@@ -56,9 +58,13 @@ export const POST: APIRoute = async ({ locals, request }) => {
 
     // --- Cập nhật images ---
     await db.prepare("DELETE FROM chemical_images WHERE chemical_id = ?").bind(id).run();
-    for (const img of images) {
+
+    const filteredImages = images.filter((img: string) => !removeImages.includes(img));
+
+    for (const img of filteredImages) {
       await db.prepare("INSERT INTO chemical_images (chemical_id, image) VALUES (?, ?)").bind(id, img).run();
     }
+
 
     // --- Cập nhật specifications ---
     await db.prepare("DELETE FROM chemical_specifications WHERE chemical_id = ?").bind(id).run();

@@ -63,7 +63,7 @@ export function initPagination({ data = [], itemsPerPage = 12, onRenderPage, pag
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const pageData = data.slice(start, end);
-    onRenderPage(pageData);
+    onRenderPage(pageData, page);
     renderPagination();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }

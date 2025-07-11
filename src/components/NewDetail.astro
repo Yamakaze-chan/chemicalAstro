@@ -103,22 +103,33 @@ function cleanHTML(html) {
   const wrapper = document.createElement("div");
   wrapper.innerHTML = html;
 
+  // Cho phép các style sau
+  const allowedStyles = [
+    "text-align", "float", "margin-left", "margin-right", "display",
+    "font-size", "font-style", "font-weight", "color", "background-color",
+    "border", "box-shadow", "padding", "margin", "border-radius"
+  ];
+
   wrapper.querySelectorAll('[style]').forEach(el => {
     const style = el.getAttribute('style');
-    if (style) {
-      const safeStyle = style
-        .replace(/(?:^|;)\s*(width|max-width|height|float|clear|margin|position|left|right|top|bottom)[^;]*;?/gi, '')
-        .trim();
-      if (safeStyle) {
-        el.setAttribute('style', safeStyle);
-      } else {
-        el.removeAttribute('style');
-      }
+    if (!style) return;
+
+    const safeStyle = style
+      .split(';')
+      .map(s => s.trim())
+      .filter(s => allowedStyles.some(allowed => s.startsWith(allowed)))
+      .join('; ');
+
+    if (safeStyle) {
+      el.setAttribute('style', safeStyle);
+    } else {
+      el.removeAttribute('style');
     }
   });
 
   return wrapper.innerHTML;
 }
+
 
 async function fetchAndRenderNewsDetail() {
   try {
