@@ -1,82 +1,17 @@
 ---
 import "../../styles/global.css";
 ---
-<style>
-@media (min-width: 400px) and (max-width: 500px) {
-  .mi4ma5 {
-    top: 12% !important;
-    right: 5% !important;
-  }
-}
-@media (min-width: 501px) and (max-width: 767px) {
-  .mi5ma7 {
-    width: 25%;
-    top: 12% !important;
-    right: 0% !important;
-  }
-}
-@media (min-width: 786px) and (max-width: 1023px) {
-.mi7ma1 {
-width: 20%;
-top: 10% !important;
-right: 0% !important;
-}
-}
-@media (min-width: 1024px) {
-  .ma1 {
-    width: 20%;
-    top: 8% !important;
-    right: 7% !important;
-  }
-}
-</style>
-<section id="homepage-hero" class="relative w-full h-full flex justify-center m-0">
-    <div class="w-full h-full absolute">
-        <img src="/assets/grid.svg" class="absolute -z-11 w-full h-full hidden md:block object-cover"/>
-        <img 
-            src="/assets/Phosphate-3D-balls.png"
-            class="absolute z-[-10]
-            w-[25%] max-w-[180px] top-[20%] right-[10%]        
-            sm:w-[30%] sm:max-w-[240px] sm:top-[10%]          
-            md:top-[15%] md:right-[5%]                         
-            lg:top-[8%] lg:right-[12%]
-            mi4ma5 mi5ma7 mi7ma1 ma1
-            "                       
-                        
-            alt="Phosphate"
-            />
-
+<div id="HP_Hero" class="relative overflow-hidden h-[90vh]">
+  <img src="../../assets/HP_Hero.jpg" alt="" class="w-full absolute top-[-100px] z-[-1]">
+  <div class="h-3/4 flex flex-row">
+    <div class="h-full w-3/5 bg-[#012E40]/50"></div>
+    <div class="h-full w-2/5 bg-[#fff]/50"></div>
+    <div class="auto-color-text absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-2/3 w-full text-center">
+      <div class="font-extrabold text-[5rem]">Phosphate Expert</div>
+      <div class="font-bold text-[1.7rem] text-center w-3/4 float-end flex items-center justify-center"><span class="block w-[40px] h-[1px] bg-[#fff] mx-2"></span>BY AN BINH ChemTech </div>
     </div>
-    <div class="mt-[15%] sm:mt-[10%] md:mt-[5%] w-[85%] h-full flex flex-col justify-center items-center gap-8">
-        <h1 class="text-[48px] md:text-[96px] font-bold text-center">
-            Leading 
-            <br>
-            <span class="text-[var(--color-4)]">The Phosphate</span>
-            <br>
-            Revolution.
-        </h1> 
-        <p class="text-[20px] md:text-[24px] text-center">
-            We are partnering with the business to build modern applications,
-                modernize existing applications, and reduce the time to market by 50%.
-            </p> 
-        <button
-        class="overflow-hidden relative w-32 p-2 h-12 bg-[var(--color-4)] text-white border-none rounded-md text-xl font-bold cursor-pointer relative z-1 group"
-        >
-        Hover me!
-        <span
-            class="absolute w-36 h-32 -top-8 -left-2 bg-white rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-left"
-        ></span>
-        <span
-            class="absolute w-36 h-32 -top-8 -left-2 bg-[var(--color-4)] rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-left"
-        ></span>
-        <span
-            class="absolute w-36 h-32 -top-8 -left-2 bg-[var(--color-3)] rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-1000 duration-500 origin-left"
-        ></span>
-        <span
-            class="group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-2.5 left-6 z-10"
-            >Explore!</span
-        >
-        </button>
+  </div>
+  <div class="bg-[#012E40] h-1/4 w-full z-5 realtive p-5">
+    <span>Hân hạnh đồng hành cùng ngành công nghiệp thực phẩm & xử lý nước, An Bình Chemtech cung cấp các giải pháp hóa chất phosphat toàn diện – từ nguyên liệu đầu vào tiêu chuẩn thực phẩm đến phụ gia công thức độc quyền, giúp tối ưu hoá giá trị gia tăng cho nông thuỷ sản.</span></div>
+</div>
 
-    </div>
-</section>
