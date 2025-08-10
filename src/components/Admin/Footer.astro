@@ -1,13 +1,18 @@
 ---
+const { user } = Astro.props;
 ---
 
 <footer class="bg-gray-800 text-white text-sm py-4 mt-10">
   <div class="max-w-screen-xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
-    <p class="mb-2 md:mb-0">&copy; 2025 Ted Martins. All rights reserved.</p>
+    
+    <!-- Bên trái: Xin chào -->
+    <p class="mb-2 md:mb-0">Xin chào, <span class="font-semibold">{user.username}</span>!</p>
+    
+    <!-- Bên phải: Menu -->
     <div class="flex space-x-4">
       <a href="/admin" class="hover:underline">Dashboard</a>
-      <a href="/admin/settings" class="hover:underline">Cài đặt</a>
-      <a href="/logout" class="hover:underline text-red-400">Đăng xuất</a>
+      <a href="/api/logout" class="hover:underline text-red-400">Đăng xuất</a>
     </div>
+
   </div>
 </footer>

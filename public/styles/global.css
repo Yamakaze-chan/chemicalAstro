@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
 	--color--gray-2: #f2f5fb;
 	--font-family--body: Poppins, sans-serif;
@@ -11,3 +13,13 @@
 	--color--transparent: #0000;
 	--color--black: #1d2635;
 }
+body {
+	background-color: white;
+  overflow-x: hidden;
+}
+
+.Montserrat{
+	font-family: 'Montserrat';
+	font-style: normal;
+}
+

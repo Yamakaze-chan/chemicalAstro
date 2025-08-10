@@ -3,54 +3,62 @@
 
 <section class="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-16 px-4 pt-24">
   <div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-12">📰 Quản Lý Tin Tức</h1>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-[var(--color-3)] mb-12">Quản Lý Tin Tức</h1>
 
     <div class="mt-6 mb-6 flex justify-end">
       <a href="/admin/addnew"
-         class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md transition">
+         class="bg-[var(--color-4)] hover:bg-[var(--color-1)] text-white font-semibold px-6 py-3 rounded-xl shadow-md transition">
         + Thêm tin tức
       </a>
     </div>
 
-    <!-- Ô tìm kiếm -->
-    <div class="relative w-full sm:w-1/2 mb-6">
-      <label for="search-input" class="block text-sm font-medium text-gray-700 mb-2">
+    <div class="relative w-full sm:w-1/2 mb-6 mx-auto">
+      <label for="search-input" class="block text-sm font-medium text-[var(--color-3)] mb-2">
         🔍 Nhập tiêu đề tin tức
       </label>
       <input
         id="search-input"
         type="text"
         placeholder="Tìm theo tiêu đề..."
-        class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-xl shadow-lg bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
       />
       <div class="absolute left-3 top-[2.4rem] text-gray-400 pointer-events-none">
         <i class="fas fa-search"></i>
       </div>
     </div>
 
-    <div class="overflow-auto bg-white shadow-xl rounded-2xl">
-      <table class="min-w-full text-sm border-collapse">
-        <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
-          <tr class="border-b border-gray-300">
-            <th class="px-4 py-3 text-center whitespace-nowrap">ID</th>
-            <th class="px-4 py-3 text-left whitespace-nowrap">Tiêu đề</th>
-            <th class="px-4 py-3 text-left whitespace-nowrap">Mô tả</th>
-            <th class="px-4 py-3 text-center whitespace-nowrap">Hành động</th>
-          </tr>
-        </thead>
-        <tbody id="news-table-body"></tbody>
-      </table>
-      <div id="pagination" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
-    </div>
+<div class="flex flex-col h-[496px] bg-white shadow-xl">
+  <div class="flex-1 overflow-auto">
+    <table class="min-w-full text-sm border-collapse">
+      <thead class="bg-[var(--color-4)] text-white uppercase text-xs font-semibold">
+        <tr class="border-b border-gray-300">
+          <th class="px-4 py-3 text-left whitespace-nowrap">Tiêu đề</th>
+          <th class="px-4 py-3 text-left whitespace-nowrap">Mô tả</th>
+          <th class="px-4 py-3 text-center whitespace-nowrap">Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="news-table-body">
+      </tbody>
+    </table>
+  </div>
+
+  <div id="pagination" class="flex justify-center gap-2 mt-6 flex-wrap p-4 border-gray-200">
+  </div>
+</div>
+
   </div>
 </section>
 
 <script>
-  import news from "../../data/news.json";
   import { initPagination } from "../../utils/pagination.js";
 
   const tbody = document.getElementById("news-table-body");
   const pagination = document.getElementById("pagination");
+  const searchInput = document.getElementById("search-input");
+
+  let allNews = [];
+  let filteredNews = [];
+  let paginationInstance;
 
   function stripHtml(html) {
     return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
@@ -58,15 +66,14 @@
 
   function renderNews(newsArray) {
     if (newsArray.length === 0) {
-      tbody.innerHTML = `
+      tbody!.innerHTML = `
         <tr class="border-b border-gray-300">
           <td colspan="4" class="text-center py-6 text-gray-500">Không có tin tức nào.</td>
         </tr>
       `;
     } else {
-      tbody.innerHTML = newsArray.map(item => `
+      tbody!.innerHTML = newsArray.map(item => `
         <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-300" data-id="${item.id}">
-          <td class="px-4 py-3 text-center whitespace-nowrap">${item.id}</td>
           <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[200px]" title="${item.title}">${item.title}</td>
           <td class="px-4 py-3 text-gray-600 whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[250px]">
             ${item.content ? stripHtml(item.content).slice(0, 60) + "..." : "-"}
@@ -81,22 +88,20 @@
 
       document.querySelectorAll('button[id^="delete-btn-"]').forEach(button => {
         button.addEventListener('click', async () => {
-          const id = parseInt(button.id.replace("delete-btn-", ""));
+          const id = parseInt(button.dataset.id);
           if (!confirm("Bạn có chắc muốn xóa không?")) return;
           try {
             const response = await fetch("/api/delete-news", {
               method: "POST",
-              headers: { "Content-type": "application/json" },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ id }),
             });
             if (!response.ok) {
-              const text = await response.text();
               alert("Lỗi server");
               return;
             }
-            const result = await response.json();
             alert("Đã xóa tin tức");
-            window.location.reload();
+            fetchAndRenderNews();
           } catch (error) {
             alert("Lỗi kết nối");
             console.error(error);
@@ -106,23 +111,45 @@
     }
   }
 
-  const searchInput = document.getElementById("search-input");
-  let filteredNews = [...news];
-
-  function newsSearch() {
-    const keyword = searchInput?.value.trim().toLowerCase();
-    filteredNews = news.filter(n => n.title.toLowerCase().includes(keyword));
+  function applySearchAndRender(query) {
+    query = query.toLowerCase();
+    filteredNews = allNews.filter(item =>
+      item.title.toLowerCase().includes(query)
+    );
     paginationInstance.render(filteredNews);
   }
 
-  searchInput?.addEventListener("input", newsSearch);
-
-  const paginationInstance = initPagination({
-    data: news,
-    itemsPerPage: 6,
-    onRenderPage: renderNews,
-    paginationContainer: pagination,
+  searchInput?.addEventListener("input", (e) => {
+    const keyword = e.target.value;
+    applySearchAndRender(keyword);
   });
 
-  paginationInstance.render(filteredNews);
+  async function fetchAndRenderNews() {
+    try {
+      const res = await fetch("/api/news");
+      const newsList = (await res.json());
+      newsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      allNews = [...newsList];
+      filteredNews = [...newsList];
+
+      paginationInstance = initPagination({
+        data: filteredNews,
+        itemsPerPage: 8,
+        onRenderPage: renderNews,
+        paginationContainer: pagination,
+      });
+
+      paginationInstance.render(filteredNews);
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu tin tức:", err);
+      tbody!.innerHTML = `
+        <tr class="border-b border-gray-300">
+          <td colspan="4" class="text-center py-6 text-red-500">Lỗi khi tải dữ liệu.</td>
+        </tr>
+      `;
+    }
+  }
+
+  fetchAndRenderNews();
 </script>

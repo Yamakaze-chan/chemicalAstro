@@ -1,5 +1,5 @@
 <section class="bg-white text-[var(--color-3)] py-12">
-  <div id="new-detail" class="max-w-7xl mx-auto px-4 flex flex-col gap-12 mt-[5%]"></div>
+  <div id="new-detail" class="max-w-7xl mx-auto px-4 flex flex-col gap-12 mt-[20%] md:mt-[5%]"></div>
 </section>
 
 <style>
@@ -8,6 +8,7 @@
   overflow-x: hidden;
   word-break: break-word;
   line-height: 1.6;
+  text-align: justify;
 }
 
 /* Ảnh (mọi nguồn, kể cả inline style) */
@@ -94,29 +95,35 @@
 </style>
 
 <script>
-import news from "../data/news.json";
-
-const newDetail = document.getElementById('new-detail')
+const newDetail = document.getElementById('new-detail');
 const urlParams = new URLSearchParams(window.location.search);
 const id = parseInt(urlParams.get("id"));
-const newItem = news.find(p => p.id === id);
 
 function cleanHTML(html) {
   const wrapper = document.createElement("div");
   wrapper.innerHTML = html;
 
+  // Cho phép các style sau
+  const allowedStyles = [
+    "text-align", "float", "margin-left", "margin-right", "display",
+    "font-size", "font-style", "font-weight", "color", "background-color",
+    "border", "box-shadow", "padding", "margin", "border-radius"
+  ];
+
   wrapper.querySelectorAll('[style]').forEach(el => {
     const style = el.getAttribute('style');
-    if (style) {
-      // Gỡ bỏ các thuộc tính ảnh hưởng layout
-      const safeStyle = style
-        .replace(/(?:^|;)\s*(width|max-width|height|float|clear|margin|position|left|right|top|bottom)[^;]*;?/gi, '')
-        .trim();
-      if (safeStyle) {
-        el.setAttribute('style', safeStyle);
-      } else {
-        el.removeAttribute('style');
-      }
+    if (!style) return;
+
+    const safeStyle = style
+      .split(';')
+      .map(s => s.trim())
+      .filter(s => allowedStyles.some(allowed => s.startsWith(allowed)))
+      .join('; ');
+
+    if (safeStyle) {
+      el.setAttribute('style', safeStyle);
+    } else {
+      el.removeAttribute('style');
     }
   });
 
@@ -124,25 +131,40 @@ function cleanHTML(html) {
 }
 
 
-if (!newItem) {
-  newDetail!.innerHTML = `<p class="text-red-500">Không tìm thấy tin tức.</p>`;
-} else {
-  const cleanedContent = cleanHTML(newItem.content);
+async function fetchAndRenderNewsDetail() {
+  try {
+    const res = await fetch(`/api/news?id=${id}`);
+    if (!res.ok) throw new Error("Lỗi khi gọi API");
 
-  newDetail!.innerHTML = `
-    <div class="w-full space-y-8">
-      <!-- Tiêu đề -->
-      <h1 class="text-4xl font-extrabold text-center text-[var(--color-1)]">
-        ${newItem.title}
-      </h1>
+    const data = await res.json();
+    const newItem = data?.data || data;
 
-      <!-- Mô tả -->
-      <div class="p-6 rounded-lg text-gray-700 leading-relaxed text-center">
-        <div class="text-lg inline-block text-left max-w-3xl w-full content-body">
-          ${cleanedContent}
+    if (!newItem || !newItem.id) {
+      newDetail!.innerHTML = `<p class="text-red-500">Không tìm thấy tin tức.</p>`;
+      return;
+    }
+
+    const cleanedContent = cleanHTML(newItem.content);
+
+    newDetail!.innerHTML = `
+      <div class="w-full space-y-8">
+        <h1 class="text-4xl font-extrabold text-justify md:text-center text-[var(--color-1)]">
+          ${newItem.title}
+        </h1>
+
+        <div class="p-6 rounded-lg text-gray-700 leading-relaxed text-justify md:text-center">
+          <div class="text-lg inline-block max-w-3xl w-full content-body text-justify">
+            ${cleanedContent}
+          </div>
         </div>
       </div>
-    </div>
-  `;
+    `;
+  } catch (err) {
+    console.error(err);
+    newDetail!.innerHTML = `<p class="text-red-500">Lỗi khi tải dữ liệu.</p>`;
+  }
 }
+
+fetchAndRenderNewsDetail();
+
 </script>

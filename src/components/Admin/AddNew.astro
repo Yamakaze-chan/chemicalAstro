@@ -26,6 +26,27 @@
     <button type="button" onclick="execCmd('underline')" class="underline px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">U</button>
     
     <button type="button" onclick="execCmd('insertImage')" class="px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">🖼</button>
+    <select onchange="applyCustomFontSize(this.value)"
+      class="px-2 py-2 border border-gray-300 rounded-md text-sm bg-white shadow-sm hover:bg-gray-100 transition duration-150">
+        <option value="">Cỡ chữ</option>
+        <option value="12">12px</option>
+        <option value="14">14px</option>
+        <option value="16">16px</option>
+        <option value="18">18px</option>
+        <option value="24">24px</option>
+        <option value="32">32px</option>
+        <option value="40">40px</option>
+        <option value="50">50px</option>
+  </select>
+    <button type="button" onclick="execCmd('justifyLeft')" class="btn">⬅️ Trái</button>
+
+    <button type="button" onclick="execCmd('justifyCenter')" class="btn">↔️ Giữa</button>
+
+    <button type="button" onclick="execCmd('justifyRight')" class="btn">➡️ Phải</button>
+
+    <button type="button" onclick="execCmd('justifyFull')" class="btn">📝 Đều</button>
+
+    <button type="button" onclick="uploadImageToEditor()" class="px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">☁️ Upload ảnh</button>
     
     <button type="button" onclick="insertTable()" class="px-4 py-2 rounded-md bg-gray-100 text-gray-800 font-medium shadow-sm hover:bg-[var(--color-3)] hover:text-white transition duration-150">📋 Table</button>
     
@@ -66,31 +87,38 @@
     background-color: #d1d5db;
   }
 </style>
+
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+
 <script>
   const form = document.getElementById("news-form");
   const contentInput = document.getElementById("content");
   const editor = document.getElementById("editor");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  form!.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    contentInput.value = editor.innerHTML;
+  const title = form.querySelector("input[name='title']").value;
+  const author = form.querySelector("input[name='author']").value;
+  const content = editor.innerHTML;
 
-    const formData = new FormData(form);
+  contentInput.value = content;
 
-    const res = await fetch("/api/add-news", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (res.ok) {
-      alert("✅ Đã thêm tin tức!");
-      window.location.href = "/admin/news"; // chuyển về trang news
-    } else {
-      const error = await res.text();
-      alert("❌ Lỗi khi thêm tin: " + error);
-    }
+  const res = await fetch("/api/add-news", {
+    method: "POST",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify({ title, author, content }),
   });
+
+  if (res.ok) {
+    alert("✅ Đã thêm tin tức!");
+    window.location.href = "/admin/news";
+  } else {
+    const error = await res.text();
+    alert("❌ Lỗi khi thêm tin: " + error);
+  }
+});
+
 
   // Toolbar hỗ trợ
   window.execCmd = function (command) {
@@ -104,6 +132,17 @@
       document.execCommand(command, false, null);
     }
   };
+
+  window.applyCustomFontSize = function (px) {
+  if (!px) return;
+  document.execCommand("fontSize", false, "7");
+  const fonts = editor.querySelectorAll("font[size='7']");
+  fonts.forEach(font => {
+    font.removeAttribute("size");
+    font.style.fontSize = px + "px";
+  });
+};
+
 
   window.insertTable = () => {
   const rows = prompt("Số hàng:", 2);
@@ -121,4 +160,30 @@
   table += "</table><br/>";
   document.execCommand('insertHTML', false, table);
 };
+const cloudName = "dlwv8fyyj";
+  const uploadPreset = "chemical_img";
+
+  function uploadImageToEditor() {
+  const myWidget = cloudinary.createUploadWidget(
+    {
+      cloudName: cloudName,
+      uploadPreset: uploadPreset,
+      multiple: false,
+      sources: ['local'],
+      defaultSource: 'local',
+    },
+    (error, result) => {
+      if (!error && result && result.event === "success") {
+        const url = result.info.secure_url;
+        const imgTag = `<img src="${url}" style="display:block;max-width:100%;margin:1rem auto;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);" />`;
+          document.execCommand('insertHTML', false, imgTag);
+      }
+    }
+  );
+
+  myWidget.open();
+}
+
+window.uploadImageToEditor = uploadImageToEditor;
+
 </script>

@@ -1,25 +1,20 @@
 ---
-import products from "../../data/products.json";
-const totalProducts = products.length;
-import news from "../../data/news.json";
-const totalNews = news.length;
-import contact from "../../data/contact.json";
-const unreadContacts = contact.filter(item => item.status === "unread").length;
+
 ---
 
 <section class="pt-24 px-4 pb-12 bg-gray-100 min-h-screen">
   <div class="max-w-screen-xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-8">Tổng quan quản trị</h1>
+    <h1 class="text-3xl font-bold text-[var(--color-3)] mb-8">Tổng quan quản trị</h1>
 
     <!-- Thống kê -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
       <!-- Sản phẩm -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Tổng Sản phẩm</h2>
-          <p class="text-3xl font-extrabold text-indigo-600 mt-3">{totalProducts}</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)]">Tổng Sản phẩm</h2>
+          <p id="total-products" class="text-3xl font-extrabold text-[var(--color-3)] mt-3">--</p>
         </div>
-        <a href="/admin/products" class="mt-5 inline-block text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/products" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           📦 Xem chi tiết
         </a>
       </div>
@@ -27,10 +22,10 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
       <!-- Tin tức -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Tin Tức hiện có</h2>
-          <p class="text-3xl font-extrabold text-green-600 mt-3">{totalNews}</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)">Tin Tức hiện có</h2>
+          <p id="total-news" class="text-3xl font-extrabold text-[var(--color-3) mt-3">--</p>
         </div>
-        <a href="/admin/news" class="mt-5 inline-block text-sm font-medium text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/news" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           📰 Xem chi tiết
         </a>
       </div>
@@ -38,10 +33,10 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
       <!-- Liên hệ -->
       <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between h-full">
         <div>
-          <h2 class="text-lg font-semibold text-gray-700">Liên Hệ chưa xem</h2>
-          <p class="text-3xl font-extrabold text-blue-600 mt-3">{unreadContacts}</p>
+          <h2 class="text-lg font-semibold text-[var(--color-3)]">Liên Hệ chưa xem</h2>
+          <p id="unread-contacts" class="text-3xl font-extrabold text-red-500 mt-3">--</p>
         </div>
-        <a href="/admin/contact" class="mt-5 inline-block text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors duration-200 text-center">
+        <a href="/admin/contact" class="mt-5 inline-block text-sm font-medium text-white bg-[var(--color-4)] hover:bg-[var(--color-3)] px-4 py-2 rounded-lg transition-colors duration-200 text-center">
           🔍 Xem chi tiết
         </a>
       </div>
@@ -50,20 +45,25 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     <!-- Chọn sản phẩm nổi bật -->
     <div class="max-w-7xl mx-auto">
       <div class="mb-6 flex justify-between items-center flex-col sm:flex-row gap-4">
-        <h1 class="text-3xl font-bold">🌟 Chọn sản phẩm nổi bật (tối đa 4)</h1>
+        <h1 class="text-3xl text-[var(--color-3)] font-bold">Chọn sản phẩm nổi bật (tối đa 4)</h1>
         <input
           id="search-input"
           type="text"
           placeholder="🔍 Tìm theo tên sản phẩm..."
-          class="w-full sm:w-80 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+          class="w-full sm:w-80 px-4 py-2 border border-gray-300 rounded-lg shadow-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
         />
       </div>
 
-      <div id="product-selection" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"></div>
+      <div class="relative min-h-[550px] flex flex-col justify-between mb-8">
+      <div id="product-selection" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
       <div id="pagination-controls" class="flex justify-center gap-2 flex-wrap mt-4"></div>
-      <button id="save-button" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-        💾 Lưu danh sách sản phẩm nổi bật
-      </button>
+    </div>
+
+      <div class="flex justify-center">
+        <button id="save-button" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+          💾 Lưu danh sách sản phẩm nổi bật
+        </button>
+      </div>
       <p id="status" class="mt-4 text-green-600 font-semibold"></p>
     </div>
   </div>
@@ -78,23 +78,58 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
   let allProducts = [];
   let filteredProducts = [];
   let currentPage = 1;
-  const itemsPerPage = 8; // ✅ Bạn có thể thay đổi số lượng sản phẩm mỗi trang
-
+  const itemsPerPage = 8;
+  console.log("📦 selectionEl:", selectionEl)
   function renderPagination(totalItems) {
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    paginationEl.innerHTML = "";
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  paginationEl.innerHTML = "";
 
-    for (let i = 1; i <= totalPages; i++) {
-      const btn = document.createElement("button");
-      btn.textContent = i;
-      btn.className = `px-3 py-1 rounded ${i === currentPage ? "bg-blue-600 text-white" : "bg-white border"} hover:bg-blue-100 transition`;
+  const pages = [];
+
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    const nearStart = currentPage <= 3;
+    const nearEnd = currentPage >= totalPages - 2;
+
+    pages.push(1);
+
+    if (!nearStart && currentPage > 3) pages.push("...");
+
+    const startMiddle = Math.max(2, currentPage - 1);
+    const endMiddle = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = startMiddle; i <= endMiddle; i++) {
+      if (i > 1 && i < totalPages) pages.push(i);
+    }
+
+    if (!nearEnd && currentPage < totalPages - 2) pages.push("...");
+
+    pages.push(totalPages);
+  }
+
+  pages.forEach(p => {
+    const btn = document.createElement("button");
+    btn.textContent = p;
+
+    if (p === "...") {
+      btn.disabled = true;
+      btn.className = "px-3 py-1 text-gray-400 cursor-default";
+    } else {
+      btn.className = `px-3 py-1 rounded ${
+        p === currentPage ? "bg-blue-600 text-white" : "bg-white border"
+      } hover:bg-blue-100 transition`;
+
       btn.addEventListener("click", () => {
-        currentPage = i;
+        currentPage = p;
         renderProducts(filteredProducts);
       });
-      paginationEl.appendChild(btn);
     }
-  }
+
+    paginationEl.appendChild(btn);
+  });
+}
+
 
   function renderProducts(list) {
     selectionEl.innerHTML = "";
@@ -110,8 +145,8 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
 
       card.innerHTML = `
         <div class="flex flex-col h-full items-center text-center">
-          <img src="${product.image}" alt="${product.name}"
-            class="w-24 h-24 object-contain mb-3 rounded-full border-2 border-blue-300 bg-white shadow-md" />
+          <img src="${product.image || '/images/placeholder.png'}" alt="${product.name}"
+              class="w-24 h-24 object-contain mb-3 rounded-full border-2 border-blue-300 bg-white shadow-md" />
           <h2 class="text-sm font-semibold text-gray-800 mb-3 min-h-[3rem] px-1">${product.name}</h2>
           <button class="select-btn mt-auto w-full px-3 py-1 rounded font-medium 
                   transition duration-200 ${isSelected ? "bg-red-500 hover:bg-red-600 text-white" : "bg-blue-500 hover:bg-blue-600 text-white"}">
@@ -131,7 +166,7 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
           }
           selected.set(product.id, product);
         }
-        renderProducts(filteredProducts); // cập nhật lại giao diện
+        renderProducts(filteredProducts);
       });
 
       selectionEl.appendChild(card);
@@ -140,23 +175,38 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     renderPagination(list.length);
   }
 
-  async function loadProducts() {
-    const res = await fetch("/api/products.json");
+async function loadProducts() {
+  try {
+    const res = await fetch("/api/products");
     allProducts = await res.json();
+    console.log("✅ All products:", allProducts);
 
-    const featuredRes = await fetch("/api/outstandingproducts.json");
-    const featured = await featuredRes.json();
-
-    featured.forEach(p => selected.set(p.id, p));
+    try {
+      const featuredRes = await fetch("/api/outstandingproducts");
+      if (featuredRes.ok) {
+        const featured = await featuredRes.json();
+        console.log("✅ Featured:", featured);
+        featured.forEach(p => selected.set(p.id, p));
+      } else {
+        console.warn("⚠️ Không thể tải sản phẩm nổi bật");
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi tải sản phẩm nổi bật:", err);
+    }
 
     filteredProducts = allProducts;
     currentPage = 1;
     renderProducts(filteredProducts);
+  } catch (err) {
+    console.error("❌ Lỗi khi tải sản phẩm:", err);
   }
+}
+
 
   document.getElementById("save-button").addEventListener("click", async () => {
     const data = Array.from(selected.values()).map(({ id, name, image }) => ({ id, name, image }));
-    const res = await fetch("/api/outstandingproducts.json", {
+    console.log("📤 Dữ liệu POST gửi lên:", data); // 👉 log dữ liệu gửi lên
+    const res = await fetch("/api/outstandingproducts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -171,6 +221,19 @@ const unreadContacts = contact.filter(item => item.status === "unread").length;
     currentPage = 1;
     renderProducts(filteredProducts);
   });
+  async function loadStats() {
+  try {
+    const res = await fetch("/api/dashboard-stats");
+    if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu thống kê");
 
+    const { totalProducts, totalNews, unreadContacts } = await res.json();
+    document.getElementById("total-products").textContent = totalProducts;
+    document.getElementById("total-news").textContent = totalNews;
+    document.getElementById("unread-contacts").textContent = unreadContacts;
+  } catch (err) {
+    console.error("❌ Lỗi khi tải thống kê:", err);
+  }
+}
+  loadStats();
   loadProducts();
 </script>

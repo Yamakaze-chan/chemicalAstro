@@ -3,18 +3,14 @@
 
   </div>
 </section>
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
 <script type="module">
 const productEdit = document.getElementById('editproduct');
 const urlParams = new URLSearchParams(window.location.search);
 const id = parseInt(urlParams.get("id"));
 
-const response = await fetch("/api/products.json");
-const products = await response.json();
-
-const product = products.find(p => p.id === id);
-
-let specKeys = product.specifications?.length > 0 ? Object.keys(product.specifications[0]) : [];
+let specKeys = [];
 
 function renderSpecTable(specs) {
   return specs.map((spec, rowIndex) => {
@@ -33,218 +29,9 @@ function renderSpecTable(specs) {
   }).join("");
 }
 
-if (!product) {
-  productEdit.innerHTML = `<p class="text-red-500">Không tìm thấy sản phẩm.</p>`;
-} else {
-  productEdit.innerHTML = `
-    <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-xl">
-      <h1 class="text-3xl font-bold text-gray-800 mb-6">✏️ Sửa Sản Phẩm</h1>
-      <form id="edit-form" class="space-y-10">
-        <input type="hidden" name="id" value="${id}" />
-
-        <!-- Grid thông tin cơ bản -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="block font-semibold text-gray-700 mb-1">Tên sản phẩm</label>
-            <input type="text" name="name" value="${product.name}" class="w-full border px-4 py-2 rounded-lg" required />
-          </div>
-          <div>
-            <label class="block font-semibold text-gray-700 mb-1">Công thức phân tử</label>
-            <input type="text" name="formula" value="${product.formula}" class="w-full border px-4 py-2 rounded-lg" />
-          </div>
-          <div>
-            <label class="block font-semibold text-gray-700 mb-1">Khối lượng phân tử</label>
-            <input type="text" name="molarMass" value="${product.molarMass}" class="w-full border px-4 py-2 rounded-lg" />
-          </div>
-          <div>
-            <label class="block font-semibold text-gray-700 mb-1">Số CAS</label>
-            <input type="text" name="cas" value="${product.cas}" class="w-full border px-4 py-2 rounded-lg" />
-          </div>
-          <div>
-            <label class="block font-semibold text-gray-700 mb-1">Số EINECS</label>
-            <input type="text" name="einecs" value="${product.einecs}" class="w-full border px-4 py-2 rounded-lg" />
-          </div>
-          <div>
-            <label class="block font-semibold text-gray-700 mb-1">Mã H.S</label>
-            <input type="text" name="hsCode" value="${product.hsCode}" class="w-full border px-4 py-2 rounded-lg" />
-          </div>
-        </div>
-
-        <!-- Các textarea full width -->
-        <div class="space-y-6">
-          <div>
-            <label class="block font-semibold text-gray-700 mb-2">Hình Thức</label>
-            <textarea name="appearance" rows="5" class="w-full border px-4 py-2 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none">${product.appearance}</textarea>
-          </div>
-          <div>
-            <label class="block font-semibold text-gray-700 mb-2">Ứng Dụng</label>
-            <textarea name="application" rows="5" class="w-full border px-4 py-2 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none">${product.application}</textarea>
-          </div>
-          <div>
-            <label class="block font-semibold text-gray-700 mb-2">Đóng gói và bảo quản</label>
-            <textarea name="storage" rows="5" class="w-full border px-4 py-2 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none">${product.storage}</textarea>
-          </div>
-        </div>
-
-        <!-- Tags -->
-        <div>
-          <label class="block font-semibold text-gray-700 mb-1 mt-4">Tags (phân cách bằng dấu phẩy)</label>
-          <input type="text" name="tags" value="${product.tags?.join(', ') || ''}" class="w-full border px-4 py-2 rounded-lg" />
-        </div>
-
-        
-        <!-- Ảnh đại diện -->
-<div>
-  <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🖼 Ảnh đại diện</h2>
-  <div class="mb-4">
-    <img src="${product.image}" class="w-32 h-32 object-cover rounded border shadow" />
-    <p class="text-sm text-gray-500 mt-2">Nếu bạn muốn thay đổi, hãy chọn ảnh mới bên dưới:</p>
-  </div>
-  <input type="file" name="thumbnail" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
-</div>
-
-       <div>
-  <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🖼 Ảnh sản phẩm</h2>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-    ${product.images.map(url => `
-      <div class="relative">
-        <img src="${url}" class="w-full h-32 object-cover rounded border" />
-        <input type="checkbox" name="remove_images[]" value="${url}" class="absolute top-1 right-1 w-5 h-5" title="Xóa ảnh này" />
-      </div>
-    `).join("")}
-  </div>
-  <label class="block mb-1 font-semibold text-gray-700">Thêm ảnh sản phẩm mới</label>
-  <input type="file" name="images" multiple accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-</div>
-
-
-        
-
-        <div>
-          <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🔍 Chỉ tiêu kỹ thuật</h2>
-          <div class="mb-2 flex gap-2 items-center">
-            <input type="text" id="new-column-name" placeholder="Tên cột mới" class="border px-3 py-1 rounded" />
-            <button type="button" id="add-column-btn" class="bg-green-500 text-white px-3 py-1 rounded">➕ Thêm cột</button>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full border border-gray-300 text-sm text-left">
-              <thead class="bg-gray-100 text-gray-700 font-semibold">
-                <tr id="spec-header">
-                  ${specKeys.map(key => `<th class="border px-4 py-2 relative group">${key} <button type="button" class="absolute top-0 right-0 text-red-500 opacity-0 group-hover:opacity-100 transition remove-col" data-col="${key}">❌</button></th>`).join("")}
-                  <th class="border px-4 py-2 text-center">Xóa</th>
-                </tr>
-              </thead>
-              <tbody id="spec-list">${renderSpecTable(product.specifications)}</tbody>
-            </table>
-            <input type="hidden" id="spec-count" name="spec_count" value="${product.specifications?.length || 0}" />
-          </div>
-          <button type="button" id="add-spec-row" class="mt-3 bg-gray-200 px-4 py-1 rounded hover:bg-gray-300">
-            ➕ Thêm dòng chỉ tiêu
-          </button>
-        </div>
-
-        <div class="flex justify-between items-center mt-10">
-          <a href="/admin/products" class="text-gray-600 hover:text-gray-800">← Quay lại</a>
-          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold">
-            💾 Lưu thay đổi
-          </button>
-        </div>
-      </form>
-    </div>
-  `;
-}
-renderHeader();
-
-// Submit form
-productEdit.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const formData = new FormData(form);
-  try {
-    const res = await fetch("/api/update-product", {
-      method: "POST",
-      body: formData,
-    });
-    const result = await res.json();
-    alert(result.success ? "✅ Cập nhật thành công!" : "❌ Lỗi: " + result.message);
-  } catch (err) {
-    alert("❌ Gửi dữ liệu thất bại!");
-  }
-});
-
-// Thêm dòng
-productEdit.addEventListener("click", (e) => {
-  if (e.target.id === "add-spec-row") {
-    const row = document.createElement("tr");
-    row.className = "spec-row";
-    row.innerHTML = `
-      ${specKeys.map(key => `
-        <td class="border px-4 py-2">
-          <input type="text" name="spec_${key}_temp" class="w-full p-2 rounded" />
-        </td>`).join("")}
-      <td class="border px-4 py-2 text-center">
-        <button type="button" class="text-red-600 font-bold remove-spec">❌</button>
-      </td>`;
-    document.getElementById("spec-list").appendChild(row);
-    reindexSpecInputs();
-  }
-});
-
-// Xóa dòng
-productEdit.addEventListener("click", (e) => {
-  if (e.target.classList.contains("remove-spec")) {
-    e.target.closest("tr")?.remove();
-    reindexSpecInputs();
-  }
-});
-
-// Cập nhật chỉ số
-function reindexSpecInputs() {
-  const rows = document.querySelectorAll(".spec-row");
-  rows.forEach((row, index) => {
-    row.querySelectorAll("input[name^='spec_']").forEach(input => {
-      const key = input.name.split("_")[1];
-      input.name = `spec_${key}_${index}`;
-    });
-  });
-  document.getElementById("spec-count").value = rows.length;
-}
-
-// Thêm cột
-productEdit.addEventListener("click", (e) => {
-  if (e.target.id === "add-column-btn") {
-    const newCol = document.getElementById("new-column-name").value.trim();
-    if (!newCol || specKeys.includes(newCol)) return;
-
-    specKeys.push(newCol);
-
-    const rows = document.querySelectorAll(".spec-row");
-    rows.forEach(row => {
-      const cell = document.createElement("td");
-      cell.className = "border px-4 py-2"; // ✅ THÊM CLASS CSS CHO BORDER
-      cell.innerHTML = `<input type="text" name="spec_${newCol}_temp" class="w-full p-2 rounded" />`;
-      row.insertBefore(cell, row.lastElementChild);
-    });
-
-    renderHeader(); // Đừng quên cập nhật lại phần `<thead>` nếu có
-    reindexSpecInputs();
-  }
-});
-
-
-// Xóa cột
-productEdit.addEventListener("click", (e) => {
-  if (e.target.classList.contains("remove-col")) {
-    const key = e.target.dataset.col;
-    specKeys = specKeys.filter(k => k !== key);
-    document.querySelectorAll(`input[name^='spec_${key}_']`).forEach(input => input.closest("td")?.remove());
-    renderHeader();
-    reindexSpecInputs();
-  }
-});
-
 function renderHeader() {
   const header = document.getElementById("spec-header");
+  if (!header) return;
   header.innerHTML = specKeys.map((key, index) => `
     <th class="border px-4 py-2 relative group">
       <input type="text" value="${key}" data-index="${index}" class="editable-col-name w-full p-1 rounded border focus:outline-none focus:ring-2 focus:ring-blue-400" />
@@ -253,27 +40,381 @@ function renderHeader() {
   `).join("") + `<th class="border px-4 py-2 text-center">Xóa</th>`;
 }
 
-// Sửa tên cột
-productEdit.addEventListener("input", (e) => {
-  if (e.target.classList.contains("editable-col-name")) {
-    const index = parseInt(e.target.dataset.index);
-    const newName = e.target.value.trim();
+function reindexSpecInputs() {
+  const rows = document.querySelectorAll(".spec-row");
+  rows.forEach((row, index) => {
+    row.querySelectorAll("input[name^='spec_']").forEach(input => {
+      const key = input.name.split("_")[1];
+      input.name = `spec_${key}_${index}`;
+    });
+  });
+  const specCountInput = document.getElementById("spec-count");
+  if (specCountInput) specCountInput.value = rows.length;
+}
 
-    const oldName = specKeys[index];
+async function main() {
+  try {
+    const res = await fetch(`/api/products?id=${id}`);
+    const product = await res.json();
 
-    if (!newName || newName === oldName || specKeys.includes(newName)) {
-      // Không đổi tên nếu trùng, rỗng hoặc đã tồn tại
+    if (!product || !product.id) {
+      productEdit.innerHTML = `<p class="text-red-500 text-center">❌ Không tìm thấy sản phẩm với id=${id}</p>`;
       return;
     }
+    let propertyFields = product.properties || [];
+    specKeys = product.specifications?.length > 0 ? Object.keys(product.specifications[0]) : [];
 
-    // Cập nhật specKeys
-    specKeys[index] = newName;
+    productEdit.innerHTML = `
+      <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">✏️ Sửa Sản Phẩm</h1>
+        <form id="edit-form" class="space-y-10">
+          <input type="hidden" name="id" value="${id}" />
 
-    // Cập nhật tên input trong tất cả các dòng
-    document.querySelectorAll(`input[name^='spec_${oldName}_']`).forEach(input => {
-      input.name = input.name.replace(`spec_${oldName}_`, `spec_${newName}_`);
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block font-semibold text-gray-700 mb-1">Tên sản phẩm</label>
+              <input type="text" name="name" value="${product.name}" class="w-full border px-4 py-2 rounded-lg" required />
+            </div>
+            <div>
+              <label class="block font-semibold text-gray-700 mb-1">Công thức phân tử</label>
+              <input type="text" name="formula" value="${product.formula}" class="w-full border px-4 py-2 rounded-lg" />
+            </div>
+            <div>
+              <label class="block font-semibold text-gray-700 mb-1">Khối lượng phân tử</label>
+              <input type="text" name="molarMass" value="${product.molarMass}" class="w-full border px-4 py-2 rounded-lg" />
+            </div>
+            <div>
+              <label class="block font-semibold text-gray-700 mb-1">Số CAS</label>
+              <input type="text" name="cas" value="${product.cas}" class="w-full border px-4 py-2 rounded-lg" />
+            </div>
+            <div>
+              <label class="block font-semibold text-gray-700 mb-1">Số EINECS</label>
+              <input type="text" name="einecs" value="${product.einecs}" class="w-full border px-4 py-2 rounded-lg" />
+            </div>
+            <div>
+              <label class="block font-semibold text-gray-700 mb-1">Mã H.S</label>
+              <input type="text" name="hsCode" value="${product.hsCode}" class="w-full border px-4 py-2 rounded-lg" />
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Thuộc tính chung</h2>
+            <div id="property-fields" class="space-y-4">
+          ${propertyFields.map((prop, i) => `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start property-row relative group">
+            <input type="text" name="property_key_${i}" value="${prop.key}" class="border px-3 py-2 rounded" placeholder="Tên thuộc tính" />
+            <textarea name="property_value_${i}" rows="3" class="border px-3 py-2 rounded">${prop.value}</textarea>
+            <button type="button" class="absolute top-0 right-0 text-red-600 font-bold opacity-0 group-hover:opacity-100 transition remove-property">❌</button>
+          </div>
+        `).join("")}
+        </div>
+        <button type="button" id="add-property-btn" class="mt-2 bg-green-500 text-white px-3 py-1 rounded">➕ Thêm dòng</button>
+        <input type="hidden" name="property_count" id="property-count" value="${propertyFields.length}" />
+          </div>
+
+          <div>
+            <label class="block font-semibold text-gray-700 mb-1 mt-4">Tags</label>
+            <input type="text" name="tags" value="${Array.isArray(product.tags) ? product.tags.join(', ') : ''}" class="w-full border px-4 py-2 rounded-lg" />
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🖼 Ảnh đại diện</h2>
+            <div class="mb-4">
+              <img src="${product.image}" id="thumbnail-preview" class="w-32 h-32 object-cover rounded border shadow" />
+              <p class="text-sm text-gray-500 mt-2">Nếu bạn muốn thay đổi, hãy chọn ảnh mới bên dưới:</p>
+            </div>
+            <button type="button" id="uploadThumbnailBtn" class="mt-2 px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700">
+              📤 Chọn ảnh đại diện
+            </button>
+            <input type="hidden" id="thumbnailUrl" name="image" value="${product.image}" />
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🖼 Ảnh sản phẩm</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4" id="image-preview-list">
+            ${product.images?.map(url => `
+              <div class="relative image-item">
+                <img src="${url}" class="w-full h-32 object-cover rounded border" />
+                <label class="absolute top-1 right-1 w-6 h-6 bg-white border border-gray-400 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-100 transition">
+                  <input type="checkbox" name="remove_images[]" value="${url}" class="sr-only peer" />
+                  <span class="text-red-600 text-sm font-bold peer-checked:opacity-100 opacity-0 transition">✕</span>
+                </label>
+              </div>
+            `).join("") || ''}
+          </div>
+          <button type="button" id="uploadImagesBtn" class="mt-2 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+            📤 Thêm ảnh sản phẩm
+          </button>
+          <input type="hidden" id="imagesUrls" name="images" value='${JSON.stringify(product.images || [])}' />
+            </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-gray-800 mt-10 mb-4">🔍 Chỉ tiêu kỹ thuật</h2>
+            <div class="mb-2 flex gap-2 items-center">
+              <input type="text" id="new-column-name" placeholder="Tên cột mới" class="border px-3 py-1 rounded" />
+              <button type="button" id="add-column-btn" class="bg-green-500 text-white px-3 py-1 rounded">➕ Thêm cột</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full border border-gray-300 text-sm text-left">
+                <thead class="bg-gray-100 text-gray-700 font-semibold">
+                  <tr id="spec-header">
+                    ${specKeys.map(key => `<th class="border px-4 py-2 relative group">${key} <button type="button" class="absolute top-0 right-0 text-red-500 opacity-0 group-hover:opacity-100 transition remove-col" data-col="${key}">❌</button></th>`).join("")}
+                    <th class="border px-4 py-2 text-center">Xóa</th>
+                  </tr>
+                </thead>
+                <tbody id="spec-list">${renderSpecTable(product.specifications || [])}</tbody>
+              </table>
+              <input type="hidden" id="spec-count" name="spec_count" value="${product.specifications?.length || 0}" />
+            </div>
+            <button type="button" id="add-spec-row" class="mt-3 bg-gray-200 px-4 py-1 rounded hover:bg-gray-300">
+              ➕ Thêm dòng chỉ tiêu
+            </button>
+          </div>
+
+          <div class="flex justify-between items-center mt-10">
+            <a href="/admin/products" class="text-gray-600 hover:text-gray-800">← Quay lại</a>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold">
+              💾 Lưu thay đổi
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    renderHeader();
+
+    // --- Các sự kiện ---
+
+    // Submit form
+    productEdit.querySelector("#edit-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+
+  const data = {
+    id: parseInt(form.id.value),
+    name: form.name.value,
+    formula: form.formula.value,
+    molarMass: form.molarMass.value,
+    cas: form.cas.value,
+    einecs: form.einecs.value,
+    hsCode: form.hsCode.value,
+    tags: form.tags.value.split(",").map(tag => tag.trim()).filter(Boolean),
+    image: form.image.value,
+    images: JSON.parse(form.images.value || "[]"),
+    removeImages: Array.from(form.querySelectorAll("input[name='remove_images[]']:checked")).map(i => i.value),
+    specifications: [],
+    properties: []
+  };
+
+  // Thu thập thuộc tính động (appearance, application, storage...)
+  const propertyCount = parseInt(form["property_count"].value || "0");
+  for (let i = 0; i < propertyCount; i++) {
+    const key = form[`property_key_${i}`]?.value?.trim();
+    const value = form[`property_value_${i}`]?.value?.trim();
+    if (key) {
+      data.properties.push({ key, value });
+    }
+  }
+
+  // Thu thập chỉ tiêu kỹ thuật (specifications)
+  const rows = form.querySelectorAll(".spec-row");
+  rows.forEach((row, rowIndex) => {
+    const spec = {};
+    row.querySelectorAll("input[name^='spec_']").forEach(input => {
+      const parts = input.name.split("_");
+      const key = parts[1];
+      spec[key] = input.value;
     });
+    data.specifications.push(spec);
+  });
+
+  console.log("Dữ liệu gửi lên:", data);
+
+  try {
+    const res = await fetch("/api/update-product", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    alert(result.success ? "✅ Cập nhật thành công!" : "❌ Lỗi: " + result.message);
+  } catch (err) {
+    alert("❌ Gửi dữ liệu thất bại!");
   }
 });
+
+
+    // Thêm dòng chỉ tiêu
+    productEdit.addEventListener("click", (e) => {
+      if (e.target.id === "add-spec-row") {
+        const row = document.createElement("tr");
+        row.className = "spec-row";
+        row.innerHTML = `
+          ${specKeys.map(key => `
+            <td class="border px-4 py-2">
+              <input type="text" name="spec_${key}_temp" class="w-full p-2 rounded" />
+            </td>`).join("")}
+          <td class="border px-4 py-2 text-center">
+            <button type="button" class="text-red-600 font-bold remove-spec">❌</button>
+          </td>
+        `;
+        document.getElementById("spec-list").appendChild(row);
+        reindexSpecInputs();
+      }
+    });
+    
+    // Xóa dòng chỉ tiêu
+    productEdit.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remove-spec")) {
+        e.target.closest("tr")?.remove();
+        reindexSpecInputs();
+      }
+    });
+
+    // Thêm cột chỉ tiêu
+    productEdit.addEventListener("click", (e) => {
+      if (e.target.id === "add-column-btn") {
+        const newCol = document.getElementById("new-column-name").value.trim();
+        if (!newCol || specKeys.includes(newCol)) return;
+
+        specKeys.push(newCol);
+
+        const rows = document.querySelectorAll(".spec-row");
+        rows.forEach(row => {
+          const cell = document.createElement("td");
+          cell.className = "border px-4 py-2";
+          cell.innerHTML = `<input type="text" name="spec_${newCol}_temp" class="w-full p-2 rounded" />`;
+          row.insertBefore(cell, row.lastElementChild);
+        });
+
+        renderHeader();
+        reindexSpecInputs();
+      }
+    });
+
+    // Xóa cột chỉ tiêu
+    productEdit.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remove-col")) {
+        const key = e.target.dataset.col;
+        specKeys = specKeys.filter(k => k !== key);
+        document.querySelectorAll(`input[name^='spec_${key}_']`).forEach(input => input.closest("td")?.remove());
+        renderHeader();
+        reindexSpecInputs();
+      }
+    });
+
+    // Sửa tên cột chỉ tiêu
+    productEdit.addEventListener("input", (e) => {
+      if (e.target.classList.contains("editable-col-name")) {
+        const index = parseInt(e.target.dataset.index);
+        const newName = e.target.value.trim();
+        const oldName = specKeys[index];
+
+        if (!newName || newName === oldName || specKeys.includes(newName)) return;
+
+        specKeys[index] = newName;
+
+        document.querySelectorAll(`input[name^='spec_${oldName}_']`).forEach(input => {
+          input.name = input.name.replace(`spec_${oldName}_`, `spec_${newName}_`);
+        });
+      }
+    });
+
+    document.getElementById("add-property-btn").addEventListener("click", () => {
+  const container = document.getElementById("property-fields");
+  const count = container.querySelectorAll(".property-row").length;
+  const div = document.createElement("div");
+  div.className = "grid grid-cols-1 md:grid-cols-2 gap-4 items-start property-row relative group";
+  div.innerHTML = `
+    <input type="text" name="property_key_${count}" class="border px-3 py-2 rounded" placeholder="Tên thuộc tính" />
+    <textarea name="property_value_${count}" rows="3" class="border px-3 py-2 rounded"></textarea>
+    <button type="button" class="absolute top-0 right-0 text-red-600 font-bold opacity-0 group-hover:opacity-100 transition remove-property">❌</button>
+  `;
+  container.appendChild(div);
+  document.getElementById("property-count").value = count + 1;
+});
+
+productEdit.addEventListener("click", (e) => {
+  if (e.target.classList.contains("remove-property")) {
+    const row = e.target.closest(".property-row");
+    if (row) row.remove();
+
+    // Cập nhật lại tên input (name)
+    const rows = document.querySelectorAll(".property-row");
+    rows.forEach((row, i) => {
+      const keyInput = row.querySelector(`input[name^="property_key_"]`);
+      const valueInput = row.querySelector(`textarea[name^="property_value_"]`);
+      if (keyInput) keyInput.name = `property_key_${i}`;
+      if (valueInput) valueInput.name = `property_value_${i}`;
+    });
+
+    // Cập nhật số lượng
+    document.getElementById("property-count").value = rows.length;
+  }
+});
+
+
+    // Ảnh đại diện từ Cloudinary
+document.getElementById("uploadThumbnailBtn").addEventListener("click", () => {
+  cloudinary.openUploadWidget(
+    {
+      cloudName: "dlwv8fyyj",
+      uploadPreset: "chemical_img",
+      multiple: false,
+      sources: ["local", "url", "camera"],
+      cropping: false,
+    },
+    (error, result) => {
+      if (!error && result.event === "success") {
+        const url = result.info.secure_url;
+        document.getElementById("thumbnailUrl").value = url;
+        document.getElementById("thumbnail-preview").src = url;
+      }
+    }
+  );
+});
+
+// Ảnh sản phẩm từ Cloudinary
+document.getElementById("uploadImagesBtn").addEventListener("click", () => {
+  cloudinary.openUploadWidget(
+    {
+      cloudName: "dlwv8fyyj",
+      uploadPreset: "chemical_img",
+      multiple: true,
+      sources: ["local", "url", "camera"],
+      cropping: false,
+    },
+    (error, result) => {
+      if (!error && result.event === "success") {
+        const url = result.info.secure_url;
+
+        // Cập nhật preview ảnh mới
+        const div = document.createElement("div");
+        div.className = "relative image-item";
+        div.innerHTML = `
+            <img src="${url}" class="w-full h-32 object-cover rounded border" />
+            <label class="absolute top-1 right-1 w-6 h-6 bg-white border border-gray-400 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-100 transition">
+              <input type="checkbox" name="remove_images[]" value="${url}" class="sr-only peer" />
+              <span class="text-red-600 text-sm font-bold peer-checked:opacity-100 opacity-0 transition">✕</span>
+            </label>
+          `;
+        document.getElementById("image-preview-list").appendChild(div);
+
+        // Cập nhật hidden input
+        const currentImages = JSON.parse(document.getElementById("imagesUrls").value || "[]");
+        currentImages.push(url);
+        document.getElementById("imagesUrls").value = JSON.stringify(currentImages);
+      }
+    }
+  );
+});
+
+
+  } catch (err) {
+    productEdit.innerHTML = `<p class="text-red-500 text-center">❌ Lỗi tải sản phẩm: ${err.message}</p>`;
+  }
+}
+
+main();
 
 </script>

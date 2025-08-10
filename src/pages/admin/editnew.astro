@@ -4,6 +4,12 @@ import Header from '../../components/Admin/Header.astro';
 import Footer from '../../components/Admin/Footer.astro';
 import "../../styles/admin.css";
 import "../../styles/global.css";
+
+import { requireLogin } from '../../lib/auth';
+const user = await requireLogin(Astro.cookies);
+if (!user) {
+  return Astro.redirect('/admin/login');
+}
 ---
 
 <!DOCTYPE html>
@@ -37,10 +43,10 @@ import "../../styles/global.css";
 
   <body>
 
-    <Header />  
+    <Header user={user} />
 
     <EditNew />
 
-    <Footer />
+    <Footer user={user} />
   </body>
 </html>

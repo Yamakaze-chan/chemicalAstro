@@ -1,120 +1,106 @@
-// import type { APIRoute } from "astro";
-// import fs from "fs";
-// import path from "path";
-// import crypto from "crypto";
+// src/pages/api/update-product.ts
+import type { APIRoute } from "astro";
 
-// export const prerender = false;
+export const prerender = false;
 
-// export const POST: APIRoute = async ({ request }) => {
-//   try {
-//     const formData = await request.formData();
-//     const id = parseInt(formData.get("id")?.toString() || "0");
+export const POST: APIRoute = async ({ locals, request }) => {
+  const db = locals.runtime.env.DB;
+  if (!db) {
+    return new Response("No DB connection", { status: 500 });
+  }
 
-//     const filePath = path.resolve("src/data/products.json");
-//     const rawData = fs.readFileSync(filePath, "utf-8");
-//     const products = JSON.parse(rawData);
+  try {
+    const body = await request.json();
 
-//     const index = products.findIndex((p: any) => p.id === id);
-//     if (index === -1) {
-//       return new Response(JSON.stringify({ success: false, message: "Sản phẩm không tồn tại." }), {
-//         status: 404,
-//         headers: { "Content-Type": "application/json" },
-//       });
-//     }
+    const {
+      id,
+      name,
+      formula,
+      molarMass,
+      cas,
+      einecs,
+      hsCode,
+      tags = [],
+      image = "",
+      images = [],
+      removeImages = [],
+      specifications = [],
+      properties = [],
+    } = body;
 
-//     const rawTags = formData.get("tags")?.toString() || "";
-//     const tags = rawTags.split(",").map(t => t.trim()).filter(Boolean);
 
-//     // Cập nhật thông tin cơ bản
-//     products[index] = {
-//       ...products[index],
-//       name: formData.get("name")?.toString() || "",
-//       formula: formData.get("formula")?.toString() || "",
-//       molarMass: formData.get("molarMass")?.toString() || "",
-//       cas: formData.get("cas")?.toString() || "",
-//       einecs: formData.get("einecs")?.toString() || "",
-//       hsCode: formData.get("hsCode")?.toString() || "",
-//       appearance: formData.get("appearance")?.toString() || "",
-//       application: formData.get("application")?.toString() || "",
-//       storage: formData.get("storage")?.toString() || "",
-//       tags,
-//     };
+    if (!id || typeof id !== "number" || isNaN(id)) {
+      return new Response("ID không hợp lệ", { status: 400 });
+    }
 
-//     // === Xử lý ảnh đại diện ===
-//     const uploadDir = path.resolve("public/uploads");
-//     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    // --- Kiểm tra sản phẩm ---
+    const product = await db.prepare("SELECT * FROM products WHERE id = ?").bind(id).first();
+    if (!product) {
+      return new Response("Không tìm thấy sản phẩm", { status: 404 });
+    }
 
-//     const thumbnailFile = formData.get("thumbnail");
-//     if (thumbnailFile instanceof File && thumbnailFile.size > 0) {
-//       const buffer = Buffer.from(await thumbnailFile.arrayBuffer());
-//       const ext = path.extname(thumbnailFile.name);
-//       const fileName = `${crypto.randomUUID()}${ext}`;
-//       const savePath = path.join(uploadDir, fileName);
-//       fs.writeFileSync(savePath, buffer);
-//       products[index].image = `/uploads/${fileName}`;
-//     }
+    // --- Cập nhật bảng products ---
+    await db.prepare(`
+      UPDATE products SET 
+        name = ?, formula = ?, molarMass = ?, cas = ?, einecs = ?, hsCode = ?, image = ?
+      WHERE id = ?
+    `).bind(name, formula, molarMass, cas, einecs, hsCode, image, id).run();
 
-//     // === Xử lý ảnh sản phẩm ===
-//     const oldImages: string[] = products[index].images || [];
+    await db.prepare(`
+      UPDATE outstandingproducts SET name = ?, image = ? WHERE id = ?
+    `).bind(name, image, id).run();
 
-//     // Xoá ảnh nếu có yêu cầu
-//     const removeImages = formData.getAll("remove_images[]") as string[];
-//     const updatedImageList = oldImages.filter(img => !removeImages.includes(img));
+    // --- Cập nhật tags ---
+    await db.prepare("DELETE FROM chemical_tags WHERE chemical_id = ?").bind(id).run();
+    for (const tag of tags) {
+      await db.prepare("INSERT INTO chemical_tags (chemical_id, tag) VALUES (?, ?)").bind(id, tag).run();
+    }
 
-//     for (const imgPath of removeImages) {
-//       const absolutePath = path.resolve("public", "." + imgPath); // "/uploads/xxx.jpg"
-//       if (fs.existsSync(absolutePath)) {
-//         fs.unlinkSync(absolutePath);
-//       }
-//     }
+    // --- Cập nhật images ---
+    await db.prepare("DELETE FROM chemical_images WHERE chemical_id = ?").bind(id).run();
 
-//     // Thêm ảnh mới
-//     const newImages = formData.getAll("images") as File[];
-//     for (const file of newImages) {
-//       if (file instanceof File && file.size > 0) {
-//         const buffer = Buffer.from(await file.arrayBuffer());
-//         const ext = path.extname(file.name);
-//         const filename = crypto.randomUUID() + ext;
-//         const savePath = path.join(uploadDir, filename);
-//         fs.writeFileSync(savePath, buffer);
-//         updatedImageList.push(`/uploads/${filename}`);
-//       }
-//     }
+    const filteredImages = images.filter((img: string) => !removeImages.includes(img));
 
-//     products[index].images = updatedImageList;
+    for (const img of filteredImages) {
+      await db.prepare("INSERT INTO chemical_images (chemical_id, image) VALUES (?, ?)").bind(id, img).run();
+    }
 
-//     // === Xử lý bảng chỉ tiêu kỹ thuật ===
-//     const specMap = new Map<number, Record<string, string>>();
-//     for (const [key, value] of formData.entries()) {
-//       const match = key.match(/^spec_(.+)_(\d+)$/);
-//       if (match) {
-//         const field = match[1];
-//         const rowIndex = parseInt(match[2]);
-//         if (!specMap.has(rowIndex)) {
-//           specMap.set(rowIndex, {});
-//         }
-//         specMap.get(rowIndex)![field] = value.toString();
-//       }
-//     }
 
-//     const specifications = Array.from(specMap.entries())
-//       .sort(([a], [b]) => a - b)
-//       .map(([, spec]) => spec);
+    // --- Cập nhật specifications ---
+    await db.prepare("DELETE FROM chemical_specifications WHERE chemical_id = ?").bind(id).run();
+    for (let rowIndex = 0; rowIndex < specifications.length; rowIndex++) {
+      const row = specifications[rowIndex];
+      for (const [colKey, value] of Object.entries(row)) {
+        await db.prepare(`
+          INSERT INTO chemical_specifications (chemical_id, row_index, col_key, value)
+          VALUES (?, ?, ?, ?)
+        `).bind(id, rowIndex, colKey, value).run();
+      }
+    }
 
-//     products[index].specifications = specifications;
+    // --- Cập nhật properties (sử dụng prop_key & prop_value) ---
+    await db.prepare("DELETE FROM chemical_properties WHERE chemical_id = ?").bind(id).run();
+    for (const { key, value } of properties) {
+      if (key && value !== undefined) {
+        await db.prepare(`
+          INSERT INTO chemical_properties (chemical_id, prop_key, prop_value)
+          VALUES (?, ?, ?)
+        `).bind(id, key, value).run();
+      }
+    }
 
-//     // Lưu lại file JSON
-//     fs.writeFileSync(filePath, JSON.stringify(products, null, 2), "utf-8");
+    return new Response(JSON.stringify({ success: true, message: "Cập nhật sản phẩm thành công." }), {
+      headers: { "Content-Type": "application/json" },
+    });
 
-//     return new Response(JSON.stringify({ success: true }), {
-//       status: 200,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return new Response(JSON.stringify({ success: false, message: "Lỗi server" }), {
-//       status: 500,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   }
-// };
+  } catch (error) {
+    console.error("Lỗi cập nhật sản phẩm:", error);
+    return new Response(JSON.stringify({
+      success: false,
+      message: "Lỗi máy chủ khi cập nhật sản phẩm.",
+    }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+};

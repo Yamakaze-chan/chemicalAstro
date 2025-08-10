@@ -3,7 +3,16 @@
 
 <section class="min-h-screen bg-white py-12 text-[var(--color-3)]">
   <div class="max-w-7xl mx-auto px-4 shadow-2xl pb-12 rounded-xl">
-    <h1 class="text-3xl mt-[5%] font-bold text-center mb-10">TẤT CẢ SẢN PHẨM</h1>
+    <h1 class="text-4xl text-center text-[var(--color-1)] font-bold font-inter mt-[20%] md:mt-[5%] mb-16">TẤT CẢ SẢN PHẨM</h1>
+    <div class="mb-6 text-center flex flex-col md:flex-row items-center justify-center gap-3">
+      <label for="search-input" class="text-lg font-medium text-[var(--color-3)]">Nhập tên:</label>
+      <input 
+        id="search-input"
+        type="text"
+        placeholder="Tìm kiếm sản phẩm..."
+        class="w-full md:w-1/2 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-1)]"
+      />
+    </div>
 
     <div class="flex flex-col md:flex-row gap-8">
       <!-- Sidebar Menu -->
@@ -17,7 +26,7 @@
       </aside>
 
       <div class="w-full md:w-3/4">
-        <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        <div id="product-list" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
         <div id="pagination" class="flex justify-center mt-8 gap-2 flex-wrap"></div>
       </div>
     </div>
@@ -26,20 +35,38 @@
 </section>
 
 <script>
-import products from "../data/products.json";
-import { initPagination } from "../utils/pagination.js";
+  import { initPagination } from "../utils/pagination.js";
 
   const productList = document.getElementById('product-list');
   const tagList = document.getElementById("tag-checkbox-list");
-  const allTags = Array.from(new Set(products.flatMap(p => p.tags || [])));
-
-  let filteredProducts = [...products]; // mặc định là tất cả sản phẩm
-
-
   const pagination = document.getElementById('pagination');
-   // Render các checkbox danh mục
-      const renderTagCheckboxes = () => {
-    tagList.innerHTML = `
+
+  let products = [];
+  let filteredProducts = [];
+
+  // Lấy dữ liệu sản phẩm và tag từ API
+  async function fetchProducts() {
+    try {
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      products = data;
+      products = data.sort((a, b) => b.id - a.id); // Mới nhất trước
+      filteredProducts = [...products];
+      renderTagCheckboxes(); // sau khi có data thì render checkbox
+      renderFilteredAndPaginate([]); // mặc định: tất cả sản phẩm
+    } catch (err) {
+      console.error('Lỗi khi tải sản phẩm:', err);
+    }
+  }
+
+  // Lấy tất cả tag duy nhất từ danh sách sản phẩm
+  function getAllTags() {
+    return Array.from(new Set(products.flatMap(p => p.tags || [])));
+  }
+
+  const renderTagCheckboxes = () => {
+    const allTags = getAllTags();
+    tagList!.innerHTML = `
       <li>
         <input type="checkbox" value="all" class="filter-checkbox all-checkbox" checked>
         Tất cả sản phẩm
@@ -47,7 +74,7 @@ import { initPagination } from "../utils/pagination.js";
     `;
 
     allTags.forEach(tag => {
-      tagList.innerHTML += `
+      tagList!.innerHTML += `
         <li>
           <input type="checkbox" value="${tag}" class="filter-checkbox">
           ${tag}
@@ -56,37 +83,35 @@ import { initPagination } from "../utils/pagination.js";
     });
 
     setupFilterEvents();
-  }
-
+  };
 
   function renderProducts(productArray) {
-  let html = "";
-  productArray.forEach(product => {
-    html += `
-      <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition duration-300 flex flex-col items-center justify-between h-full">
-        <a href="/productdetail?id=${product.id}">
-          <img src="${product.image}" alt="${product.title}"
-            class="w-full h-64 object-contain rounded-md mb-4 hover:scale-105 transition duration-300 bg-white" />
-        </a>
-        <h2 class="text-xl font-semibold mb-2 text-center">${product.name}</h2>
-        <a href="/productdetail?id=${product.id}" 
-          class="w-fit mx-auto bg-[var(--color-3)] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition mt-4">
-          Xem chi tiết
-        </a>
-      </div>
+    let html = "";
+    productArray.forEach(product => {
+      html += `
+        <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition duration-300 flex flex-col items-center justify-between h-full">
+          <a href="/productdetail?id=${product.id}">
+            <img src="${product.image}" alt="${product.name}"
+              class="w-full h-64 object-contain rounded-md mb-4 hover:scale-105 transition duration-300 bg-white" />
+          </a>
+          <h2 class="text-xl font-semibold mb-2 text-center">${product.name}</h2>
+          <a href="/productdetail?id=${product.id}" 
+            class="w-fit mx-auto bg-[var(--color-3)] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition mt-4">
+            Xem chi tiết
+          </a>
+        </div>
+      `;
+    });
 
-    `;
-  });
+    productList!.innerHTML = html;
+  }
 
-  productList.innerHTML = html;
-}
-
-const setupFilterEvents = () => {
+  const setupFilterEvents = () => {
     const allCheckbox = document.querySelector('.all-checkbox');
     const otherCheckboxes = document.querySelectorAll('.filter-checkbox:not(.all-checkbox)');
 
-    allCheckbox.addEventListener('change', () => {
-      if (allCheckbox.checked) {
+    allCheckbox!.addEventListener('change', () => {
+      if (allCheckbox!.checked) {
         otherCheckboxes.forEach(cb => cb.checked = false);
         renderFilteredAndPaginate([]);
       }
@@ -95,7 +120,7 @@ const setupFilterEvents = () => {
     otherCheckboxes.forEach(cb => {
       cb.addEventListener('change', () => {
         if (cb.checked) {
-          allCheckbox.checked = false;
+          allCheckbox!.checked = false;
         }
 
         const selectedTags = Array.from(otherCheckboxes)
@@ -103,7 +128,7 @@ const setupFilterEvents = () => {
           .map(cb => cb.value);
 
         if (selectedTags.length === 0) {
-          allCheckbox.checked = true;
+          allCheckbox!.checked = true;
           renderFilteredAndPaginate([]);
           return;
         }
@@ -111,15 +136,14 @@ const setupFilterEvents = () => {
         renderFilteredAndPaginate(selectedTags);
       });
     });
-  }
+  };
 
- const paginationInstance = initPagination({
+  const paginationInstance = initPagination({
     data: filteredProducts,
-    itemsPerPage: 3,
+    itemsPerPage: 9, 
     onRenderPage: renderProducts,
     paginationContainer: pagination,
   });
-
 
   function renderFilteredAndPaginate(selectedTags) {
     if (selectedTags.length === 0) {
@@ -129,12 +153,37 @@ const setupFilterEvents = () => {
         product.tags?.some(tag => selectedTags.includes(tag))
       );
     }
-    paginationInstance.render(filteredProducts); // Gọi lại phân trang với data mới
+    paginationInstance.render(filteredProducts);
+  }
+  const searchInput = document.getElementById("search-input");
+
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.trim().toLowerCase();
+  const selectedTags = Array.from(document.querySelectorAll('.filter-checkbox:not(.all-checkbox)'))
+    .filter(cb => cb.checked)
+    .map(cb => cb.value);
+
+  let filtered = products;
+
+  // Lọc theo tag nếu có
+  if (selectedTags.length > 0) {
+    filtered = filtered.filter(product =>
+      product.tags?.some(tag => selectedTags.includes(tag))
+    );
   }
 
+  // Lọc theo tên
+  if (query !== "") {
+    filtered = filtered.filter(product =>
+      product.name.toLowerCase().includes(query)
+    );
+  }
+
+  filteredProducts = filtered;
+  paginationInstance.render(filteredProducts);
+});
 
 
-
-renderTagCheckboxes();               
-renderFilteredAndPaginate([]); 
+  fetchProducts();
 </script>
+

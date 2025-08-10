@@ -1,56 +1,32 @@
-// import type { APIRoute } from "astro";
-// import fs from "fs";
-// import path from "path";
+import type { APIRoute } from "astro";
 
-// export const prerender = false;
+export const POST: APIRoute = async ({ request, locals }) => {
+  const db = locals.runtime.env.DB;
 
-// export const POST: APIRoute = async ({ request }) => {
-//   try {
-//     const formData = await request.formData();
+  if (!db) {
+    return new Response("Database not found", { status: 500 });
+  }
 
-//     const id = parseInt(formData.get("id") as string);
-//     const title = formData.get("title")?.toString().trim();
-//     const author = formData.get("author")?.toString().trim();
-//     const content = formData.get("content")?.toString().trim();
+  try {
+    const body = await request.json();
+    const { id, title, author, content } = body;
 
-//     if (!id || !title || !content) {
-//       return new Response(JSON.stringify({ success: false, message: "Thiếu dữ liệu bắt buộc." }), {
-//         status: 400,
-//       });
-//     }
+    if (!id) {
+      return new Response("ID is required", { status: 400 });
+    }
 
-//     // Đường dẫn file news.json
-//     const filePath = path.resolve("src/data/news.json");
+    const stmt = db.prepare("UPDATE news SET title = \'"+title+"\', author = \'"+author+"\', content = \'"+content+"\' WHERE id = \'"+id+"\'");
+    const result = await stmt.run();
 
-//     // Đọc file JSON hiện tại
-//     const jsonData = fs.readFileSync(filePath, "utf-8");
-//     const newsList = JSON.parse(jsonData);
-
-//     // Tìm tin tức theo ID
-//     const index = newsList.findIndex((item: any) => item.id === id);
-//     if (index === -1) {
-//       return new Response(JSON.stringify({ success: false, message: "Không tìm thấy tin tức." }), {
-//         status: 404,
-//       });
-//     }
-
-//     // Cập nhật thông tin
-//     newsList[index] = {
-//       ...newsList[index],
-//       title,
-//       author,
-//       content,
-//     };
-
-//     // Ghi lại file JSON
-//     fs.writeFileSync(filePath, JSON.stringify(newsList, null, 2), "utf-8");
-
-//     return new Response(JSON.stringify({ success: true }), {
-//       status: 200,
-//     });
-//   } catch (err) {
-//     return new Response(JSON.stringify({ success: false, message: "Lỗi máy chủ." }), {
-//       status: 500,
-//     });
-//   }
-// };
+    if (result.success) {
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } else {
+      return new Response("Không tìm thấy tin tức để cập nhật", { status: 404 });
+    }
+  } catch (err) {
+    console.error("Lỗi khi cập nhật tin tức:", err);
+    return new Response("Lỗi server" + err, { status: 500 });
+  }
+};

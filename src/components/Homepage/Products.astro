@@ -1,50 +1,35 @@
 ---
 import '../../styles/global.css';
-import outstanding from "../../data/outstandingproducts.json";
 ---
+<div class="w-full p-5">
+  <h2 class="m-4 text-[2rem] mb-10">Sản phẩm chính:</h2>
+  <div id="HP_Products" class="grid grid-cols-3 p-10 gap-x-[100px] gap-y-[200px]">
+    
+  </div>
+  <div class="w-full flex flex-row gap-2 items-center justify-end font-sans text-[2rem] font-bold">
+    Xem thêm <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-7 h-7"><path d="M566.6 342.6C579.1 330.1 579.1 309.8 566.6 297.3L406.6 137.3C394.1 124.8 373.8 124.8 361.3 137.3C348.8 149.8 348.8 170.1 361.3 182.6L466.7 288L96 288C78.3 288 64 302.3 64 320C64 337.7 78.3 352 96 352L466.7 352L361.3 457.4C348.8 469.9 348.8 490.2 361.3 502.7C373.8 515.2 394.1 515.2 406.6 502.7L566.6 342.7z"/></svg>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+  var container = $('#HP_Products'); // Select the element where new elements will be added
+  var numberOfElements = 6; // Define how many elements to add
 
-<section class="bg-[var(--color-1)] py-16 px-4">
-  <h1 class="text-center text-white text-3xl md:text-5xl font-bold mb-12">
-    🌟 Sản phẩm nổi bật
-  </h1>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 max-w-7xl mx-auto">
-    {outstanding.map((item) => (
-      <a
-  href={`/productdetail?id=${item.id}`}
-  class="group block w-full sm:w-[260px] bg-[var(--color-4)] rounded-2xl shadow-lg 
-         hover:scale-105 hover:shadow-2xl hover:ring-2 hover:ring-white 
-         transition-all duration-300 cursor-pointer"
->
-  <div class="flex flex-col h-full items-center text-center p-6">
-    <img
-      src={item.image}
-      alt={item.name}
-      class="w-28 h-28 sm:w-32 sm:h-32 object-contain mb-4 rounded-full border-2 border-white shadow-md"
-    />
-    <h2 class="text-white text-base sm:text-lg md:text-xl font-semibold mb-4 min-h-[3.5rem]">
-      {item.name}
-    </h2>
-    <div
-      class="mt-auto w-full px-4 py-2 bg-white text-[var(--color-3)] font-semibold rounded-lg 
-            group-hover:bg-[var(--color-3)] group-hover:text-white transition duration-300 text-center"
-    >
-      Xem chi tiết
+  for (var i = 0; i < numberOfElements; i++) {
+    // Create the HTML for the new element
+    var newElementHtml = `
+    <div class="border border-1 translate-2">
+      <div class="bg-[#F2F2F2] -translate-4 p-4 min-h-[500px]">
+        <h5 class="px-4 text-[2rem] text-[#34C759] font-bold">01 Phosphate</h5>
+        <div class="p-8 text-[1.5rem]">
+          We are Chemicals specialists with a portfolio of chemical manufacturers in China, offering a variety of product
+        </div>
+      </div>
     </div>
-  </div>
-</a>
-    ))}
-  </div>
+    `;
 
-  <div class="text-center pt-10">
-    <a href="/product"
-      class="inline-flex items-center gap-2 px-6 py-3 rounded bg-white text-[var(--color-3)] font-semibold 
-             hover:bg-[var(--color-3)] hover:text-white transition duration-300 shadow">
-      Tất cả sản phẩm
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-      </svg>
-    </a>
-  </div>
-</section>
+    // Append the new element to the container
+    container.append(newElementHtml);
+  }
+});
+</script>

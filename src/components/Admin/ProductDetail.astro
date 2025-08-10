@@ -6,149 +6,170 @@
 </section>
 
 <script>
-import products from "../../data/products.json";
-
-const productDetail = document.getElementById('product-detail')
+const productDetail = document.getElementById('product-detail');
 const urlParams = new URLSearchParams(window.location.search);
 const id = parseInt(urlParams.get("id"));
 
-const product = products.find(p => p.id === id);
-
-const allImages = [...product?.images || []];
-if (product?.image && !allImages.includes(product.image)) {
-  allImages.unshift(product.image);
-}
-
-if (!product) {
-  productDetail!.innerHTML = `<p class="text-red-500">Không tìm thấy sản phẩm.</p>`;
-} else {
-  productDetail!.innerHTML = `
-  <div class="max-w-3xl w-full mx-auto px-4">
-    <div class="flex flex-col gap-12">
-      <div>
-        <img
-          id="main-image"
-          src="${product.image || "/images/placeholder.png"}"
-          alt="${product.name}"
-          class="w-full max-h-[600px] object-contain rounded-xl border shadow-lg mb-4"
-        />
-        ${allImages.length > 1
-          ? `
-          <div class="flex flex-wrap gap-4" id="thumbnails">
-            ${allImages
-              .map(
-                (img, idx) => `
-              <img 
-                src="${img}" 
-                data-index="${idx}"
-                class="w-24 h-24 object-cover rounded-lg border border-gray-300 cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
-              />`
-              )
-              .join("")}
-          </div>
-        `
-          : ""}
-      </div>
-
-    <!-- Thông tin sản phẩm -->
-    <div class="space-y-6">
-      <h1 class="text-3xl font-extrabold text-[var(--color-1)]">${product.name}</h1>
-
-      <div class="text-gray-700 space-y-2">
-        <div><strong>CTPT:</strong> ${product.formula}</div>
-        <div><strong>Khối lượng mol:</strong> ${product.molarMass}</div>
-        <div><strong>Mã CAS:</strong> ${product.cas}</div>
-        <div><strong>HS Code:</strong> ${product.hsCode}</div>
-        <div><strong>Tags:</strong> ${product.tags?.join(", ") || "Không có"}</div>
-        <div><strong>Hình thức:</strong></div>
-        <p class="bg-gray-100 p-2 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
-          ${product.appearance}
-        </p>
-        <div><strong>Ứng dụng:</strong></div>
-        <p class="bg-gray-100 p-2 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
-          ${product.application}
-        </p>
-        <div><strong>Bảo quản:</strong></div>
-        <p class="bg-gray-100 p-2 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
-          ${product.storage}
-        </p>
-      </div>
-
-      <!-- Thông số kỹ thuật -->
-<div>
-  <strong>Thông số kỹ thuật:</strong>
-  ${product.specifications && product.specifications.length > 0 ? `
-    <div class="overflow-x-auto mt-2">
-      <table class="min-w-full border border-gray-300 text-sm text-left">
-        <thead class="bg-gray-100 text-gray-700">
-          <tr>
-            ${Object.keys(product.specifications[0]).map(key => `
-              <th class="border px-4 py-2 break-words whitespace-normal">${key}</th>
-            `).join("")}
-          </tr>
-        </thead>
-        <tbody>
-          ${product.specifications.map(spec => `
-            <tr class="hover:bg-gray-50">
-              ${Object.keys(product.specifications[0]).map(key => `
-                <td class="border px-4 py-2 break-words whitespace-normal">${spec[key] || ""}</td>
-              `).join("")}
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-    </div>
-  ` : `<p class="text-gray-500 mt-1">Không có thông số kỹ thuật.</p>`}
-</div>
-
-
-      <!-- Nút thao tác -->
-      <div class="flex flex-wrap gap-4 pt-6 border-t mt-6">
-        <a href="/admin/editproduct?id=${id}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition font-semibold">Sửa</a>
-        <button id="delete-btn" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition font-semibold">Xóa</button>
-        <a href="/admin/products" class="ml-auto bg-gray-700 text-white px-5 py-2 rounded-lg transition font-semibold">← Quay về danh sách</a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-document.getElementById("delete-btn")?.addEventListener("click", async () => {
-  if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
-
+async function fetchProductDetail() {
   try {
-    const res = await fetch("/api/delete-product", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-
+    const res = await fetch(`/api/products?id=${id}`);
     if (!res.ok) {
-      const text = await res.text();
-      alert("Lỗi server: " + text);
+      productDetail!.innerHTML = `<p class="text-red-500">Không tìm thấy sản phẩm.</p>`;
       return;
     }
 
-    const result = await res.json();
-    alert("Đã xóa sản phẩm.");
-    window.location.href = "/admin/products";
-  } catch (error) {
-    alert("Lỗi kết nối máy chủ.");
-    console.error(error);
-  }
-});
-}
-const mainImage = document.getElementById("main-image");
-  const thumbnails = document.querySelectorAll("#thumbnails img");
+    const product = await res.json();
 
-  thumbnails.forEach(thumb => {
-    thumb.addEventListener("click", () => {
-      mainImage!.src = thumb.src;
+    const allImages = [...product.images || []];
+    if (product.image && !allImages.includes(product.image)) {
+      allImages.unshift(product.image);
+    }
 
-      // Highlight ảnh đang chọn
-      thumbnails.forEach(t => t.classList.remove("ring-2", "ring-blue-400"));
-      thumb.classList.add("ring-2", "ring-blue-400");
+    productDetail!.innerHTML = `
+      <div class="max-w-3xl w-full mx-auto px-4">
+        <div class="flex flex-col gap-12">
+          <div>
+            <img
+              id="main-image"
+              src="${product.image || "/images/placeholder.png"}"
+              alt="${product.name}"
+              class="w-full max-h-[600px] object-contain rounded-xl border shadow-lg mb-4"
+            />
+            ${allImages.length > 1
+              ? `
+              <div class="flex flex-wrap gap-4" id="thumbnails">
+                ${allImages
+                  .map(
+                    (img, idx) => `
+                    <img 
+                      src="${img}" 
+                      data-index="${idx}"
+                      class="w-24 h-24 object-cover rounded-lg border border-gray-300 cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
+                    />`
+                  )
+                  .join("")}
+              </div>
+            `
+              : ""}
+          </div>
+
+          <!-- Thông tin sản phẩm -->
+          <div class="space-y-6">
+            <h1 class="text-3xl font-extrabold text-[var(--color-1)]">${product.name}</h1>
+
+            <div class="text-gray-700 space-y-2">
+              ${product.formula ? `<div><strong>CTPT:</strong> ${product.formula}</div>` : ""}
+              ${product.molarMass ? `<div><strong>Khối lượng mol:</strong> ${product.molarMass}</div>` : ""}
+              ${product.cas ? `<div><strong>Mã CAS:</strong> ${product.cas}</div>` : ""}
+              ${product.hsCode ? `<div><strong>HS Code:</strong> ${product.hsCode}</div>` : ""}
+              ${product.tags && product.tags.length ? `<div><strong>Tags:</strong> ${product.tags.join(", ")}</div>` : ""}
+
+              ${
+                product.properties?.length
+                  ? product.properties.map(
+                      (prop) => `
+                    <div><strong>${prop.key}:</strong></div>
+                    <p class="bg-gray-100 p-2 rounded border border-gray-200 text-gray-600 whitespace-pre-line">
+                      ${prop.value}
+                    </p>
+                  `
+                    ).join("")
+                  : ""
+              }
+            </div>
+
+
+
+            <!-- Thông số kỹ thuật -->
+            <div>
+              <strong>Thông số kỹ thuật:</strong>
+              ${
+                product.specifications && product.specifications.length > 0
+                  ? `
+                <div class="overflow-x-auto mt-2">
+                  <table class="min-w-full border border-gray-300 text-sm text-left">
+                    <thead class="bg-gray-100 text-gray-700">
+                      <tr>
+                        ${Object.keys(product.specifications[0]).map(
+                          (key) => `
+                          <th class="border px-4 py-2 break-words whitespace-normal">${key}</th>
+                        `
+                        ).join("")}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${product.specifications.map((row) => `
+                        <tr class="hover:bg-gray-50">
+                          ${Object.keys(product.specifications[0]).map((key) => `
+                            <td class="border px-4 py-2 break-words whitespace-normal">${row[key] || ""}</td>
+                          `).join("")}
+                        </tr>
+                      `).join("")}
+                    </tbody>
+                  </table>
+                </div>
+              `
+                  : `<p class="text-gray-500 mt-1">Không có thông số kỹ thuật.</p>`
+              }
+            </div>
+
+            <!-- Nút thao tác -->
+            <div class="flex flex-wrap gap-4 pt-6 border-t mt-6">
+              <a href="/admin/editproduct?id=${id}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition font-semibold">Sửa</a>
+              <button id="delete-btn" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition font-semibold">Xóa</button>
+              <a href="/admin/products" class="ml-auto bg-gray-700 text-white px-5 py-2 rounded-lg transition font-semibold">← Quay về danh sách</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Xử lý xoá
+    document.getElementById("delete-btn")?.addEventListener("click", async () => {
+      if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
+
+      try {
+        const res = await fetch("/api/delete-product", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          alert("Lỗi server: " + text);
+          return;
+        }
+
+        alert("Đã xóa sản phẩm.");
+        window.location.href = "/admin/products";
+      } catch (error) {
+        alert("Lỗi kết nối máy chủ.");
+        console.error(error);
+      }
     });
-  });
+
+    // Gán sự kiện click cho ảnh nhỏ
+    const mainImage = document.getElementById("main-image");
+    const thumbnails = document.querySelectorAll("#thumbnails img");
+
+    thumbnails.forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        mainImage!.src = thumb.src;
+
+        thumbnails.forEach((t) => t.classList.remove("ring-2", "ring-blue-400"));
+        thumb.classList.add("ring-2", "ring-blue-400");
+      });
+    });
+
+  } catch (err) {
+    productDetail!.innerHTML = `<p class="text-red-500">Lỗi khi tải dữ liệu sản phẩm.</p>`;
+    console.error(err);
+  }
+}
+
+fetchProductDetail();
 </script>
+
 
 
